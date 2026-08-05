@@ -2,46 +2,17 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Lorenzo Lannino</title>
-		<meta
-			name="description"
-			content="Lorenzo Lannino is an italian full-stack web developer and mobile app developer, specialized in the frontend part of a Web Application."
-		/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+		<title>Chirudeva Reddy Butukuri — AI/ML Engineer & CS Scholar</title>
+		<meta name="description" content="Computer Science student at BITS Pilani Dubai. Specializing in Computer Vision, NLP, and Machine Learning systems." />
+		<meta name="theme-color" content="#050608" />
 
-		<link rel="icon" type="image/png" href="/assets/favicon/favicon-96x96.png" sizes="96x96" />
-		<link rel="icon" type="image/svg+xml" href="/assets/favicon/favicon.svg" />
-		<link rel="shortcut icon" href="/assets/favicon/favicon.ico" />
-		<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png" />
-		<meta name="apple-mobile-web-app-title" content="Lorenzo Lannino" />
-		<link rel="manifest" href="/assets/favicon/site.webmanifest" />
-
-		<link href="/styles.min.css" rel="stylesheet" />
-		<!-- GOOGLE FONT -->
+		<!-- Distinctive Typography System -->
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
-			rel="stylesheet"
-		/>
-		<style>
-			html.lenis,
-			html.lenis body {
-				height: auto;
-			}
-			.lenis.lenis-smooth {
-				scroll-behavior: auto !important;
-			}
-			.lenis.lenis-smooth [data-lenis-prevent] {
-				overscroll-behavior: contain;
-			}
-			.lenis.lenis-stopped {
-				overflow: clip;
-			}
-			.lenis.lenis-smooth iframe {
-				pointer-events: none;
-			}
-		</style>
+		<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Syne+Mono&family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Reenie+Beanie&display=swap" rel="stylesheet" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+		<link href="/styles.min.css" rel="stylesheet" />
 
 		<script type="importmap">
 			{
@@ -54,489 +25,589 @@
 		</script>
 	</head>
 	<body>
-		<section id="intro">
-			<h1>
-				<span class="greetings">Hi! I'm</span>
-				<span class="fullname"><b>Lorenzo Lannino</b></span>
-			</h1>
-			<h2>
-				A professional Web Developer<br />
-				<div class="clown">...and clown</div>
-			</h2>
-			<p>Scroll Down for more</p>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="100"
-				height="100"
-				fill="currentColor"
-				class="bi bi-arrow-down"
-				viewBox="0 0 16 16"
-			>
-				<path
-					fill-rule="evenodd"
-					d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1"
-				/>
-			</svg>
-		</section>
+		<!-- Custom Interactive Cursor -->
+		<div id="custom-cursor">
+			<div class="cursor-dot"></div>
+			<div class="cursor-ring"></div>
+		</div>
 
-		<section id="courtains">
-			<div class="container" style="height: 100vh; position: relative">
-				<h3 class="courtains-title">
-					<div class="highlight">CENTERING DIVS</div>
-					IS NOT THE MOST ADVANCED<br />
-					THING I CAN DO.
-				</h3>
-
-				<h3 class="right-title courtains-title">
-					DO YOU WANT TO
-					<div class="highlight">SEE MORE</div>
-					?<br />
-					<div class="small">(I WOULDN'T.)</div>
-				</h3>
-				<div class="courtains-text">OK, LET'S DO<br />A STEP BACK</div>
-			</div>
-
-			<div class="courtains left"></div>
-			<div class="courtains right"></div>
-		</section>
-
-		<section id="presentation">
-			<div class="container presentation-container">
-				<div class="stickyTitle">
-					<h3>Who am I?</h3>
+		<!-- Monogram Initials Preloader Overlay -->
+		<div id="preloader">
+			<div class="preloader__content">
+				<div class="preloader__initials">CRB</div>
+				<div class="preloader__subtitle">CHIRUDEVA REDDY BUTUKURI &middot; SYSTEM LOAD</div>
+				
+				<div class="preloader__bar-container">
+					<div id="preloader-bar" class="preloader__bar"></div>
 				</div>
-				<div class="info">
-					<div>
-						My name is
-						<b class="highlight">Lorenzo Lannino</b>. I am 23 years old, and I currently live in
-						Venice, Italy.<br />
-						I'm bald but I used to have red hair... life is unfair.<br />
-						Besides that, I am a professional <b class="highlight">Web Developer</b>.
-					</div>
-					<div>
-						I really like coding. I consider it <b class="highlight">a form of art</b>: it can be a
-						way of expressing yourself. Another thing I enjoy is
-						<b class="highlight">psychology</b> and overall humanistic subjects.<br />
-						I believe the human brain is very similar to a machine at the end of the day.<br />
-						What makes a human act a certain way? Well, it depends on millions of inputs.
-					</div>
-					<div>
-						Other then coding, my hobbies include <b class="highlight">working out</b> as a free
-						athlete, <b class="highlight">reading</b>, and hanging out with friends.<br />
-						I constantly try to <b class="highlight">improve myself</b> and my lifestyle, so that I
-						can make the world around me a better place and be a
-						<b class="highlight">source of trust</b> for the people I love.
-					</div>
-					<div>
-						I am currently working as a <b class="highlight">Senior Web Developer</b> at
-						<a class="highlight" target="_blank" href="https://engimedia.it">Engimedia S.R.L.</a>
-						<br />
-						I mainly operate in the frontend part of a web application, but I am also able to work
-						on the backend part. Other than that, I can develop
-						<b class="highlight">mobile applications</b>.
+				
+				<div id="preloader-counter" class="preloader__counter">0%</div>
+			</div>
+		</div>
+
+		<!-- Animated Canvas Background -->
+		<canvas id="hero-canvas"></canvas>
+
+		<!-- Asymmetric Grid Background -->
+		<div class="grid-background"></div>
+
+		<!-- Persistent Header Navigation Bar -->
+		<header class="bottom-bar">
+			<div class="bottom-bar__left">
+				<div class="bottom-bar__profile">
+					<div class="nav-monogram">CRB</div>
+					<div class="bottom-bar__name">
+						<strong>Chirudeva Reddy Butukuri</strong><br>
+						<span>CS Scholar & AI/ML Engineer</span>
 					</div>
 				</div>
 			</div>
-		</section>
-
-		<section id="certificates">
-			<div class="container intro">
-				<div>
-					<h2 class="title">What about my <b class="highlight">education</b>?</h2>
+			<div class="bottom-bar__right">
+				<nav class="nav-links">
+					<a href="#hero" class="nav-item">System</a>
+					<a href="#about" class="nav-item">About</a>
+					<a href="#tech" class="nav-item">Tech Stack</a>
+					<a href="#projects" class="nav-item">In-Situ Demos</a>
+					<a href="#experience" class="nav-item">Experience</a>
+				</nav>
+				<div class="social-icons">
+					<a href="https://github.com/Chirudeva-Reddy" target="_blank" rel="noopener" aria-label="GitHub" class="magnetic"><i class="fa-brands fa-github fa-lg"></i></a>
+					<a href="mailto:f20230331@dubai.bits-pilani.ac.in" aria-label="Email" class="magnetic"><i class="fa-regular fa-envelope fa-lg"></i></a>
+					<a href="tel:+971568747298" aria-label="Phone" class="magnetic"><i class="fa-solid fa-phone fa-lg"></i></a>
 				</div>
-				<div>
-					<h3 class="subtitle school">
-						I actually only have a<br />
-						<b class="highlight">Diploma in IT studies</b>.
-					</h3>
-				</div>
-				<div>
-					<h3 class="subtitle but">BUT...</h3>
-				</div>
-			</div>
-
-			<div class="container" style="margin-top: 500px">
-				<div class="numberOfCertificates">
-					<div class="number">
-						<div>3</div>
-						<div>7</div>
-					</div>
-					<div class="info">
-						Is the total number of <b class="highlight">certificates</b> I got from online
-						courses.<br />
-						This certificates include:
-					</div>
-				</div>
-				<div class="numberOfCertificates">
-					<div class="number">
-						<div>1</div>
-						<div>3</div>
-					</div>
-					<div class="info">
-						Certificates from
-						<a href="https://zerotomastery.io/" class="highlight">Zero To Mastery</a>.
-					</div>
-				</div>
-				<div class="numberOfCertificates">
-					<div class="number">
-						<div>1</div>
-						<div>1</div>
-					</div>
-					<div class="info">
-						Certificates from
-						<a href="https://www.udemy.com/" class="highlight">Udemy</a>.
-					</div>
-				</div>
-				<div class="numberOfCertificates">
-					<div class="number">
-						<div>7</div>
-					</div>
-					<div class="info">
-						Certificates from
-						<a href="https://devacademy.it/" class="highlight">DevAcademy</a>.
-					</div>
-				</div>
-				<div class="numberOfCertificates">
-					<div class="number">
-						<div>6</div>
-					</div>
-					<div class="info">
-						Certificates from platforms such as
-						<a href="https://learn.mongodb.com/" class="highlight">MongoDB</a>,
-						<a href="https://threejs-journey.com/" class="highlight">ThreeJS</a>, and
-						<a
-							href="https://www.creativecodingclub.com/bundles/creative-coding-club"
-							class="highlight"
-						>
-							GSAP </a
-						>.
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<section id="knowledge">
-			<h2 class="title container">But, what am I <span class="highlight">good at</span>?</h2>
-			<div class="wrapper">
-				<div class="horizontal-scroll">
-					<h3 class="subtitle">Let's see:</h3>
-					<div class="card">
-						<img loading="lazy" alt="Javascript logo" src="/assets/technologies/javascript.png" />
-						<div class="card__title">Javascript</div>
-						<div class="card__description">
-							I've been writing vanilla JS code almost everyday for 4 years. I can say that I pretty
-							much mastered it, even though I am sure I can still improve and learn more. And that's
-							what I try to do.
-						</div>
-					</div>
-					<div class="card">
-						<img loading="lazy" alt="Typescript logo" src="/assets/technologies/typescript.webp" />
-						<div class="card__title">Typescript</div>
-						<div class="card__description">
-							Everyone knows Javascript is kind of a mess, and I personally agree with it. That's
-							why I learned Typescript and I write all my new big projects with it.
-						</div>
-					</div>
-					<div class="card">
-						<img loading="lazy" alt="CSS logo" src="/assets/technologies/css.webp" />
-						<div class="card__title">CSS</div>
-						<div class="card__description">
-							I'm probably not the most creative person, but I like the idea of expressing myself
-							graphically and create nice websites. I don't like using many CSS libraries: I write
-							my own code.
-						</div>
-					</div>
-					<div class="card">
-						<img loading="lazy" alt="React logo" src="/assets/technologies/react.webp" />
-						<div class="card__title">React</div>
-						<div class="card__description">
-							I used React for various projects. I know deeply how it works under the hood, at the
-							point that I created a web-components library based on its API.
-						</div>
-					</div>
-					<div class="card">
-						<img loading="lazy" alt="NextJS logo" src="/assets/technologies/next.png" />
-						<div class="card__title">NextJS</div>
-						<div class="card__description">
-							For my personal projects, I used a lot the framework NextJS. I am comfortable on
-							developing a whole application based on it, on frontend and backend code.
-						</div>
-					</div>
-					<div class="card">
-						<img loading="lazy" alt="Flutter logo" src="/assets/technologies/flutter.webp" />
-						<div class="card__title">Flutter</div>
-						<div class="card__description">
-							Because of its react-like way of building interfaces, I feel pretty comfortable using
-							Flutter to develop mobile applications for all platforms.
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<h2 class="title more">And <span class="highlight">more</span>...</h2>
-
-			<div class="technologies container">
-				<img
-					loading="lazy"
-					class="parallax-logo"
-					data-multiplier="4"
-					alt="Java logo"
-					src="/assets/technologies/java.png"
-				/>
-				<img
-					loading="lazy"
-					class="parallax-logo"
-					data-multiplier="2"
-					alt="NodeJS logo"
-					src="/assets/technologies/node.png"
-				/>
-				<img
-					loading="lazy"
-					class="parallax-logo"
-					data-multiplier="4"
-					alt="MongoDB logo"
-					src="/assets/technologies/mongodb.png"
-				/>
-				<img
-					loading="lazy"
-					class="parallax-logo"
-					data-multiplier="5"
-					alt="Dart logo"
-					src="/assets/technologies/dart.png"
-				/>
-				<img
-					loading="lazy"
-					class="parallax-logo"
-					data-multiplier="7"
-					alt="Wordpress logo"
-					src="/assets/technologies/wordpress.webp"
-				/>
-				<img
-					loading="lazy"
-					class="parallax-logo"
-					data-multiplier="7"
-					alt="GSAP logo"
-					src="/assets/technologies/gsap.svg"
-				/>
-				<img
-					loading="lazy"
-					class="parallax-logo"
-					data-multiplier="5"
-					alt="ThreeJS logo"
-					src="/assets/technologies/three.png"
-				/>
-				<img
-					loading="lazy"
-					class="parallax-logo"
-					data-multiplier="8"
-					alt="Sass logo"
-					src="/assets/technologies/sass.png"
-				/>
-				<img
-					loading="lazy"
-					class="parallax-logo lazy-img"
-					data-multiplier="8"
-					alt="SQL logo"
-					src="/assets/technologies/sql.png"
-				/>
-			</div>
-		</section>
-
-		<section id="experiences" class="container">
-			<h2 class="title">Now let's talk about my <br /><b class="highlight">experiences</b>.</h2>
-		</section>
-
-		<section id="engimedia">
-			<img class="logo" src="/assets/logos/engimedia.svg" alt="Engimedia logo" />
-			<div class="wrapper">
-				<div class="analysis container">
-					<p>I worked for Engimedia S.R.L. for more than 4 years</p>
-					<p class="right">In all these years, I did a lot of things, like:</p>
-					<p>
-						Refactoring of old code
-						<span class="details">
-							Went from jQuery to Vanilla JS ES2015+ or Wompo, bootstrap 3 to 5, and more.
-							<br />Improved performance and reduced code by at least 50%.<br />
-							Implemented a more modern UI for internal tools.
-						</span>
-					</p>
-					<p class="right">
-						Creation of websites and e-commerces
-						<span class="details"> using Wordpress with Elementor or Divi, and WooCommerce </span>
-					</p>
-					<p>
-						Creation of mobile applications
-						<span class="details">
-							using Dart & Flutter. Only one application deployed on production. Two more only
-							available by testers.
-						</span>
-					</p>
-					<p class="right">
-						Creation of a components library
-						<span class="details">based on Material Design 3 by Google, built with Wompo</span>
-					</p>
-					<p class="center">And much more...</p>
-				</div>
-			</div>
-		</section>
-
-		<section id="setitup">
-			<div class="background">
-				<div class="circle"></div>
-			</div>
-			<div class="content">
-				<div class="bubble light" style="top: 20%; left: 80%; scale: 2"></div>
-				<div class="bubble" style="top: 70%; left: 10%; scale: 1.5"></div>
-				<div class="bubble" style="top: 40%; left: 50%; scale: 1"></div>
-				<div class="bubble light" style="top: 55%; left: 75%; scale: 2.5"></div>
-				<div class="bubble light" style="top: 14%; left: -20px; scale: 3"></div>
-				<div class="bubble" style="top: 30%; left: 10%; scale: 1"></div>
-				<div class="bubble" style="top: 30%; left: 60%; scale: 1.5"></div>
-				<div class="bubble light" style="top: 50%; left: 33%; scale: 3"></div>
-				<div class="bubble" style="top: 69%; left: 69%; scale: 1"></div>
-				<div class="bubble light" style="top: 90%; left: 50%; scale: 2"></div>
-				<div class="bubble m-hidden" style="top: 120%; left: 90%; scale: 1.5"></div>
-				<div class="bubble" style="top: 110%; left: 3%; scale: 3"></div>
-				<div class="bubble light" style="top: 112%; left: 30%; scale: 2"></div>
-				<div class="container intro">
-					<a href="https://www.setitup.it/" target="_blank" title="Visit website">
-						<img
-							class="logo lazy-img"
-							src="/assets/logos/setitup.png"
-							alt="Set It Up - Improvements logo"
-						/>
-					</a>
-					<div class="info">
-						<h2 class="title">Set It Up<br />Improvements</h2>
-						Is my first private project that made it to production, fully developed by me.
-					</div>
-				</div>
-				<div class="container">
-					<p class="text">
-						A friend of mine asked me to make a website for his new agency. At that time, for me
-						developing a <b class="highlight">whole website</b> and publishing it to production was
-						a <b class="highlight">big challenge</b>, so I accepted it straight away.
-					</p>
-					<p class="text">
-						Having to worry about the <b class="highlight">user experience</b>, the
-						<b class="highlight">style</b> and <b class="highlight">content</b> of the website,
-						<b class="highlight">SEO</b>, and <b class="highlight">performance</b>, was a completely
-						new experience to me, but I highly satisfied the client.
-					</p>
-					<p class="text">
-						To make it, I used <b class="highlight">React</b> with <b class="highlight">NextJS</b>,
-						and then published it on <b class="highlight">Vercel</b>.<br />
-						I also used a pre-made <b class="highlight">theme</b> selected by the client, which I
-						then modified to match the company's style.
-					</p>
-					<p class="text">
-						The website allowed the client to be <b class="highlight">more visible</b> and to
-						<b class="highlight">gain more clients</b>, also thanks to the contact form that I
-						developed on the website.
-					</p>
-				</div>
-			</div>
-		</section>
-
-		<section id="wompo">
-			<div class="intro">
-				<div class="bubble"></div>
-				<svg id="wompo-logo" xmlns="http://www.w3.org/2000/svg" viewBox="200 200 650 650">
-					<path
-						fill="currentColor"
-						class="cls-1"
-						d="M435.13,708.67c-14.9,14.15-38.52,10.44-55.47-.78-12.11-7.68-22.58-19.1-30.81-31.16-18.56-27.47-29.12-59.23-41-90.03-5.27-13.93-10.68-27.79-16.42-41.53-5.97-14.36-12.38-28.58-18.53-42.89-13.59-31.16-30.77-75.17-.32-100.7,31.55-24.95,86.7-17.7,114.61,10.65,23.39,23.58,28.67,56.55,33.71,88.72,2.68,17.74,5.2,35.54,8.43,53.19,3,16.65,6.58,33.11,10.26,49.65,6.34,32,20.66,79.19-4.36,104.78l-.11.1ZM604.79,721.53c-13.07,1.19-28.25-6.45-39.64-14.75-11.1-7.96-21.4-17.58-31.25-27.16-29.52-29.17-59.53-59.93-71.44-99.97-8.87-28.87-10.02-61.83-9.49-92.85.44-38.77,9.95-84.41,53.46-93.97,19.71-4.39,41.56,1.12,56.57,14.67,28.17,26.11,26.91,66.86,33.05,103.12,4.92,35.08,16.5,68.66,26.81,102.43,7.82,27.21,17.02,59.49,8.04,86.38-3.85,11.68-13.64,21.4-25.96,22.08h-.14ZM748.52,494.15c-15.35,30.34-26.43,62.41-37.55,94.46-4.56,11.92-8.93,22.36-16.06,31.59-14.79,19.21-31.72,10.7-40.36-9.23-12.08-27.34-9.27-60.51-8.56-90.02.36-13.14.28-26.34.2-39.49-.52-31.81,1.3-65.93,33.1-80.71,26.15-12.53,72.06-9.48,85.85,18.88,10.28,23.92-6.28,51.51-16.52,74.34l-.09.2Z"
-					/>
-					<path
-						fill="currentColor"
-						class="cls-1"
-						d="M512,220.82c160.81,0,291.18,130.36,291.18,291.18s-130.36,291.18-291.18,291.18-291.18-130.36-291.18-291.18,130.36-291.18,291.18-291.18M512,206.65c-41.22,0-81.21,8.08-118.86,24-36.36,15.38-69.02,37.4-97.05,65.43-28.04,28.04-50.05,60.69-65.43,97.05-15.93,37.65-24,77.64-24,118.86s8.08,81.21,24,118.86c15.38,36.36,37.4,69.02,65.43,97.05,28.04,28.04,60.69,50.05,97.05,65.43,37.65,15.93,77.64,24,118.86,24s81.21-8.08,118.86-24c36.36-15.38,69.02-37.4,97.05-65.43,28.04-28.04,50.05-60.69,65.43-97.05,15.93-37.65,24-77.64,24-118.86s-8.08-81.21-24-118.86c-15.38-36.36-37.4-69.02-65.43-97.05-28.04-28.04-60.69-50.05-97.05-65.43-37.65-15.93-77.64-24-118.86-24h0Z"
-					/>
-				</svg>
-				<a class="wompo-title" href="https://wompo.dev" target="_blank">
-					<h2>Wompo</h2>
-					<h3>The fast, lightweight, React-like, web-components library.</h3>
+				<a href="mailto:f20230331@dubai.bits-pilani.ac.in" class="nav-location-tag magnetic">
+					<i class="fa-solid fa-location-dot fa-xs"></i> Dubai, U.A.E ↗
 				</a>
 			</div>
+		</header>
 
-			<div class="info">
-				<div class="container">
-					<p>
-						On 1st of April 2024 I released the first version of
-						<a class="highlight" href="https://wompo.dev" target="_blank">Wompo</a>, my first
-						<b class="highlight">open source</b> project that consists of a Javascript library that
-						helps building reactive components using <b class="highlight">native browser APIs</b>.
-					</p>
-					<p>
-						It's <b class="highlight">super fast</b>, <b class="highlight">lightweight</b>, and
-						built with an API very similar to <b class="highlight">React</b>, so that React users
-						can easily adapt to it. The only difference is that it uses
-						<b class="highlight">web-components</b>.
-					</p>
-					<p>
-						I worked with web-components for a while at
-						<a href="https://engimedia.it" target="_blank" class="highlight">Engimedia</a>. To
-						create this library, I used all my experience and found solutions for what I considered
-						to be odd, like <b class="highlight">Shadow DOM</b>, slots, and more.
-					</p>
-					<p>
-						For this reason, I developed a <b class="highlight">built-in CSS modules</b> system that
-						allows to style your custom web-components without having to worry about style
-						conflicts.
-					</p>
-					<p>
-						For more, check out
-						<a href="https://wompo.dev" target="_blank" class="highlight">wompo.dev</a>, the
-						official documentation website entirely made with Wompo and
-						<a href="https://www.npmjs.com/package/wompo-router" target="_blank" class="highlight">
-							Wompo Router
-						</a>
-						, a client-side router to handle CSR multi-page websites.
-					</p>
-				</div>
+		<!-- Main Smooth Wrapper -->
+		<div id="smooth-wrapper">
+			<div id="smooth-content">
+
+				<!-- ====== SECTION 1: ASYMMETRIC HERO ====== -->
+				<section class="page page--hero" id="hero">
+					<div class="hero-asymmetric-grid">
+						<div class="hero-left">
+							<div class="hero-tag">COMPUTER SCIENCE SCHOLAR &middot; BITS PILANI DUBAI</div>
+							
+							<h1 class="lead-display-asymmetric">
+								<span class="word-giant font-syne tilt-left">ARCHITECTING</span><br>
+								<span class="word-medium font-fraunces text-gradient tilt-right">Intelligent Vision</span> 
+								<span class="word-small font-mono">&</span><br>
+								<span class="word-large font-space text-highlight">SCALABLE ML ENGINES.</span>
+							</h1>
+							
+							<p class="hero-subtext">
+								Building privacy-preserving 3D mesh algorithms, NLP sentiment engines, and high-throughput computer vision models.
+							</p>
+						</div>
+
+						<div class="hero-right">
+							<div class="hero-code-card tilt-card">
+								<div class="code-card-header">
+									<span class="dot red"></span>
+									<span class="dot yellow"></span>
+									<span class="dot green"></span>
+									<span class="code-filename">vision_pipeline.py</span>
+									<button id="run-insitu-btn" class="insitu-run-badge"><i class="fa-solid fa-play fa-xs"></i> Run In-Situ</button>
+								</div>
+								<pre class="code-body"><code><span class="code--purple">class</span> <span class="code--yellow">SilhouetteMeshNet</span>(nn.Module):
+    <span class="code--purple">def</span> <span class="code--yellow">__init__</span>(self):
+        super().__init__()
+        self.encoder = VisionBackbone()
+        self.mesh_decoder = Deformable3D()
+
+    <span class="code--purple">def</span> <span class="code--yellow">forward</span>(self, binary_mask):
+        latents = self.encoder(binary_mask)
+        mesh = self.mesh_decoder(latents)
+        <span class="code--purple">return</span> mesh</code></pre>
+								<div id="insitu-terminal-output" class="insitu-terminal hidden">
+									<span class="term-line green">> Initializing PyTorch CUDA context... [OK]</span>
+									<span class="term-line cyan">> Running In-Situ Silhouette 3D Mesh Reconstruction...</span>
+									<span class="term-line white">> Mesh Vertices: 14,280 | FPS: 60 | Latency: 8.4ms</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<a href="#about" class="scroll-hint magnetic">
+						<span>Explore Archive</span>
+						<i class="fa-solid fa-arrow-down fa-sm"></i>
+					</a>
+				</section>
+
+				<!-- ====== SECTION 2: ASYMMETRIC ABOUT ====== -->
+				<section class="page page--about" id="about">
+					<div class="about-container">
+						<div class="about-card-skewed anim-reveal">
+							<div class="about-card__top">
+								<div class="about-emblem">
+									<span class="emblem-text">CRB</span>
+									<span class="photo-badge">CS '27</span>
+								</div>
+								<div class="about-title">
+									<span class="handwritten-tag">Biography & Research</span>
+									<h2>Computer Science & Minor in Data Science at <strong>BITS Pilani, Dubai Campus</strong></h2>
+								</div>
+							</div>
+
+							<div class="about-stats-row-asymmetric">
+								<div class="stat-box box-large">
+									<span class="stat-number">9.13</span>
+									<span class="stat-label">CGPA / 10.0</span>
+								</div>
+								<div class="stat-box box-small">
+									<span class="stat-number">42%</span>
+									<span class="stat-label">Latency Reduction</span>
+								</div>
+								<div class="stat-box box-medium">
+									<span class="stat-number">1M+</span>
+									<span class="stat-label">Crash Records Analyzed</span>
+								</div>
+								<div class="stat-box box-small">
+									<span class="stat-number">98%</span>
+									<span class="stat-label">NN Error Cut</span>
+								</div>
+							</div>
+
+							<div class="about-card__body">
+								<p>
+									I specialize in the intersection of <strong>Computer Vision</strong>, <strong>Natural Language Processing</strong>, and <strong>Privacy-Preserving AI Systems</strong>. My research focuses on extracting dense 3D mesh representations from minimal privacy-safe 2D inputs, as well as high-throughput sentiment & customer intelligence algorithms.
+								</p>
+								<p>
+									As <strong>AI Engineer Intern at Nablix Labs</strong>, I engineered core API endpoints serving real-time predictions, reducing backend error rate by 42%. Prior to Nablix, I was <strong>SDE Intern at Domdog</strong>, building automated regression pipelines and security scanners across 8 client deployments.
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- ====== SECTION 3: PROPORTION-MISMATCHED ASYMMETRIC TECH GRID ====== -->
+				<section class="page page--tech" id="tech">
+					<div class="section-container">
+						<div class="tech-header anim-reveal">
+							<span class="handwritten-tag">Architecture & Tooling</span>
+							<h2 class="section-title">Core Technologies & Infrastructure</h2>
+							<p class="section-subtitle">Asymmetric breakdown of daily tech stack across Deep Learning, Computer Vision, Backend Pipelines, and Infrastructure.</p>
+						</div>
+
+						<div class="tech-bento-grid">
+							<div class="tech-card bento-wide anim-reveal">
+								<div class="tech-icon-box icon-pytorch">
+									<i class="fa-solid fa-brain"></i>
+								</div>
+								<div class="tech-info">
+									<h3>PyTorch & Deep Learning</h3>
+									<span class="tech-category">FRAMEWORK // MODEL TRAINING</span>
+									<p>Building custom neural network architectures, loss function optimization, transfer learning, and model deployment for CV and NLP pipelines.</p>
+								</div>
+							</div>
+
+							<div class="tech-card bento-narrow anim-reveal">
+								<div class="tech-icon-box icon-opencv">
+									<i class="fa-solid fa-eye"></i>
+								</div>
+								<div class="tech-info">
+									<h3>OpenCV & Vision</h3>
+									<span class="tech-category">CV // IMAGE PROCESSING</span>
+									<p>Real-time frame extraction, silhouette segmentation, and optical flow.</p>
+								</div>
+							</div>
+
+							<div class="tech-card bento-narrow-alt anim-reveal">
+								<div class="tech-icon-box icon-python">
+									<i class="fa-brands fa-python"></i>
+								</div>
+								<div class="tech-info">
+									<h3>Python Ecosystem</h3>
+									<span class="tech-category">PRIMARY LANGUAGE</span>
+									<p>Core programming language for ML research, Pandas/NumPy, and AsyncIO APIs.</p>
+								</div>
+							</div>
+
+							<div class="tech-card bento-wide-alt anim-reveal">
+								<div class="tech-icon-box icon-cpp">
+									<i class="fa-solid fa-code"></i>
+								</div>
+								<div class="tech-info">
+									<h3>C++ High Performance</h3>
+									<span class="tech-category">SYSTEMS // ALGORITHMS</span>
+									<p>Low-level algorithmic execution, memory-managed data structures, and hardware-accelerated computations.</p>
+								</div>
+							</div>
+
+							<div class="tech-card bento-hero-row anim-reveal">
+								<div class="tech-icon-box icon-sql">
+									<i class="fa-solid fa-database"></i>
+								</div>
+								<div class="tech-info">
+									<h3>SQL & Database Architecture</h3>
+									<span class="tech-category">DATABASE // DATA PIPELINES</span>
+									<p>Complex relational queries, indexing optimization, spatial feature storage, and large dataset ingestion pipelines over 1M+ records.</p>
+								</div>
+							</div>
+
+							<div class="tech-card bento-mini anim-reveal">
+								<div class="tech-icon-box icon-aws">
+									<i class="fa-brands fa-aws"></i>
+								</div>
+								<div class="tech-info">
+									<h3>AWS Cloud</h3>
+									<span class="tech-category">CLOUD INFRASTRUCTURE</span>
+									<p>S3 storage & EC2 GPU model training.</p>
+								</div>
+							</div>
+
+							<div class="tech-card bento-narrow anim-reveal">
+								<div class="tech-icon-box icon-playwright">
+									<i class="fa-solid fa-vial-circle-check"></i>
+								</div>
+								<div class="tech-info">
+									<h3>Playwright E2E</h3>
+									<span class="tech-category">AUTOMATION</span>
+									<p>End-to-end regression suites and security audit scripts.</p>
+								</div>
+							</div>
+
+							<div class="tech-card bento-wide anim-reveal">
+								<div class="tech-icon-box icon-linux">
+									<i class="fa-brands fa-linux"></i>
+								</div>
+								<div class="tech-info">
+									<h3>Linux Systems & POSIX Shell</h3>
+									<span class="tech-category">ENVIRONMENT // DEPLOYMENT</span>
+									<p>POSIX shell scripting, server environment configuration, process management, and automated deployment pipelines.</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- ====== SECTION 4: IN-SITU INTERACTIVE PROJECT DEMOS ====== -->
+				<section class="page page--explore" id="projects">
+					<div class="explore-header anim-reveal">
+						<div>
+							<span class="handwritten-tag">Interactive Laboratory</span>
+							<h2 class="explore-title">In-Situ Engineering Demos</h2>
+						</div>
+						<span class="side-note">test live model in-situ →</span>
+					</div>
+
+					<div class="project-slider">
+						<ul class="project-cards">
+							<!-- Card 1: In-Situ 3D Mesh Sandbox -->
+							<li class="project-card-item">
+								<article class="project-cover" data-project="0">
+									<div class="project-cover__header">
+										<span class="project-category">CV // IJCAI Proposal</span>
+										<span class="project-index">01</span>
+									</div>
+									<div class="project-cover__visual">
+										<div class="insitu-widget-box">
+											<div class="insitu-widget-header">
+												<span>IN-SITU SILHOUETTE 3D MESH</span>
+												<button id="toggle-mesh-btn" class="insitu-btn-sm"><i class="fa-solid fa-cube"></i> Toggle Wireframe Mesh</button>
+											</div>
+											<div class="mesh-canvas-wrapper">
+												<canvas id="insitu-mesh-canvas" width="360" height="140"></canvas>
+											</div>
+										</div>
+									</div>
+									<div class="project-cover__bar">
+										<h3>Privacy-Preserving Body Composition</h3>
+										<p>In-situ 3D mesh reconstruction algorithm extracting dense body geometry from 2D silhouette masks without storing raw RGB photo data.</p>
+									</div>
+								</article>
+							</li>
+
+							<!-- Card 2: In-Situ Live NLP Sentiment Sandbox -->
+							<li class="project-card-item">
+								<article class="project-cover" data-project="1">
+									<div class="project-cover__header">
+										<span class="project-category">NLP // Customer Intelligence</span>
+										<span class="project-index">02</span>
+									</div>
+									<div class="project-cover__visual">
+										<div class="insitu-widget-box">
+											<div class="insitu-widget-header">
+												<span>IN-SITU SENTIMENT VECTORIZER</span>
+											</div>
+											<div class="insitu-input-wrapper">
+												<input type="text" id="nlp-input" value="The latency reduction and backend API speed is incredible!" class="insitu-text-input" />
+												<div class="nlp-scores-row">
+													<div class="score-badge pos"><i class="fa-solid fa-face-smile"></i> Pos: <span id="pos-score">0.96</span></div>
+													<div class="score-badge neu"><i class="fa-solid fa-face-meh"></i> Neu: <span id="neu-score">0.03</span></div>
+													<div class="score-badge neg"><i class="fa-solid fa-face-frown"></i> Neg: <span id="neg-score">0.01</span></div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="project-cover__bar">
+										<h3>NLP Sentiment & Topic Engine</h3>
+										<p>Real-time in-situ vectorizer clustering 10,000+ unstructured customer feedback entries into actionable sentiment vectors.</p>
+									</div>
+								</article>
+							</li>
+
+							<!-- Card 3: In-Situ Crash Severity Model -->
+							<li class="project-card-item">
+								<article class="project-cover" data-project="2">
+									<div class="project-cover__header">
+										<span class="project-category">Data Science // 1M+ Records</span>
+										<span class="project-index">03</span>
+									</div>
+									<div class="project-cover__visual">
+										<div class="project-cover__code">
+											<div class="code-line"><span class="code--purple">import</span> pandas <span class="code--purple">as</span> pd</div>
+											<div class="code-line"><span class="code--purple">from</span> xgboost <span class="code--purple">import</span> XGBClassifier</div>
+											<div class="code-line"></div>
+											<div class="code-line"><span class="code--comment"># Chicago Traffic Crash Analytics</span></div>
+											<div class="code-line">df = pd.read_csv("chicago_crashes_1M.csv")</div>
+											<div class="code-line">X_geo = engineer_spatial_features(df)</div>
+											<div class="code-line">model.fit(X_geo, y_severity)</div>
+										</div>
+									</div>
+									<div class="project-cover__bar">
+										<h3>Accident Severity ML Classifier</h3>
+										<span class="project-type-label">Predictive modeling over 1,000,000+ traffic collision reports in Chicago.</span>
+									</div>
+								</article>
+							</li>
+
+							<!-- Card 4: In-Situ Telemetry Autonomous USV -->
+							<li class="project-card-item">
+								<article class="project-cover" data-project="3">
+									<div class="project-cover__header">
+										<span class="project-category">Robotics // Hardware</span>
+										<span class="project-index">04</span>
+									</div>
+									<div class="project-cover__visual">
+										<div class="project-cover__code">
+											<div class="code-line"><span class="code--comment"># Emirates Robotics Competition USV</span></div>
+											<div class="code-line"><span class="code--purple">class</span> <span class="code--yellow">WaterCollectorUSV</span>:</div>
+											<div class="code-line">    <span class="code--purple">def</span> <span class="code--yellow">autonomous_loop</span>(self):</div>
+											<div class="code-line">        coords = self.gps.get_location()</div>
+											<div class="code-line">        self.thrusters.navigate(coords)</div>
+											<div class="code-line">        self.debris_intake.deploy()</div>
+										</div>
+									</div>
+									<div class="project-cover__bar">
+										<h3>Autonomous Water Collection USV</h3>
+										<p>Unmanned surface vessel designed for autonomous ocean debris intake and environmental sensing.</p>
+									</div>
+								</article>
+							</li>
+
+							<!-- Card 5 -->
+							<li class="project-card-item">
+								<article class="project-cover" data-project="4">
+									<div class="project-cover__header">
+										<span class="project-category">Neural Networks // Fuzzy Logic</span>
+										<span class="project-index">05</span>
+									</div>
+									<div class="project-cover__visual">
+										<div class="project-cover__code">
+											<div class="code-line"><span class="code--purple">import</span> skfuzzy <span class="code--purple">as</span> fuzz</div>
+											<div class="code-line"><span class="code--purple">import</span> torch.nn <span class="code--purple">as</span> nn</div>
+											<div class="code-line"></div>
+											<div class="code-line"><span class="code--comment"># Hybrid Fuzzy-ANN Depression Risk</span></div>
+											<div class="code-line">fuzzy_weights = fuzz.membership(features)</div>
+											<div class="code-line">risk_score = ann_net(fuzzy_weights)</div>
+											<div class="code-line"><span class="code--comment"># 98% reduction in training error</span></div>
+										</div>
+									</div>
+									<div class="project-cover__bar">
+										<h3>Depression Risk Prediction Neural Net</h3>
+										<p>Hybrid architecture combining Fuzzy Logic inference with Artificial Neural Networks.</p>
+									</div>
+								</article>
+							</li>
+
+							<!-- Card 6 -->
+							<li class="project-card-item">
+								<article class="project-cover" data-project="5">
+									<div class="project-cover__header">
+										<span class="project-category">Machine Learning // Classification</span>
+										<span class="project-index">06</span>
+									</div>
+									<div class="project-cover__visual">
+										<div class="project-cover__code">
+											<div class="code-line"><span class="code--purple">from</span> sklearn.ensemble <span class="code--purple">import</span> RandomForestClassifier</div>
+											<div class="code-line"></div>
+											<div class="code-line"><span class="code--comment"># Ride-hailing cancellation prediction</span></div>
+											<div class="code-line">temporal_features = extract_hour_weather(df)</div>
+											<div class="code-line">rf_model = RandomForestClassifier(n_estimators=250)</div>
+											<div class="code-line">rf_model.fit(temporal_features, y_canceled)</div>
+										</div>
+									</div>
+									<div class="project-cover__bar">
+										<h3>Ride Cancellation Predictive Model</h3>
+										<p>Ensemble ML model predicting driver cancellation probability based on spatial and temporal factors.</p>
+									</div>
+								</article>
+							</li>
+						</ul>
+					</div>
+				</section>
+
+				<!-- ====== SECTION 5: ASYMMETRIC INDUSTRY TIMELINE ====== -->
+				<section class="page page--experience" id="experience">
+					<div class="section-container">
+						<div class="experience-header anim-reveal">
+							<span class="handwritten-tag">Career Trajectory</span>
+							<h2 class="section-title">Industry & Research Experience</h2>
+							<p class="section-subtitle">A chronological breakdown of my engineering roles, key metrics delivered, and software achievements.</p>
+						</div>
+
+						<div class="timeline">
+							<div class="timeline__line"></div>
+
+							<div class="timeline__item item-left anim-reveal">
+								<div class="timeline__node node-cyan"></div>
+								<div class="timeline__card card-asymmetric-1">
+									<div class="timeline__card-header">
+										<div>
+											<span class="timeline__company">Nablix Labs</span>
+											<h3 class="timeline__role">AI Engineer Intern</h3>
+										</div>
+										<span class="timeline__date date-cyan">06/2024 — 08/2024</span>
+									</div>
+									<div class="timeline__card-body">
+										<ul>
+											<li>Curated and optimized model inference & API endpoints serving real-time predictions, reducing backend production error rate by <strong>42%</strong>.</li>
+											<li>Engineered automated data validation scripts for incoming multimodal inputs to ensure high prediction quality.</li>
+											<li>Collaborated with senior ML engineers on model quantization and low-latency API response strategies.</li>
+										</ul>
+									</div>
+									<div class="timeline__tags">
+										<span class="tech-badge">Python</span>
+										<span class="tech-badge">PyTorch</span>
+										<span class="tech-badge">FastAPI</span>
+										<span class="tech-badge">Docker</span>
+										<span class="tech-badge">Model Optimization</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="timeline__item item-right anim-reveal">
+								<div class="timeline__node node-pink"></div>
+								<div class="timeline__card card-asymmetric-2">
+									<div class="timeline__card-header">
+										<div>
+											<span class="timeline__company">Domdog</span>
+											<h3 class="timeline__role">Software Development Engineer (SDE) Intern</h3>
+										</div>
+										<span class="timeline__date date-pink">01/2024 — 05/2024</span>
+									</div>
+									<div class="timeline__card-body">
+										<ul>
+											<li>Engineered automated Playwright regression testing suites and security scanning tools deployed across <strong>8 client platforms</strong>.</li>
+											<li>Built scalable backend processing pipelines handling automated user session simulation and vulnerability audits.</li>
+											<li>Constructed custom dashboard components for monitoring automated test executions and failure tracebacks in real-time.</li>
+										</ul>
+									</div>
+									<div class="timeline__tags">
+										<span class="tech-badge">Playwright</span>
+										<span class="tech-badge">Node.js</span>
+										<span class="tech-badge">Security Audit</span>
+										<span class="tech-badge">CI/CD</span>
+										<span class="tech-badge">Linux</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="timeline__item item-full anim-reveal">
+								<div class="timeline__node node-amber"></div>
+								<div class="timeline__card card-asymmetric-3">
+									<div class="timeline__card-header">
+										<div>
+											<span class="timeline__company">BITS Pilani, Dubai Campus</span>
+											<h3 class="timeline__role">Undergraduate Researcher & AI Project Lead</h3>
+										</div>
+										<span class="timeline__date date-amber">09/2023 — PRESENT</span>
+									</div>
+									<div class="timeline__card-body">
+										<ul>
+											<li>Authoring paper proposal for IJCAI on privacy-preserving 3D body composition estimation from 2D binary silhouettes.</li>
+											<li>Led student robotics team designing an Autonomous Water Collection USV for the Emirates Robotics Competition.</li>
+											<li>Maintained top academic standing with <strong>9.13 / 10.0 CGPA</strong> and Minor in Data Science.</li>
+										</ul>
+									</div>
+									<div class="timeline__tags">
+										<span class="tech-badge">Computer Vision</span>
+										<span class="tech-badge">NLP</span>
+										<span class="tech-badge">Robotics</span>
+										<span class="tech-badge">Research Publication</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- ====== SECTION 6: FOOTER ====== -->
+				<section class="page page--footer" id="footer">
+					<div class="footer-marquee">
+						<div class="footer-marquee__inner">
+							<h1>COMPUTER VISION &middot; NLP ENGINES &middot; PYTORCH &middot; NABLIX LABS &middot; BITS PILANI DUBAI &middot; DOMDOG &middot; MACHINE LEARNING &middot;&nbsp;</h1>
+							<h1>COMPUTER VISION &middot; NLP ENGINES &middot; PYTORCH &middot; NABLIX LABS &middot; BITS PILANI DUBAI &middot; DOMDOG &middot; MACHINE LEARNING &middot;&nbsp;</h1>
+						</div>
+					</div>
+
+					<div class="footer-details">
+						<div class="footer-details__inner">
+							<h2>Technical Domain Breakdown</h2>
+
+							<div class="footer-details__columns">
+								<div class="skill-category">
+									<h3>Languages & Frameworks</h3>
+									<ul>
+										<li>Python, SQL, C++, Java</li>
+										<li>PyTorch, Scikit-Learn</li>
+										<li>Pandas, NumPy, Matplotlib</li>
+										<li>LaTeX, Git, Linux</li>
+									</ul>
+								</div>
+								<div class="skill-category">
+									<h3>Computer Vision</h3>
+									<ul>
+										<li>OpenCV, YOLOv8</li>
+										<li>SAM / SAM-2 Segmentation</li>
+										<li>MediaPipe Pose Estimation</li>
+										<li>3D Mesh Reconstruction</li>
+									</ul>
+								</div>
+								<div class="skill-category">
+									<h3>NLP & Engineering</h3>
+									<ul>
+										<li>BERT / Transformers</li>
+										<li>K-Means Text Clustering</li>
+										<li>Playwright Automation</li>
+										<li>AWS S3, Docker</li>
+									</ul>
+								</div>
+								<div class="skill-category">
+									<h3>Education & Honors</h3>
+									<ul>
+										<li><strong>B.E. Computer Science</strong></li>
+										<li>BITS Pilani, Dubai Campus</li>
+										<li>CGPA: <strong>9.13 / 10.0</strong></li>
+										<li>Minor in Data Science</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="footer-copyright">
+						<span>© 2026 CHIRUDEVA REDDY BUTUKURI &middot; ALL RIGHTS RESERVED</span>
+						<span>DESIGNED & ENGINEERED IN DUBAI, U.A.E</span>
+					</div>
+				</section>
+
 			</div>
-		</section>
-
-		<section id="summary">
-			<h2 class="title">That's it.<br />Now, a little <b class="highlight">Summary</b>.</h2>
-			<div class="grid container">
-				<div>
-					<h3>Who am I?</h3>
-					<p>
-						I'm <b class="highlight">Lorenzo Lannino</b>, a 23 years old italian guy who enjoys
-						coding, exercising, and people. I always try to
-						<b class="highlight">improve myself</b> and be better at my job, which I really like.
-						<b class="highlight">Becoming a better person and programmer</b> are my main goals in
-						life at the moment.
-					</p>
-				</div>
-				<div>
-					<h3>What is my job?</h3>
-					<p>
-						I work as a <b class="highlight">full-stack developer</b> at Engimedia S.R.L. I'm
-						specialized in the <b class="highlight">frontend</b> part of a web application, but I
-						can work on the backend part as well. I am also able, using Flutter, to create a
-						<b class="highlight">mobile applications</b> for all platforms.
-					</p>
-				</div>
-				<div>
-					<h3>What am I good at?</h3>
-					<p>
-						I'm good at JavaScript, <b class="highlight">TypeScript</b>, CSS, NodeJS, NextJS, React,
-						Flutter, and <b class="highlight">Wompo</b>. I can also work with ThreeJS,
-						<b class="highlight">GSAP</b>, Sass, and Python, but I didn't have the possibility to
-						apply this knowledge at work.
-					</p>
-				</div>
-			</div>
-		</section>
-
-		<section id="contacts" class="container">
-			<h2 class="title">Need something?<br /></h2>
-			<p>Positive or negative feedbacks<br />on this website are highly appreciated as well!</p>
-			<h2 class="title"><b class="highlight">Contact me</b> at:<br /></h2>
-			<h3 class="subtitle">lanninolore@gmail.com</h3>
-		</section>
+		</div>
 
 		<script src="/scripts.min.js" type="module"></script>
 	</body>
