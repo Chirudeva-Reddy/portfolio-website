@@ -1,30 +1,27 @@
 import express from 'express';
-import helmet from 'helmet';
 import compression from 'compression';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { randomBytes } from 'crypto';
 import fs from 'fs';
 
 const app = express();
-app.use(helmet());
 
 app.disable('x-powered-by');
+
+// Simple CSP suitable for local development with import maps + module scripts
 app.use((req, res, next) => {
-	res.locals.cspNonce = randomBytes(32).toString('hex');
+	res.setHeader('Content-Security-Policy',
+		"default-src 'self'; " +
+		"script-src 'self' 'unsafe-inline' https://kit.fontawesome.com; " +
+		"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; " +
+		"font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://ka-f.fontawesome.com; " +
+		"img-src 'self' data: blob:; " +
+		"connect-src 'self' https://ka-f.fontawesome.com"
+	);
 	next();
 });
-app.use(
-	helmet({
-		contentSecurityPolicy: {
-			directives: {
-				scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.cspNonce}'`],
-			},
-		},
-	})
-);
 
-app.use(compression()); // gzip support
+app.use(compression());
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -33,29 +30,25 @@ app.use('/gsap', express.static(__dirname + '/node_modules/gsap'));
 app.use('/lenis', express.static(__dirname + '/node_modules/lenis'));
 
 const filePath = path.join(__dirname, 'index.html');
-let indexHtml = '';
-
-fs.readFile(filePath, 'utf8', (err, data) => {
-	if (err) {
-		res.status(500).send('Error loading page');
-		return;
-	}
-	indexHtml = data;
-});
 
 app.get('/', (_req, res) => {
-	const nonce = res.locals.cspNonce;
-	const modifiedHtml = indexHtml.replace(/<script(.*?)>/g, `<script$1 nonce="${nonce}">`);
-	res.send(modifiedHtml);
+	try {
+		const indexHtml = fs.readFileSync(filePath, 'utf8');
+		res.send(indexHtml);
+	} catch (err) {
+		res.status(500).send('Error loading page');
+	}
 });
 
 app.get('*', (req, res) => {
 	res.redirect('/');
 });
 
-/* const port = 3000;
-app.listen(port, () => {
-	console.log(`Example app listening on port ${port}`);
-}); */
+const PORT = process.env.PORT || 3000;
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+	app.listen(PORT, () => {
+		console.log(`Server listening on http://localhost:${PORT}`);
+	});
+}
 
 export default app;
