@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { JetBrains_Mono, Space_Grotesk } from 'next/font/google';
+import { Fraunces, JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import type { ReactNode } from 'react';
 
 import { CustomCursor } from '../src/components/ui/CustomCursor';
@@ -15,6 +15,11 @@ const spaceGrotesk = Space_Grotesk({
 const jetBrainsMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-jetbrains-mono',
+});
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-fraunces',
 });
 
 export const metadata: Metadata = {
@@ -40,7 +45,7 @@ export interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps): ReactNode {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${jetBrainsMono.variable}`}>
+    <html lang="en" className={`${spaceGrotesk.variable} ${jetBrainsMono.variable} ${fraunces.variable}`}>
       <body>
         <SmoothScroll>{children}</SmoothScroll>
         <CustomCursor />

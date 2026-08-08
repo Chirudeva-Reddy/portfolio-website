@@ -17,6 +17,7 @@
 
 @theme inline {
   --font-display: var(--font-space-grotesk);
+  --font-editorial: var(--font-fraunces);
   --font-mono: var(--font-jetbrains-mono);
   --color-surface-base: var(--surface-base);
   --color-surface-elevated: var(--surface-elevated);
