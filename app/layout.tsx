@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { JetBrains_Mono, Space_Grotesk } from 'next/font/google';
 import type { ReactNode } from 'react';
 
+import { CustomCursor } from '../src/components/ui/CustomCursor';
 import { SmoothScroll } from '../src/components/ui/SmoothScroll';
 
 import './globals.css';
@@ -42,6 +43,7 @@ export default function RootLayout({ children }: RootLayoutProps): ReactNode {
     <html lang="en" className={`${spaceGrotesk.variable} ${jetBrainsMono.variable}`}>
       <body>
         <SmoothScroll>{children}</SmoothScroll>
+        <CustomCursor />
       </body>
     </html>
   );
