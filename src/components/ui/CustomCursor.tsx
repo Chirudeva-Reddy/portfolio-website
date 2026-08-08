@@ -29,7 +29,10 @@ export function CustomCursor(): ReactNode {
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[100] overflow-hidden">
       <motion.svg
+        aria-hidden="true"
         className={`fixed top-0 left-0 h-[30px] w-[30px] transform-gpu mix-blend-difference ${cursorClassName}`}
+        focusable="false"
+        role="presentation"
         viewBox="0 0 30 30"
         style={{ x: ringX, y: ringY, translateX: '-50%', translateY: '-50%' }}
         animate={{ opacity: isVisible ? 1 : 0, scale: ringScale }}
@@ -52,7 +55,10 @@ export function CustomCursor(): ReactNode {
       </motion.svg>
 
       <motion.svg
+        aria-hidden="true"
         className={`fixed top-0 left-0 h-2 w-2 transform-gpu mix-blend-difference ${cursorClassName}`}
+        focusable="false"
+        role="presentation"
         viewBox="0 0 8 8"
         style={{ x: dotX, y: dotY, translateX: '-50%', translateY: '-50%' }}
         animate={{ opacity: isVisible ? 1 : 0 }}

@@ -1,5 +1,6 @@
 node_modules
 .next
 .playwright-cli
+tsconfig.tsbuildinfo
 .DS_Store
 .vercel

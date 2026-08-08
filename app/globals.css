@@ -35,6 +35,7 @@
 html {
   background: var(--surface-base);
   color: var(--text-primary);
+  scrollbar-gutter: stable;
 }
 
 body {
