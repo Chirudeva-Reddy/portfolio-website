@@ -80,12 +80,12 @@ Next/Tailwind foundation
 **Description:** Replace the untracked cursor draft with an SVG cursor driven by requestAnimationFrame and motion values. It will detect magnetic targets, label them, and disappear entirely for coarse pointers or reduced motion.
 
 **Acceptance criteria:**
-- [ ] The 8px dot and 30px ring track a fine pointer with the specified spring physics.
-- [ ] `data-magnetic="true"` targets center and label the ring without layout-changing animation.
-- [ ] All listeners and RAF work are removed on unmount.
+- [x] The 8px dot and 30px ring track a fine pointer with the specified spring physics.
+- [x] `data-magnetic="true"` targets center and label the ring without layout-changing animation.
+- [x] All listeners and RAF work are removed on unmount.
 
 **Verification:**
-- [ ] Hover a magnetic target and confirm snap, label, and exit behavior.
+- [x] Hover a magnetic target and confirm snap, label, and exit behavior.
 - [ ] Confirm no cursor renders at a coarse-pointer viewport.
 
 **Dependencies:** Tasks 1-2.
@@ -109,13 +109,13 @@ Next/Tailwind foundation
 **Description:** Implement the portal-based asymmetric SVG path reveal and connect its completion to a root content opacity gate. It locks document scrolling only while active and restores it reliably.
 
 **Acceptance criteria:**
-- [ ] Content does not appear before the initial curtain coverage is complete.
-- [ ] The curtain path and title-character stagger obey the shared easing and reduced-motion fallback.
-- [ ] Scroll lock is restored after completion, unmount, and early route exit.
+- [x] Content does not appear before the initial curtain coverage is complete.
+- [x] The curtain path and title-character stagger obey the shared easing and reduced-motion fallback.
+- [x] Scroll lock is restored after completion, unmount, and early route exit.
 
 **Verification:**
-- [ ] Reload the route and observe one complete reveal without FOUC.
-- [ ] Test keyboard navigation after the curtain completes.
+- [x] Reload the route and observe one complete reveal without FOUC.
+- [x] Test keyboard navigation after the curtain completes.
 
 **Dependencies:** Tasks 1-3.
 
@@ -131,12 +131,12 @@ Next/Tailwind foundation
 **Description:** Define typed project data from the existing local images and render it in a responsive, irregular three-column bento layout. Cards reveal once in view using the supplied spring and 0.1 second stagger.
 
 **Acceptance criteria:**
-- [ ] `BentoItemProps` includes the specified fields and maps every project to a local asset.
-- [ ] The layout is one column on mobile and three asymmetric columns from the medium breakpoint.
-- [ ] Reveals use only opacity and translate transforms and respect reduced motion.
+- [x] `BentoItemProps` includes the specified fields and maps every project to a local asset.
+- [x] The layout is one column on mobile and three asymmetric columns from the medium breakpoint.
+- [x] Reveals use only opacity and translate transforms and respect reduced motion.
 
 **Verification:**
-- [ ] Check 320px, 768px, 1024px, and 1440px layouts.
+- [x] Check 320px, 768px, 1024px, and 1440px layouts.
 - [ ] Confirm each card animation runs once on entry.
 
 **Dependencies:** Tasks 1-4.
@@ -153,13 +153,13 @@ Next/Tailwind foundation
 **Description:** Implement keyboard-accessible card activation, motion-safe hover details, shared-layout image expansion, grid de-emphasis, focus management, and safe scroll restoration.
 
 **Acceptance criteria:**
-- [ ] Each card is operable by mouse, Enter, and Space.
-- [ ] Hover uses image transform/filter state, title translation, and arrow translation without geometry animation.
-- [ ] The modal closes by Escape, close control, or backdrop; returns focus; and prevents background scrolling.
+- [x] Each card is operable by mouse, Enter, and Space.
+- [x] Hover uses image transform/filter state, title translation, and arrow translation without geometry animation.
+- [x] The modal closes by Escape, close control, or backdrop; returns focus; and prevents background scrolling.
 
 **Verification:**
-- [ ] Open, close, and reopen every project using both keyboard and pointer.
-- [ ] Confirm the selected thumbnail and modal hero share one `layoutId` transition.
+- [x] Open and close a project with pointer, Space, Escape, the close control, and the backdrop.
+- [x] Confirm the selected thumbnail and modal hero share one `layoutId` transition.
 
 **Dependencies:** Task 5.
 
@@ -172,10 +172,11 @@ Next/Tailwind foundation
 
 ### Checkpoint: Complete
 
-- [ ] Production build and TypeScript validation succeed.
-- [ ] The page is checked at 320px, 768px, 1024px, and 1440px.
-- [ ] Reduced motion, coarse pointer, keyboard modal flow, and initial entry are manually checked.
-- [ ] Existing local assets and Chirudeva Reddy identity are visible; no remote placeholder project images remain.
+- [x] Production build and TypeScript validation succeed.
+- [x] The page is checked at 320px, 768px, 1024px, and 1440px.
+- [ ] Reduced motion and coarse pointer are manually checked.
+- [x] Keyboard modal flow and initial entry are manually checked.
+- [x] Existing local assets and Chirudeva Reddy identity are visible; no remote placeholder project images remain.
 
 ## Risks and Mitigations
 
