@@ -5,14 +5,12 @@ import Lenis from 'lenis';
 gsap.registerPlugin(ScrollTrigger);
 
 document.addEventListener('DOMContentLoaded', () => {
-	console.log('⚡ Chirudeva Reddy Portfolio Architecture Initialized.');
-
 	const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	const hasCoarsePointer = window.matchMedia('(hover: none), (pointer: coarse)').matches;
 	const motionEnabled = !prefersReducedMotion && !hasCoarsePointer;
 	if (!motionEnabled) document.documentElement.classList.add('motion-reduced');
 
-	// 1. Single-Loop Lenis Smooth Scroll Synced with GSAP Ticker & Lax.js
+	// 1. Single-Loop Lenis Smooth Scroll Synced with GSAP Ticker
 	const lenis = motionEnabled ? new Lenis({
 		duration: 1.2,
 		easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -32,18 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		gsap.ticker.lagSmoothing(0);
 	}
 
-	// 2. Lax.js Scroll-Driven Inertia & 3D Pitch-Unfold Setup
-	if (typeof window.lax !== 'undefined' && motionEnabled) {
-		window.lax.init();
-		if (!window.lax.update) window.lax.update = function () {};
-		window.lax.addDriver('scrollY', function () {
-			return window.scrollY;
-		}, { inertiaEnabled: true });
-
-		// Removed Lax.js .about-card-skewed bindings to use GSAP Horizontal Slice-In
-	}
-
-	// 2.5 GSAP Horizontal Slice-In Transition for About Card
+	// 2. GSAP Horizontal Slice-In Transition for About Card
 	if (motionEnabled) {
 		const aboutCard = document.querySelector('.about-card-skewed');
 		if (aboutCard) {
@@ -96,23 +83,24 @@ document.addEventListener('DOMContentLoaded', () => {
 	};
 
 	if (motionEnabled) {
-		window.addEventListener('mousemove', (e) => {
+		window.addEventListener('pointermove', (e) => {
 			targetMouseX = e.clientX;
 			targetMouseY = e.clientY;
-		});
+		}, { passive: true });
 		rafId = requestAnimationFrame(renderCursor);
+		window.addEventListener('pagehide', () => cancelAnimationFrame(rafId), { once: true });
 	}
 
 	const interactiveElements = document.querySelectorAll('[data-magnetic="true"], .magnetic, a, button, .project-cover, .skill-card, .tech-card, .timeline__card, .stat-box');
 	if (motionEnabled) {
 		interactiveElements.forEach((el) => {
-			el.addEventListener('mouseenter', () => {
+			el.addEventListener('pointerenter', () => {
 				document.body.classList.add('cursor-hover');
 				const rect = el.getBoundingClientRect();
 				magneticTarget = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
 				if (cursorLabel) cursorLabel.textContent = el.getAttribute('data-cursor-text') || '';
 			});
-			el.addEventListener('mouseleave', () => {
+			el.addEventListener('pointerleave', () => {
 				document.body.classList.remove('cursor-hover');
 				magneticTarget = null;
 				if (cursorLabel) cursorLabel.textContent = '';
@@ -128,6 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const modalIndex = document.getElementById('project-modal-index');
 	const modalGithub = document.getElementById('project-modal-github');
 	const modalPanel = projectModal?.querySelector('.project-modal__panel');
+	const pageContent = document.getElementById('smooth-content');
 	const projectCardsForModal = document.querySelectorAll('.project-cover');
 	let lastFocusedProject = null;
 
@@ -144,15 +133,17 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 		projectModal.classList.add('is-open');
 		projectModal.setAttribute('aria-hidden', 'false');
+		pageContent?.setAttribute('inert', '');
 		document.body.classList.add('modal-open');
 		if (lenis) lenis.stop();
-		modalPanel?.focus();
+		modalPanel?.focus({ preventScroll: true });
 	};
 
 	const closeProjectModal = () => {
 		if (!projectModal) return;
 		projectModal.classList.remove('is-open');
 		projectModal.setAttribute('aria-hidden', 'true');
+		pageContent?.removeAttribute('inert');
 		document.body.classList.remove('modal-open');
 		if (lenis) lenis.start();
 		lastFocusedProject?.focus();
@@ -169,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeProjectModal(); });
 	projectModal?.addEventListener('keydown', (event) => {
 		if (event.key !== 'Tab') return;
-		const focusable = Array.from(projectModal.querySelectorAll('button, [tabindex]:not([tabindex="-1"])')).filter((element) => !element.hasAttribute('disabled'));
+		const focusable = Array.from(projectModal.querySelectorAll('a[href], button, [tabindex]:not([tabindex="-1"])')).filter((element) => !element.hasAttribute('disabled'));
 		if (focusable.length === 0) return;
 		const first = focusable[0];
 		const last = focusable[focusable.length - 1];
@@ -305,44 +296,22 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	// 7. Preloader Progress Counter & Initial Stagger Entrance
+	// 7. Immediate preloader exit & initial stagger entrance
 	const preloader = document.getElementById('preloader');
-	const preloaderBar = document.getElementById('preloader-bar');
-	const preloaderCounter = document.getElementById('preloader-counter');
 
-	if (preloader && preloaderBar && preloaderCounter && !prefersReducedMotion) {
-		let count = 0;
-		const interval = setInterval(() => {
-			count += Math.floor(Math.random() * 4) + 1;
-			if (count >= 100) {
-				count = 100;
-				clearInterval(interval);
-				preloaderBar.style.transform = 'scaleX(1)';
-				preloaderCounter.textContent = '100%';
-
-				setTimeout(() => {
-					preloader.classList.add('preloader--loaded');
-					preloader.style.pointerEvents = 'none';
-					ScrollTrigger.refresh();
-
-					// Hero Entrance Stagger
-					if (motionEnabled) {
-						gsap.from('.landing-panel__copy .hero-tag', { y: 20, opacity: 0, duration: 0.6, ease: 'power2.out' });
-						gsap.from('.landing-panel__copy h1', { y: 35, opacity: 0, duration: 0.8, delay: 0.15, ease: 'power3.out' });
-						gsap.from('.slant-italic', { rotate: -6, opacity: 0, duration: 0.8, delay: 0.25, ease: 'back.out(1.7)' });
-						gsap.from('.landing-panel__copy p', { y: 25, opacity: 0, duration: 0.7, delay: 0.3, ease: 'power2.out' });
-						gsap.from('.landing-panel__enter', { scale: 0.9, opacity: 0, duration: 0.6, delay: 0.45, ease: 'back.out(1.5)' });
-						gsap.from('.landing-panel__image', { x: 40, opacity: 0, scale: 0.95, duration: 0.9, delay: 0.2, ease: 'power3.out' });
-					}
-				}, 600);
-			} else {
-				preloaderBar.style.transform = `scaleX(${count / 100})`;
-				preloaderCounter.textContent = `${count}%`;
-			}
-		}, 40);
-	} else if (preloader) {
+	if (preloader) {
 		preloader.classList.add('preloader--loaded');
 		preloader.style.pointerEvents = 'none';
+		ScrollTrigger.refresh();
+
+		if (motionEnabled) {
+			gsap.from('.landing-panel__copy .hero-tag', { y: 20, opacity: 0, duration: 0.6, ease: 'power2.out' });
+			gsap.from('.landing-panel__copy h1', { y: 35, opacity: 0, duration: 0.8, delay: 0.15, ease: 'power3.out' });
+			gsap.from('.slant-italic', { rotate: -6, opacity: 0, duration: 0.8, delay: 0.25, ease: 'back.out(1.7)' });
+			gsap.from('.landing-panel__copy p', { y: 25, opacity: 0, duration: 0.7, delay: 0.3, ease: 'power2.out' });
+			gsap.from('.landing-panel__enter', { scale: 0.9, opacity: 0, duration: 0.6, delay: 0.45, ease: 'back.out(1.5)' });
+			gsap.from('.landing-panel__image', { x: 40, opacity: 0, scale: 0.95, duration: 0.9, delay: 0.2, ease: 'power3.out' });
+		}
 	}
 
 	// 8. Header Navigation Link Smooth Scroll & ScrollSpy
@@ -385,61 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	// 9. Hero Canvas Animated Ambient Blobs & Cursor Tracking Spotlight
-	const canvas = document.getElementById('hero-canvas');
-	if (canvas && motionEnabled) {
-		const ctx = canvas.getContext('2d');
-		let width = (canvas.width = window.innerWidth);
-		let height = (canvas.height = window.innerHeight);
-
-		window.addEventListener('resize', () => {
-			width = canvas.width = window.innerWidth;
-			height = canvas.height = window.innerHeight;
-		});
-
-		const ambientBlobs = [
-			{ x: width * 0.2, y: height * 0.3, r: 380, vx: 0.4, vy: 0.25, color: 'rgba(0, 242, 254, 0.04)' },
-			{ x: width * 0.8, y: height * 0.7, r: 420, vx: -0.3, vy: -0.4, color: 'rgba(0, 230, 153, 0.035)' },
-			{ x: width * 0.5, y: height * 0.5, r: 320, vx: 0.25, vy: -0.3, color: 'rgba(0, 230, 153, 0.035)' }
-		];
-
-		function animateCanvas() {
-			ctx.clearRect(0, 0, width, height);
-
-			ambientBlobs.forEach((b) => {
-				b.x += b.vx;
-				b.y += b.vy;
-
-				if (b.x < -100 || b.x > width + 100) b.vx *= -1;
-				if (b.y < -100 || b.y > height + 100) b.vy *= -1;
-
-				const gradient = ctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, b.r);
-				gradient.addColorStop(0, b.color);
-				gradient.addColorStop(1, 'transparent');
-
-				ctx.fillStyle = gradient;
-				ctx.beginPath();
-				ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-				ctx.fill();
-			});
-
-			const cursorLight = ctx.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 500);
-			cursorLight.addColorStop(0, 'rgba(210, 225, 240, 0.09)');
-			cursorLight.addColorStop(0.3, 'rgba(150, 168, 190, 0.04)');
-			cursorLight.addColorStop(0.7, 'rgba(90, 105, 125, 0.015)');
-			cursorLight.addColorStop(1, 'transparent');
-
-			ctx.fillStyle = cursorLight;
-			ctx.beginPath();
-			ctx.arc(mouseX, mouseY, 500, 0, Math.PI * 2);
-			ctx.fill();
-
-			requestAnimationFrame(animateCanvas);
-		}
-		animateCanvas();
-	}
-
-	// 10. Projects Horizontal Pinned Track Movement (GSAP ScrollTrigger)
+	// 9. Projects Horizontal Pinned Track Movement (GSAP ScrollTrigger)
 	const projectsSection = document.getElementById('projects');
 	const projectCards = document.querySelector('.project-cards');
 	const projectCounter = document.getElementById('project-num');

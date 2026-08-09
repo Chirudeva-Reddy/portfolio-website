@@ -25,7 +25,16 @@ app.use(compression());
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/public', {
+	setHeaders: (res, filePath) => {
+		const isVersionlessEntry = /(?:index\.html|styles\.min\.css|scripts\.min\.js)$/.test(filePath);
+		const cacheControl = isVersionlessEntry
+			? 'no-cache'
+			: 'public, max-age=604800, stale-while-revalidate=86400';
+
+		res.setHeader('Cache-Control', cacheControl);
+	},
+}));
 app.use('/gsap', express.static(__dirname + '/node_modules/gsap'));
 app.use('/lenis', express.static(__dirname + '/node_modules/lenis'));
 
