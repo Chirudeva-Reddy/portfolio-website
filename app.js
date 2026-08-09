@@ -12,7 +12,7 @@ app.disable('x-powered-by');
 app.use((req, res, next) => {
 	res.setHeader('Content-Security-Policy',
 		"default-src 'self'; " +
-		"script-src 'self' 'unsafe-inline' https://kit.fontawesome.com; " +
+		"script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://kit.fontawesome.com https://unpkg.com; " +
 		"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; " +
 		"font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://ka-f.fontawesome.com; " +
 		"img-src 'self' data: blob:; " +
@@ -45,9 +45,10 @@ app.get('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || '127.0.0.1';
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-	app.listen(PORT, () => {
-		console.log(`Server listening on http://localhost:${PORT}`);
+	app.listen(PORT, HOST, () => {
+		console.log(`Server listening on http://${HOST}:${PORT}`);
 	});
 }
 

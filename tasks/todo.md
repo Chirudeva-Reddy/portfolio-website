@@ -1,17 +1,6 @@
-# Chirudeva Reddy Portfolio Migration
+# $10,000 Award-Winning About Card Scroll Transition
 
-- [x] Task 1: Migrate the root to Next.js App Router.
-- [x] Task 2: Build the smooth-scroll shell and shared motion tokens.
-- [x] Task 3: Build Component A's adaptive magnetic cursor.
-
-## Checkpoint: Core Shell
-
-- [ ] Build clean; native fallback and desktop cursor work.
-
-- [x] Task 4: Build Component B's curtain entry transition.
-- [x] Task 5: Build Component C's typed, local-asset bento grid.
-- [x] Task 6: Build Component D's card interaction and project modal.
-
-## Checkpoint: Complete
-
-- [ ] Build, responsive, reduced-motion, coarse-pointer, and keyboard checks pass.
+- [x] Task 1: Copy compiled lax.js library from scratch/lax_js/lib/lax.min.js into public/lax.min.js and reference in index.html
+- [x] Task 2: Add 3D perspective styling rules for .about-card in public/styles.min.css
+- [x] Task 3: Implement Lax.js scroll driver & GSAP ScrollTrigger 3D pitch-unfold timeline in public/scripts.min.js and app/scripts.js
+- [x] Task 4: Verify 3D scroll-driven transition in live browser via /browser subagent
