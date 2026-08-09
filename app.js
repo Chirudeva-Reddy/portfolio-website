@@ -30,6 +30,8 @@ app.use('/gsap', express.static(__dirname + '/node_modules/gsap'));
 app.use('/lenis', express.static(__dirname + '/node_modules/lenis'));
 
 const filePath = path.join(__dirname, 'index.html');
+const resumeFilePath = path.join(__dirname, 'private', 'resume.pdf');
+const resumeFileName = 'Chirudeva_Reddy_Resume.pdf';
 
 app.get('/', (_req, res) => {
 	try {
@@ -37,6 +39,51 @@ app.get('/', (_req, res) => {
 		res.send(indexHtml);
 	} catch (err) {
 		res.status(500).send('Error loading page');
+	}
+});
+
+app.get('/api/resume', async (req, res) => {
+	const rawMode = req.query.mode;
+	const requestedMode = typeof rawMode === 'string' ? rawMode : undefined;
+	if (rawMode !== undefined && (typeof rawMode !== 'string' || (requestedMode !== 'view' && requestedMode !== 'download'))) {
+		return res.status(400).json({
+			error: 'Invalid resume mode',
+			message: 'The mode must be either view or download.'
+		});
+	}
+
+	try {
+		const { size } = await fs.promises.stat(resumeFilePath);
+		const disposition = requestedMode === 'download' ? 'attachment' : 'inline';
+
+		res.status(200).set({
+			'Content-Type': 'application/pdf',
+			'Content-Disposition': `${disposition}; filename="${resumeFileName}"`,
+			'Content-Length': size,
+			'Cache-Control': 'public, max-age=86400, must-revalidate'
+		});
+
+		const resumeStream = fs.createReadStream(resumeFilePath);
+		resumeStream.once('error', (error) => {
+			console.error('Resume stream failed', { error, resumeFilePath });
+			if (res.headersSent) {
+				res.destroy(error);
+				return;
+			}
+			res.status(500).json({
+				error: 'Resume unavailable',
+				message: 'The requested document could not be retrieved.'
+			});
+		});
+		resumeStream.pipe(res);
+	} catch (error) {
+		const errorCode = error && typeof error === 'object' && 'code' in error ? error.code : undefined;
+		const statusCode = errorCode === 'ENOENT' ? 404 : 500;
+		console.error('Resume retrieval failed', { error, resumeFilePath, statusCode });
+		return res.status(statusCode).json({
+			error: 'Resume unavailable',
+			message: 'The requested document could not be retrieved.'
+		});
 	}
 });
 
