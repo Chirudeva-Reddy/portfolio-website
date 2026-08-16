@@ -8,15 +8,29 @@
 	<meta name="theme-color" content="#012624">
 	<meta name="robots" content="index, follow">
 
+	<link rel="canonical" href="https://chirudevareddy.com/">
+
 	<!-- OpenGraph & Twitter Meta Tags -->
 	<meta property="og:title" content="Chirudeva Reddy | AI/ML Engineer & CS Scholar">
 	<meta property="og:description" content="Portfolio of Chirudeva Reddy — Deep Learning, 3D Mesh Reconstruction, NLP Systems, and Engineering Architecture.">
 	<meta property="og:type" content="website">
 	<meta property="og:locale" content="en_US">
+	<meta property="og:url" content="https://chirudevareddy.com/">
+	<meta property="og:site_name" content="Chirudeva Reddy">
+	<meta property="og:image" content="https://chirudevareddy.com/assets/og-image.png">
+	<meta property="og:image:width" content="1200">
+	<meta property="og:image:height" content="630">
+	<meta property="og:image:alt" content="Chirudeva Reddy — AI/ML Engineer and CS Scholar">
 	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:title" content="Chirudeva Reddy | AI/ML Engineer & CS Scholar">
+	<meta name="twitter:description" content="Privacy-preserving 3D vision, NLP systems, and scalable ML infrastructure.">
+	<meta name="twitter:image" content="https://chirudevareddy.com/assets/og-image.png">
 
-	<!-- Favicon -->
-	<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%23003734'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='%23cbfffc' font-family='sans-serif' font-size='46' font-weight='bold'>CR</text></svg>">
+	<!-- Favicon & PWA manifest -->
+	<link rel="icon" type="image/svg+xml" href="/assets/favicon/icon.svg">
+	<link rel="icon" type="image/png" sizes="96x96" href="/assets/favicon/icon-96.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/icon-180.png">
+	<link rel="manifest" href="/assets/favicon/site.webmanifest">
 
 	<!-- Progressive-enhancement bootstrap. Deliberately a classic inline script
 	     with no imports: it must run even if the module bundle 404s, throws, or
@@ -39,6 +53,14 @@
 			window.setTimeout(dismissLoader, 3000);
 		})();
 	</script>
+
+	<!-- Fonts. Moved out of a CSS @import, which serialised
+	     HTML -> stylesheet -> Google CSS -> font files. Only the two families
+	     actually used are requested (Outfit and Plus Jakarta Sans were loaded
+	     but never rendered). -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 
 	<!-- Stylesheet -->
 	<link rel="stylesheet" href="/dist/app.css">

@@ -167,11 +167,49 @@ document.addEventListener('DOMContentLoaded', () => {
 			});
 
 			// Render Loop with Organic Wave Perturbation
-			let clock = new THREE.Clock();
+			// THREE.Clock is deprecated; elapsed seconds is all this loop needs.
+			const startedAt = performance.now();
+
+			// The sphere is a hero decoration, but the loop used to run for the
+			// entire 6000px scroll — 3600 CPU-side position updates per frame
+			// while the user reads the footer. Suspend it when the hero is gone.
+			let heroInView = true;
+			let rafId = null;
+
+			const heroSection = document.getElementById('hero');
+			if (heroSection && 'IntersectionObserver' in window) {
+				new IntersectionObserver(
+					(entries) => {
+						entries.forEach((entry) => {
+							if (entry.isIntersecting === heroInView) return;
+							heroInView = entry.isIntersecting;
+							if (heroInView && rafId === null) {
+								animate3D();
+							}
+						});
+					},
+					{ rootMargin: '120px' }
+				).observe(heroSection);
+			}
+
+			// Browsers already throttle rAF in background tabs, but this also
+			// releases the GPU when the tab is hidden for a long time.
+			document.addEventListener('visibilitychange', () => {
+				if (document.hidden) {
+					if (rafId !== null) cancelAnimationFrame(rafId);
+					rafId = null;
+				} else if (heroInView && rafId === null) {
+					animate3D();
+				}
+			});
 
 			const animate3D = () => {
-				requestAnimationFrame(animate3D);
-				const elapsedTime = clock.getElapsedTime();
+				if (!heroInView || document.hidden) {
+					rafId = null;
+					return;
+				}
+				rafId = requestAnimationFrame(animate3D);
+				const elapsedTime = (performance.now() - startedAt) / 1000;
 
 				if (particleSystem) {
 					// Inertial rotation
