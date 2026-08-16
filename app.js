@@ -3,23 +3,59 @@ import compression from 'compression';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import crypto from 'crypto';
+import helmet from 'helmet';
 
 const app = express();
 
 app.disable('x-powered-by');
 
-// Simple CSP suitable for local development with import maps + module scripts
-app.use((req, res, next) => {
-	res.setHeader('Content-Security-Policy',
-		"default-src 'self'; " +
-		"script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://kit.fontawesome.com https://unpkg.com; " +
-		"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; " +
-		"font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://ka-f.fontawesome.com; " +
-		"img-src 'self' data: blob:; " +
-		"connect-src 'self' https://ka-f.fontawesome.com"
-	);
-	next();
-});
+// The one inline script is the progressive-enhancement bootstrap in index.html.
+// Hashing it lets script-src drop 'unsafe-inline' entirely. Computed at startup
+// from the file itself, so it can never drift out of sync with the markup.
+const indexHtmlPath = path.join(path.dirname(fileURLToPath(import.meta.url)), 'index.html');
+const inlineScriptHashes = (() => {
+	try {
+		const html = fs.readFileSync(indexHtmlPath, 'utf8');
+		return [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(
+			(m) => `'sha256-${crypto.createHash('sha256').update(m[1], 'utf8').digest('base64')}'`
+		);
+	} catch {
+		return [];
+	}
+})();
+
+app.use(
+	helmet({
+		contentSecurityPolicy: {
+			useDefaults: false,
+			directives: {
+				'default-src': ["'self'"],
+				// No 'unsafe-inline' and no 'unsafe-eval': nothing in this project
+				// evaluates strings, and the single inline script is hashed above.
+				'script-src': ["'self'", ...inlineScriptHashes],
+				// Inline styles are still required: GSAP writes element.style
+				// directly and the markup carries a few style attributes.
+				'style-src': ["'self'", "'unsafe-inline'", 'https://cdnjs.cloudflare.com', 'https://fonts.googleapis.com'],
+				'font-src': ["'self'", 'https://fonts.gstatic.com', 'https://cdnjs.cloudflare.com'],
+				'img-src': ["'self'", 'data:', 'blob:'],
+				'connect-src': ["'self'"],
+				'object-src': ["'none'"],
+				'base-uri': ["'self'"],
+				'frame-ancestors': ["'none'"],
+				'form-action': ["'self'"],
+				'upgrade-insecure-requests': [],
+			},
+		},
+		// Hostinger terminates TLS at its CDN; a long HSTS max-age is appropriate
+		// because the domain is already HTTPS-only with a 301 from http.
+		hsts: { maxAge: 31536000, includeSubDomains: true, preload: false },
+		// The site loads Font Awesome from cdnjs, which is not CORP-annotated.
+		crossOriginEmbedderPolicy: false,
+		crossOriginResourcePolicy: { policy: 'cross-origin' },
+		referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+	})
+);
 
 app.use(compression());
 
@@ -104,8 +140,30 @@ app.get('/api/resume', async (req, res) => {
 	}
 });
 
-app.get('*', (req, res) => {
-	res.redirect('/');
+// Real 404s. The previous catch-all redirected everything to '/', which meant a
+// missing asset returned an HTML page with a 302 — exactly what hid the missing
+// vendor module until the browser complained about the MIME type.
+const ASSET_PATH = /\.[a-z0-9]+$/i;
+
+app.use((req, res) => {
+	if (ASSET_PATH.test(req.path)) {
+		return res.status(404).type('txt').send('Not found');
+	}
+
+	res.status(404).type('html').send(
+		`<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>404 — Page not found | Chirudeva Reddy</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/dist/app.css"></head>
+<body class="error-page">
+<main class="error-page__inner">
+<p class="error-page__code">ERROR 404</p>
+<h1 class="error-page__title">This page does not exist.</h1>
+<p class="error-page__body">The address may be mistyped, or the page may have moved.</p>
+<p class="error-page__action"><a class="btn-aurora" href="/">RETURN HOME &#8599;</a></p>
+</main></body></html>`
+	);
 });
 
 const PORT = process.env.PORT || 3000;

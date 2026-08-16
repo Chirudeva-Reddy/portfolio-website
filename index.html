@@ -57,6 +57,8 @@
 </head>
 <body>
 
+	<a href="#main-content" class="skip-link">Skip to main content</a>
+
 	<!-- Custom Precision Interactive Cursor -->
 	<div id="custom-cursor" aria-hidden="true">
 		<div class="cursor-glow"></div>
@@ -462,7 +464,7 @@
 
 					<div class="projects-list">
 						<!-- Project 1: 3D Body Mesh -->
-						<article class="project-item-card" data-project="0" data-github="https://github.com/Chirudeva-Reddy/body2health" tabindex="0" role="button" data-cursor-text="Inspect">
+						<article class="project-item-card" data-project="0" data-github="https://github.com/Chirudeva-Reddy/body2health" data-cursor-text="Inspect">
 							<div class="project-card-info">
 								<div class="project-meta-row">
 									<span class="project-category-tag">CV // IJCAI PROPOSAL (09/2025 – PRESENT)</span>
@@ -473,7 +475,8 @@
 									Creating a pipeline to estimate human body composition from silhouettes under privacy constraints using transfer learning, hyperparameter tuning, and 3-D reconstruction under supervision of Dr. Shivang Agarwal.
 								</p>
 								<div class="project-actions-row">
-									<a href="https://github.com/Chirudeva-Reddy/body2health" target="_blank" rel="noopener" class="btn-kelp" onclick="event.stopPropagation()">
+									<button type="button" class="project-card__open" data-open-project>VIEW DETAILS</button>
+									<a href="https://github.com/Chirudeva-Reddy/body2health" target="_blank" rel="noopener" class="btn-kelp">
 										<i class="fa-brands fa-github"></i> REPOSITORY ↗
 									</a>
 								</div>
@@ -492,7 +495,7 @@
 						</article>
 
 						<!-- Project 2: NLP Review Insight Engine -->
-						<article class="project-item-card" data-project="1" data-github="https://github.com/Chirudeva-Reddy/NLP-Proj" tabindex="0" role="button" data-cursor-text="Inspect">
+						<article class="project-item-card" data-project="1" data-github="https://github.com/Chirudeva-Reddy/NLP-Proj" data-cursor-text="Inspect">
 							<div class="project-card-info">
 								<div class="project-meta-row">
 									<span class="project-category-tag">NLP // INTELLIGENCE (01/2026 – PRESENT)</span>
@@ -503,7 +506,8 @@
 									Working on creating an NLP pipeline to extract sentiment and key themes from large-scale customer reviews using text preprocessing, transformer embeddings, and clustering algorithms.
 								</p>
 								<div class="project-actions-row">
-									<a href="https://github.com/Chirudeva-Reddy/NLP-Proj" target="_blank" rel="noopener" class="btn-kelp" onclick="event.stopPropagation()">
+									<button type="button" class="project-card__open" data-open-project>VIEW DETAILS</button>
+									<a href="https://github.com/Chirudeva-Reddy/NLP-Proj" target="_blank" rel="noopener" class="btn-kelp">
 										<i class="fa-brands fa-github"></i> REPOSITORY ↗
 									</a>
 								</div>
@@ -523,7 +527,7 @@
 						</article>
 
 						<!-- Project 3: Accident Severity ML -->
-						<article class="project-item-card" data-project="2" data-github="https://github.com/Chirudeva-Reddy/Road-Accident-Severity-Prediction" tabindex="0" role="button" data-cursor-text="Inspect">
+						<article class="project-item-card" data-project="2" data-github="https://github.com/Chirudeva-Reddy/Road-Accident-Severity-Prediction" data-cursor-text="Inspect">
 							<div class="project-card-info">
 								<div class="project-meta-row">
 									<span class="project-category-tag">DATA SCIENCE // 1M+ RECORDS (09/2025 – 01/2026)</span>
@@ -534,7 +538,8 @@
 									Built a collaborative 4-member project on crash severity prediction for the Chicago Crash Dataset consisting of over 1,000,000 records. Contributed data-preprocessing and interactive risk visualization.
 								</p>
 								<div class="project-actions-row">
-									<a href="https://github.com/Chirudeva-Reddy/Road-Accident-Severity-Prediction" target="_blank" rel="noopener" class="btn-kelp" onclick="event.stopPropagation()">
+									<button type="button" class="project-card__open" data-open-project>VIEW DETAILS</button>
+									<a href="https://github.com/Chirudeva-Reddy/Road-Accident-Severity-Prediction" target="_blank" rel="noopener" class="btn-kelp">
 										<i class="fa-brands fa-github"></i> REPOSITORY ↗
 									</a>
 								</div>
@@ -553,7 +558,7 @@ model.fit(X_features, y_severity)</code></pre>
 						</article>
 
 						<!-- Project 4: Student Depression Risk -->
-						<article class="project-item-card" data-project="3" data-github="https://github.com/Chirudeva-Reddy/Student-Depression-Risk" tabindex="0" role="button" data-cursor-text="Inspect">
+						<article class="project-item-card" data-project="3" data-github="https://github.com/Chirudeva-Reddy/Student-Depression-Risk" data-cursor-text="Inspect">
 							<div class="project-card-info">
 								<div class="project-meta-row">
 									<span class="project-category-tag">AI // FUZZY &amp; ANN (02/2024 – 05/2024)</span>
@@ -564,7 +569,8 @@ model.fit(X_features, y_severity)</code></pre>
 									Worked under Dr. Shanookha Ali to build a system using fuzzy logic and artificial neural networks in order to tune and predict continuous depression risk of students from lifestyle and academic factors, achieving 98% training error reduction.
 								</p>
 								<div class="project-actions-row">
-									<a href="https://github.com/Chirudeva-Reddy/Student-Depression-Risk" target="_blank" rel="noopener" class="btn-kelp" onclick="event.stopPropagation()">
+									<button type="button" class="project-card__open" data-open-project>VIEW DETAILS</button>
+									<a href="https://github.com/Chirudeva-Reddy/Student-Depression-Risk" target="_blank" rel="noopener" class="btn-kelp">
 										<i class="fa-brands fa-github"></i> REPOSITORY ↗
 									</a>
 								</div>
@@ -759,7 +765,7 @@ model.fit(X_features, y_severity)</code></pre>
 	<!-- Accessible Project Details Dialog Modal -->
 	<div id="project-modal" class="project-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title">
 		<div class="project-modal__backdrop" id="modal-backdrop" data-cursor-text="Dismiss"></div>
-		<div class="project-modal__panel">
+		<div class="project-modal__panel" tabindex="-1">
 			<button class="project-modal__close" id="modal-close" aria-label="Close Project Details Dialog" data-cursor-text="Close">CLOSE ✕</button>
 			<span class="project-modal__category" id="modal-category">CATEGORY</span>
 			<h2 id="modal-title">Project Title</h2>

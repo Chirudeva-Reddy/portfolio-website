@@ -608,11 +608,12 @@ document.addEventListener('DOMContentLoaded', () => {
 	const modalPanel = projectModal?.querySelector('.project-modal__panel');
 	const pageContent = document.getElementById('smooth-content');
 	const projectCardsList = document.querySelectorAll('.project-item-card');
-	let lastFocusedProject = null;
+	// Focus returns to whatever opened the dialog, not to the card element.
+	let lastFocusedTrigger = null;
 
 	const openProjectModal = (card) => {
 		if (!projectModal || !modalTitle || !modalCategory || !modalDescription || !modalIndex) return;
-		lastFocusedProject = card;
+		if (!lastFocusedTrigger) lastFocusedTrigger = card.querySelector('[data-open-project]') || card;
 		modalTitle.textContent = card.querySelector('.project-item-title')?.textContent || 'Project';
 		modalCategory.textContent = card.querySelector('.project-category-tag')?.textContent || 'Project';
 		modalDescription.textContent = card.querySelector('.project-item-desc')?.textContent || '';
@@ -638,17 +639,27 @@ document.addEventListener('DOMContentLoaded', () => {
 		pageContent?.removeAttribute('inert');
 		document.body.classList.remove('modal-open');
 		if (lenis) lenis.start();
-		lastFocusedProject?.focus();
+		lastFocusedTrigger?.focus();
+		lastFocusedTrigger = null;
 	};
 
 	projectCardsList.forEach((card) => {
-		card.addEventListener('click', () => openProjectModal(card));
-		card.addEventListener('keydown', (event) => {
-			if (event.key === 'Enter' || event.key === ' ') {
-				event.preventDefault();
-				openProjectModal(card);
-			}
+		// The card itself stays clickable as a pointer affordance, but it is no
+		// longer a role="button" wrapping links. Keyboard and screen-reader users
+		// get the real <button> inside the actions row instead.
+		card.addEventListener('click', (event) => {
+			if (event.target.closest('a[href]')) return;
+			openProjectModal(card);
 		});
+
+		const openButton = card.querySelector('[data-open-project]');
+		if (openButton) {
+			openButton.addEventListener('click', (event) => {
+				event.stopPropagation();
+				lastFocusedTrigger = openButton;
+				openProjectModal(card);
+			});
+		}
 	});
 
 	modalClose?.addEventListener('click', closeProjectModal);

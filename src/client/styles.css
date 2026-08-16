@@ -17,6 +17,8 @@
 	--color-silver-mist: #bbc7c6;
 	--color-ash: #f2f2f2;
 	--color-slate-deep: #707777;
+	/* Accessible variant for TEXT use — #707777 fails AA on every site surface. */
+	--color-slate-text: #93a3a2;
 	--color-lavender-phosphor: #fde9ff;
 
 	--color-bioluminescent-gradient: #00827c;
@@ -547,7 +549,6 @@ html.js #preloader.preloader--loaded {
 	text-transform: uppercase;
 	text-decoration: none;
 	border: none;
-	outline: none;
 	white-space: nowrap;
 	transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s, opacity 0.2s;
 }
@@ -1165,7 +1166,7 @@ html.js #preloader.preloader--loaded {
 
 .code-keyword { color: #fde9ff; font-weight: 500; }
 .code-func { color: #cbfffc; }
-.code-comment { color: var(--color-slate-deep); font-style: italic; }
+.code-comment { color: var(--color-slate-text); font-style: italic; }
 .code-string { color: #8df0cc; }
 
 /* ==========================================================================
@@ -1424,7 +1425,7 @@ html.js #preloader.preloader--loaded {
 	font-size: 11px;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
-	color: var(--color-slate-deep);
+	color: var(--color-slate-text);
 }
 
 /* ==========================================================================
@@ -1854,4 +1855,141 @@ section[id],
 #projects,
 #experience {
 	scroll-margin-top: 88px;
+}
+
+/* ==========================================================================
+   ACCESSIBILITY
+   ========================================================================== */
+
+/* Visible focus for every interactive element. :focus-visible so pointer
+   users do not see rings on click, but keyboard users always do. */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+	outline: 2px solid #2ef4eb;
+	outline-offset: 3px;
+	border-radius: var(--radius-small);
+}
+
+/* On the light aurora button a cyan ring is low-contrast; use the dark ink. */
+.btn-aurora:focus-visible {
+	outline-color: #011d1c;
+	outline-offset: 3px;
+}
+
+/* The custom cursor hides the native pointer, so keyboard focus must still be
+   unmistakable even when cursor:none is active. */
+html.js-cursor a:focus-visible,
+html.js-cursor button:focus-visible,
+html.js-cursor [tabindex]:focus-visible {
+	outline-width: 2px;
+}
+
+/* Skip navigation — the header holds ~12 controls before the content starts. */
+.skip-link {
+	position: absolute;
+	left: 16px;
+	top: -100px;
+	z-index: 100000;
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	padding: 0 20px;
+	background: var(--color-aurora-gradient);
+	color: #011d1c;
+	font-family: var(--font-mono);
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	text-decoration: none;
+	border-radius: var(--radius-small);
+	transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+	top: 16px;
+}
+
+/* Touch targets: the footer link list was 18px tall. */
+.footer-link-item {
+	display: flex;
+	align-items: center;
+	min-height: 32px;
+}
+
+.mobile-menu__socials .social-link,
+.site-header__actions .social-link {
+	min-width: 40px;
+	min-height: 40px;
+}
+
+/* A real control for opening a project, so the card no longer has to be a
+   role="button" wrapping links. */
+.project-card__open {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	min-height: 40px;
+	padding: 0 18px;
+	background: transparent;
+	border: 1px solid var(--border-kelp);
+	border-radius: var(--radius-buttons);
+	color: var(--color-liquid-mist);
+	font-family: var(--font-matter);
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.project-card__open:hover {
+	border-color: rgba(46, 244, 235, 0.6);
+	background: rgba(46, 244, 235, 0.07);
+}
+
+/* ==========================================================================
+   ERROR PAGE
+   ========================================================================== */
+body.error-page {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	min-height: 100svh;
+	padding: 24px;
+	text-align: center;
+}
+
+.error-page__inner {
+	max-width: 540px;
+}
+
+.error-page__code {
+	font-family: var(--font-mono);
+	font-size: 12px;
+	letter-spacing: 0.2em;
+	color: #2ef4eb;
+}
+
+.error-page__title {
+	margin: 16px 0;
+	font-size: clamp(28px, 6vw, 44px);
+	line-height: 1.1;
+	letter-spacing: -0.03em;
+	color: var(--color-platinum);
+}
+
+.error-page__body {
+	color: var(--color-silver-mist);
+	line-height: 1.6;
+}
+
+.error-page__action {
+	margin-top: 28px;
 }
