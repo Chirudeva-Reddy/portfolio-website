@@ -7,7 +7,9 @@
 	"scripts": {
 		"dev": "node app.js",
 		"build": "node build.mjs",
-		"start": "node app.js"
+		"start": "node app.js",
+		"preflight": "node preflight.mjs",
+		"package": "node preflight.mjs && node package-deploy.mjs"
 	},
 	"author": "Chirudeva Reddy",
 	"license": "ISC",

@@ -6,3 +6,5 @@ tsconfig.tsbuildinfo
 .vercel
 public/dist
 .build-staging
+deploy.zip
+.deploy-staging
