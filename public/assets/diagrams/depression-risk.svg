@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360" role="img" aria-labelledby="dep-title dep-desc">
+  <title id="dep-title">Student depression risk prediction pipeline</title>
+  <desc id="dep-desc">Lifestyle and academic factors are mapped through a fuzzy inference layer into membership degrees, then tuned by an artificial neural network into a continuous depression risk score.</desc>
+
+  <defs>
+    <style>
+      .lbl { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; fill: #edfffe; }
+      .sub { font-family: ui-monospace, monospace; font-size: 10px; fill: #93a3a2; letter-spacing: .08em; }
+      .cap { font-family: ui-monospace, monospace; font-size: 10px; fill: #2ef4eb; letter-spacing: .16em; }
+      .node { fill: #003734; stroke: rgba(255,255,255,.10); }
+      .flow { stroke: #2ef4eb; stroke-width: 1.5; fill: none; }
+    </style>
+    <marker id="dep-ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="#2ef4eb"/>
+    </marker>
+    <linearGradient id="dep-grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2ef4eb"/>
+      <stop offset="55%" stop-color="#cbfffc"/>
+      <stop offset="100%" stop-color="#fde9ff"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="640" height="360" fill="#011d1c"/>
+  <text x="28" y="40" class="cap">METHOD PIPELINE</text>
+
+  <!-- 1. factors -->
+  <rect x="28" y="86" width="124" height="104" rx="8" class="node"/>
+  <g transform="translate(52,106)">
+    <rect x="0" y="0" width="76" height="11" rx="5" fill="#cbfffc" opacity=".55"/>
+    <rect x="0" y="17" width="58" height="11" rx="5" fill="#cbfffc" opacity=".40"/>
+    <rect x="0" y="34" width="68" height="11" rx="5" fill="#cbfffc" opacity=".50"/>
+    <rect x="0" y="51" width="44" height="11" rx="5" fill="#cbfffc" opacity=".30"/>
+  </g>
+  <text x="90" y="208" class="lbl" text-anchor="middle">Input Factors</text>
+  <text x="90" y="224" class="sub" text-anchor="middle">LIFESTYLE / ACADEMIC</text>
+
+  <!-- 2. fuzzy inference -->
+  <rect x="176" y="86" width="124" height="104" rx="8" class="node"/>
+  <g transform="translate(200,112)" fill="none" stroke-width="1.6">
+    <path d="M0 48h76" stroke="rgba(255,255,255,.14)"/>
+    <path d="M2 48 L20 12 L38 48" stroke="#2ef4eb" opacity=".9"/>
+    <path d="M20 48 L38 12 L56 48" stroke="#cbfffc" opacity=".75"/>
+    <path d="M38 48 L56 12 L74 48" stroke="#fde9ff" opacity=".7"/>
+  </g>
+  <text x="238" y="208" class="lbl" text-anchor="middle">Fuzzy Inference</text>
+  <text x="238" y="224" class="sub" text-anchor="middle">MEMBERSHIP DEGREES</text>
+
+  <!-- 3. ANN -->
+  <rect x="324" y="86" width="124" height="104" rx="8" class="node"/>
+  <g transform="translate(346,104)">
+    <g stroke="#2ef4eb" stroke-width=".8" opacity=".45">
+      <path d="M12 14 46 12M12 14 46 34M12 14 46 56M12 36 46 12M12 36 46 34M12 36 46 56M12 58 46 12M12 58 46 34M12 58 46 56"/>
+      <path d="M46 12 78 34M46 34 78 34M46 56 78 34"/>
+    </g>
+    <circle cx="12" cy="14" r="5" fill="#cbfffc"/><circle cx="12" cy="36" r="5" fill="#cbfffc"/><circle cx="12" cy="58" r="5" fill="#cbfffc"/>
+    <circle cx="46" cy="12" r="5" fill="#2ef4eb"/><circle cx="46" cy="34" r="5" fill="#2ef4eb"/><circle cx="46" cy="56" r="5" fill="#2ef4eb"/>
+    <circle cx="78" cy="34" r="6" fill="#fde9ff"/>
+  </g>
+  <text x="386" y="208" class="lbl" text-anchor="middle">Neural Network</text>
+  <text x="386" y="224" class="sub" text-anchor="middle">TUNED REGRESSOR</text>
+
+  <!-- 4. continuous risk score -->
+  <rect x="472" y="86" width="140" height="104" rx="8" class="node" stroke="rgba(253,233,255,.35)"/>
+  <g transform="translate(494,118)">
+    <rect x="0" y="18" width="96" height="8" rx="4" fill="url(#dep-grad)" opacity=".9"/>
+    <circle cx="66" cy="22" r="7" fill="#011d1c" stroke="#fde9ff" stroke-width="2"/>
+    <text x="0" y="46" font-family="ui-monospace,monospace" font-size="9" fill="#93a3a2">LOW</text>
+    <text x="96" y="46" font-family="ui-monospace,monospace" font-size="9" fill="#93a3a2" text-anchor="end">HIGH</text>
+  </g>
+  <text x="542" y="208" class="lbl" text-anchor="middle">Continuous Risk</text>
+  <text x="542" y="224" class="sub" text-anchor="middle">SCORE, NOT A LABEL</text>
+
+  <!-- flows -->
+  <path class="flow" d="M152 138 H172" marker-end="url(#dep-ar)"/>
+  <path class="flow" d="M300 138 H320" marker-end="url(#dep-ar)"/>
+  <path class="flow" d="M448 138 H468" marker-end="url(#dep-ar)"/>
+
+  <line x1="28" y1="284" x2="612" y2="284" stroke="rgba(255,255,255,.08)"/>
+  <text x="28" y="308" class="sub">FUZZY LOGIC</text>
+  <text x="140" y="308" class="sub">ARTIFICIAL NEURAL NETWORKS</text>
+  <text x="368" y="308" class="sub">HYPERPARAMETER TUNING</text>
+  <text x="28" y="332" class="sub" fill="#707777">Supervised by Dr. Shanookha Ali — 98% training error reduction</text>
+</svg>

@@ -32,23 +32,59 @@
 	<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/icon-180.png">
 	<link rel="manifest" href="/assets/favicon/site.webmanifest">
 
-	<!-- Progressive-enhancement bootstrap. Deliberately a classic inline script
-	     with no imports: it must run even if the module bundle 404s, throws, or
-	     is blocked, so the loader can never outlive the page. -->
+	<!-- Progressive-enhancement bootstrap. Drives smooth loading progress bar and
+	     dismisses overlay seamlessly once complete. Deliberately inline with no imports
+	     so the loader can never outlive or block the page. -->
 	<script>
 		(function () {
 			var root = document.documentElement;
 			root.classList.remove('no-js');
 			root.classList.add('js');
 
+			var bar = null;
+			var counter = null;
+			var duration = 900;
+			var startTime = null;
+			var isDismissed = false;
+
 			function dismissLoader() {
+				if (isDismissed) return;
+				isDismissed = true;
 				root.classList.add('is-loaded');
 			}
 
-			// Normal path: dismiss shortly after the page finishes loading.
-			window.addEventListener('load', function () {
-				window.setTimeout(dismissLoader, 250);
-			});
+			function step(timestamp) {
+				if (!bar) bar = document.querySelector('.preloader__bar');
+				if (!counter) counter = document.getElementById('preloader-counter');
+				if (!startTime) startTime = timestamp;
+
+				var elapsed = timestamp - startTime;
+				var t = Math.min(1, elapsed / duration);
+				var eased = 1 - Math.pow(1 - t, 3);
+				var percent = Math.min(100, Math.round(eased * 100));
+
+				if (bar) {
+					bar.style.transform = 'scaleX(' + (percent / 100) + ')';
+				}
+				if (counter) {
+					counter.textContent = (percent < 10 ? '0' + percent : percent) + '%';
+				}
+
+				if (t < 1) {
+					window.requestAnimationFrame(step);
+				} else {
+					window.setTimeout(dismissLoader, 180);
+				}
+			}
+
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', function () {
+					window.requestAnimationFrame(step);
+				});
+			} else {
+				window.requestAnimationFrame(step);
+			}
+
 			// Failsafe: dismiss regardless of what the module graph does.
 			window.setTimeout(dismissLoader, 3000);
 		})();
@@ -89,9 +125,7 @@
 		<div class="cursor-label"></div>
 	</div>
 
-	<!-- Branded entrance overlay. Purely decorative: it is hidden unless JS is
-	     running, it never reports fake progress, and it is dismissed by the
-	     bootstrap script above rather than by the module bundle. -->
+	<!-- Branded entrance overlay with smooth kinetic progress bar -->
 	<div id="preloader" aria-hidden="true">
 		<div class="preloader__content">
 			<div class="preloader__logo-wrap">
@@ -106,6 +140,7 @@
 			<div class="preloader__bar-container">
 				<div class="preloader__bar"></div>
 			</div>
+			<div class="preloader__counter" id="preloader-counter">00%</div>
 		</div>
 	</div>
 
@@ -251,12 +286,13 @@
 				     SECTION 2: SIGNATURE BENTO BOXES METRIC GRID
 				     ========================================================================== -->
 				<section id="metrics" class="bento-metrics-section section-container" aria-label="Key Performance Indicators">
+					<h2 class="sr-only">Key Performance Indicators &amp; Academic Distinction</h2>
 					<div class="bento-metrics-grid">
 						<!-- Card 1: Tall Highlight Card in Lavender Phosphor (#fde9ff) -->
 						<div class="bento-box-tall-highlight" data-cursor-text="CGPA">
 							<div class="bento-box-label">ACADEMIC DISTINCTION (YTD)</div>
 							<div>
-								<div class="bento-box-stat" data-target="9.13">9.13</div>
+								<div class="bento-box-stat">9.13</div>
 								<div class="bento-box-sub">CGPA / 10.0 • BITS Pilani Dubai (Conferred 09/2027)</div>
 							</div>
 						</div>
@@ -265,7 +301,7 @@
 						<div class="bento-box-wide" data-cursor-text="Optimization">
 							<div class="bento-box-label">PRODUCTION ERROR REDUCTION</div>
 							<div>
-								<div class="bento-box-stat" data-target="42">42%</div>
+								<div class="bento-box-stat">42%</div>
 								<div class="bento-box-sub">API endpoint debugging &amp; low-latency optimization at Nablix Labs</div>
 							</div>
 						</div>
@@ -274,7 +310,7 @@
 						<div class="bento-box-small stat-platinum" data-cursor-text="Big Data">
 							<div class="bento-box-label">BIG DATA RECORDS ANALYZED</div>
 							<div>
-								<div class="bento-box-stat" data-target="1">1M+</div>
+								<div class="bento-box-stat">1M+</div>
 								<div class="bento-box-sub">Chicago dataset crash risk modeling with XGBoost</div>
 							</div>
 						</div>
@@ -283,7 +319,7 @@
 						<div class="bento-box-small" data-cursor-text="Neural Net">
 							<div class="bento-box-label">NN TRAINING ERROR CUT</div>
 							<div>
-								<div class="bento-box-stat" data-target="98">98%</div>
+								<div class="bento-box-stat">98%</div>
 								<div class="bento-box-sub">Continuous depression risk model under Dr. Shanookha Ali</div>
 							</div>
 						</div>
@@ -309,31 +345,22 @@
 										In industry, I served as <strong>AI Engineer Intern at Nablix Labs</strong> (curating API endpoints and reducing error rates by 42%), <strong>Fullstack Developer Intern at Jovens Technologies FZ-LLC</strong> (architecting fullstack ML apps with 28% efficiency boost and NLP pipelines reducing manual time by 12%), and <strong>SDE Intern at Domdog</strong> (building Playwright automation, malicious content scanner integration across 8 client platforms, and boosting SEO traffic by 11%).
 									</p>
 								</div>
-								<div style="margin-top: 12px;">
+								<div class="u-mt-12">
 									<a href="mailto:f20230331@dubai.bits-pilani.ac.in" class="btn-aurora" data-cursor-text="Collaborate">
 										COLLABORATE ON RESEARCH ↗
 									</a>
 								</div>
 							</div>
 
-							<!-- Geometric Molecular Network Topology Illustration -->
-							<div class="about-molecular-graphic" aria-hidden="true">
-								<svg class="molecular-svg" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
-									<circle cx="160" cy="160" r="140" stroke="rgba(203, 255, 252, 0.12)" stroke-width="1.5" stroke-dasharray="4 6" />
-									<circle cx="160" cy="160" r="85" stroke="rgba(0, 130, 124, 0.3)" stroke-width="1.5" />
-									<polygon points="160,35 275,115 235,250 85,250 45,115" stroke="rgba(255, 255, 255, 0.25)" stroke-width="1.5" fill="none" />
-									<line x1="160" y1="35" x2="160" y2="160" stroke="rgba(203, 255, 252, 0.4)" stroke-width="1.5" />
-									<line x1="275" y1="115" x2="160" y2="160" stroke="rgba(203, 255, 252, 0.4)" stroke-width="1.5" />
-									<line x1="235" y1="250" x2="160" y2="160" stroke="rgba(203, 255, 252, 0.4)" stroke-width="1.5" />
-									<line x1="85" y1="250" x2="160" y2="160" stroke="rgba(203, 255, 252, 0.4)" stroke-width="1.5" />
-									<line x1="45" y1="115" x2="160" y2="160" stroke="rgba(203, 255, 252, 0.4)" stroke-width="1.5" />
-									<circle cx="160" cy="35" r="7" fill="#fde9ff" />
-									<circle cx="275" cy="115" r="6" fill="#cbfffc" />
-									<circle cx="235" cy="250" r="6" stroke="#cbfffc" stroke-width="2" fill="#012624" />
-									<circle cx="85" cy="250" r="6" stroke="#2ef4eb" stroke-width="2" fill="#012624" />
-									<circle cx="45" cy="115" r="5" fill="#edfffe" />
-									<circle cx="160" cy="160" r="9" fill="#fde9ff" />
-								</svg>
+							<!-- Authentic Professional Headshot Portrait Card -->
+							<div class="about-portrait-card" data-cursor-text="Identity">
+								<div class="about-portrait-frame">
+									<img src="/assets/profile_headshot.webp" alt="Chirudeva Reddy — AI/ML Engineer &amp; CS Scholar" class="about-portrait-img" width="700" height="805" loading="lazy" decoding="async">
+									<div class="about-portrait-badge">
+										<span class="status-indicator-dot" aria-hidden="true"></span>
+										<span>CHIRUDEVA REDDY // RESEARCH SCHOLAR</span>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -344,7 +371,7 @@
 				     ========================================================================== -->
 				<section id="matrix" class="section-container" aria-label="Core Competencies and Technical Stack">
 					<span class="section-label">CORE COMPETENCIES &amp; SKILLS</span>
-					<h2 class="section-heading" style="margin-top: 8px;">Technical Matrix &amp; Stack</h2>
+					<h2 class="section-heading u-mt-8">Technical Matrix &amp; Stack</h2>
 
 					<div class="matrix-grid">
 						<!-- Bento Card 1: Programming Languages -->
@@ -482,7 +509,7 @@
 					<div class="projects-header-row">
 						<div>
 							<span class="section-label">ENGINEERING PORTFOLIO</span>
-							<h2 class="section-heading" style="margin-top: 8px;">Featured Projects &amp; Architecture</h2>
+							<h2 class="section-heading u-mt-8">Featured Projects &amp; Architecture</h2>
 						</div>
 						<div class="project-counter-badge">04 / 04</div>
 					</div>
@@ -511,11 +538,9 @@
 									<span>mesh_reconstruct.py</span>
 									<span>PYTORCH // SMPL // TRANSFER LEARNING</span>
 								</div>
-								<pre><code><span class="code-comment"># 3D Silhouette Reconstruction</span>
-<span class="code-keyword">def</span> <span class="code-func">estimate_body_composition</span>(silhouette_2d):
-    params = smpl_estimator.predict(silhouette_2d)
-    mesh_3d = smpl_model.get_vertices(params)
-    <span class="code-keyword">return</span> optimize_privacy_constraints(mesh_3d)</code></pre>
+								<img class="project-diagram" src="/assets/diagrams/body-composition.svg"
+										 alt="Pipeline diagram: a 2D binary silhouette is regressed into SMPL body parameters, reconstructed as a 3D mesh, and converted into a body composition estimate. Raw imagery never leaves the privacy boundary."
+										 width="640" height="360" loading="lazy" decoding="async">
 							</div>
 						</article>
 
@@ -542,12 +567,9 @@
 									<span>review_nlp_engine.py</span>
 									<span>TRANSFORMERS // BERT // CLUSTERING</span>
 								</div>
-								<pre><code><span class="code-comment"># Large-Scale Customer Review NLP</span>
-<span class="code-keyword">class</span> <span class="code-func">ReviewInsightEngine</span>:
-    <span class="code-keyword">def</span> <span class="code-func">extract_themes_and_sentiment</span>(self, reviews):
-        clean_text = self.preprocess_text(reviews)
-        vectors = bert_model.encode(clean_text)
-        <span class="code-keyword">return</span> kmeans_cluster(vectors, k=12)</code></pre>
+								<img class="project-diagram" src="/assets/diagrams/nlp-insight-engine.svg"
+										 alt="Pipeline diagram: raw customer reviews are preprocessed, encoded into transformer embeddings, then k-means clustered into ranked themes and sentiment."
+										 width="640" height="360" loading="lazy" decoding="async">
 							</div>
 						</article>
 
@@ -574,11 +596,9 @@
 									<span>crash_severity.py</span>
 									<span>XGBOOST // CHICAGO 1M+ DATASET</span>
 								</div>
-								<pre><code><span class="code-comment"># 1M+ Records Geospatial Preprocessing</span>
-df = pd.read_csv(<span class="code-string">"chicago_crash_1M.csv"</span>)
-X_features = engineer_spatial_and_temporal(df)
-model = XGBClassifier(n_estimators=300)
-model.fit(X_features, y_severity)</code></pre>
+								<img class="project-diagram" src="/assets/diagrams/accident-severity.svg"
+										 alt="Pipeline diagram: over one million Chicago crash records are preprocessed, engineered into spatial and temporal features, and classified by XGBoost into low, medium and high severity."
+										 width="640" height="360" loading="lazy" decoding="async">
 							</div>
 						</article>
 
@@ -605,11 +625,9 @@ model.fit(X_features, y_severity)</code></pre>
 									<span>depression_risk_ann.py</span>
 									<span>FUZZY LOGIC // NEURAL NETWORKS</span>
 								</div>
-								<pre><code><span class="code-comment"># Fuzzy Logic & Neural Network Optimization</span>
-<span class="code-keyword">class</span> <span class="code-func">ContinuousDepressionRiskPredictor</span>:
-    <span class="code-keyword">def</span> <span class="code-func">evaluate_lifestyle_factors</span>(self, lifestyle_vector):
-        fuzzy_scores = self.fuzzy_inference(lifestyle_vector)
-        <span class="code-keyword">return</span> self.ann_model.predict(fuzzy_scores)</code></pre>
+								<img class="project-diagram" src="/assets/diagrams/depression-risk.svg"
+										 alt="Pipeline diagram: lifestyle and academic factors pass through a fuzzy inference layer into membership degrees, then an artificial neural network produces a continuous risk score."
+										 width="640" height="360" loading="lazy" decoding="async">
 							</div>
 						</article>
 					</div>
@@ -620,14 +638,14 @@ model.fit(X_features, y_severity)</code></pre>
 				     ========================================================================== -->
 				<section id="experience" class="section-container" aria-label="Career and Professional Experience">
 					<span class="section-label">PROFESSIONAL EXPERIENCE</span>
-					<h2 class="section-heading" style="margin-top: 8px;">Industry Experience &amp; Track Record</h2>
+					<h2 class="section-heading u-mt-8">Industry Experience &amp; Track Record</h2>
 
 					<div class="timeline-stack">
 						<!-- Role 1: Nablix Labs -->
 						<div class="timeline-card" data-cursor-text="Nablix">
 							<div class="timeline-card__header">
 								<div>
-									<h3 class="timeline-role-title">AI Engineer Intern</h3>
+									<h3 class="timeline-role-title">Incoming AI Engineer Intern</h3>
 									<div class="timeline-org">Nablix Labs • Dubai, U.A.E (Hybrid)</div>
 								</div>
 								<div class="timeline-date-badge">06/2026 – 09/2026</div>
@@ -796,7 +814,7 @@ model.fit(X_features, y_severity)</code></pre>
 			<h2 id="modal-title">Project Title</h2>
 			<p class="project-modal__description" id="modal-desc">Project description content.</p>
 			<div class="project-modal__index" id="modal-index">CASE STUDY 01 // ARCHITECTURE</div>
-			<div style="margin-top: 14px;">
+			<div class="u-mt-14">
 				<a href="#" id="modal-github" target="_blank" rel="noopener" class="btn-aurora" data-cursor-text="GitHub">
 					<i class="fa-brands fa-github"></i> VIEW ON GITHUB ↗
 				</a>

@@ -96,6 +96,31 @@ await check('robots.txt and sitemap are populated', async () => {
 	return true;
 });
 
+await check('no fabricated project imagery', async () => {
+	const dir = path.join(root, 'public', 'assets');
+	const { readdir } = await import('fs/promises');
+	const files = await readdir(dir);
+	// The original project_*.png files were AI-generated depictions of fictional
+	// products (fake personas, garbled text). They must never ship again.
+	const offenders = files.filter((f) => /^project_.*\.(png|jpe?g|webp)$/i.test(f));
+	return offenders.length === 0 || `fabricated imagery present: ${offenders.join(', ')}`;
+});
+
+await check('every project card has a diagram', async () => {
+	const html = await readFile(path.join(root, 'index.html'), 'utf8');
+	const cards = (html.match(/class="project-item-card"/g) || []).length;
+	const imgs = (html.match(/class="project-diagram"/g) || []).length;
+	return cards === imgs || `${cards} project cards but ${imgs} diagrams`;
+});
+
+await check('no references to deleted assets', async () => {
+	const html = await readFile(path.join(root, 'index.html'), 'utf8');
+	for (const gone of ['profile_headshot.png', 'assets/technologies/', 'assets/logos/']) {
+		if (html.includes(gone)) return `index.html still references ${gone}`;
+	}
+	return true;
+});
+
 console.log('');
 if (failures.length) {
 	console.error(`PREFLIGHT FAILED — ${failures.length} blocking issue(s):`);

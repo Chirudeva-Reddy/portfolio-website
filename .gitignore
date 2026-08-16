@@ -8,3 +8,4 @@ public/dist
 .build-staging
 deploy.zip
 .deploy-staging
+public/plugins

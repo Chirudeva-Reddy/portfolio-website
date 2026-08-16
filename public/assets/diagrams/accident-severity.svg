@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360" role="img" aria-labelledby="acc-title acc-desc">
+  <title id="acc-title">Road accident severity prediction pipeline</title>
+  <desc id="acc-desc">Over one million Chicago crash records are preprocessed, engineered into spatial and temporal features, and classified by a gradient-boosted model into low, medium and high severity.</desc>
+
+  <defs>
+    <style>
+      .lbl { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; fill: #edfffe; }
+      .sub { font-family: ui-monospace, monospace; font-size: 10px; fill: #93a3a2; letter-spacing: .08em; }
+      .cap { font-family: ui-monospace, monospace; font-size: 10px; fill: #2ef4eb; letter-spacing: .16em; }
+      .node { fill: #003734; stroke: rgba(255,255,255,.10); }
+      .flow { stroke: #2ef4eb; stroke-width: 1.5; fill: none; }
+    </style>
+    <marker id="acc-ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="#2ef4eb"/>
+    </marker>
+  </defs>
+
+  <rect width="640" height="360" fill="#011d1c"/>
+  <text x="28" y="40" class="cap">METHOD PIPELINE</text>
+
+  <!-- 1. dataset -->
+  <rect x="28" y="86" width="124" height="104" rx="8" class="node"/>
+  <g transform="translate(62,110)" fill="none" stroke="#cbfffc" stroke-width="1.4" opacity=".9">
+    <ellipse cx="28" cy="10" rx="26" ry="8"/>
+    <path d="M2 10v34c0 4.4 11.6 8 26 8s26-3.6 26-8V10"/>
+    <path d="M2 27c0 4.4 11.6 8 26 8s26-3.6 26-8"/>
+  </g>
+  <text x="90" y="208" class="lbl" text-anchor="middle">Chicago Crashes</text>
+  <text x="90" y="224" class="sub" text-anchor="middle">1,000,000+ RECORDS</text>
+
+  <!-- 2. preprocessing -->
+  <rect x="176" y="86" width="124" height="104" rx="8" class="node"/>
+  <g transform="translate(208,110)">
+    <rect x="0" y="0" width="60" height="10" rx="2" fill="#2ef4eb" opacity=".8"/>
+    <rect x="0" y="16" width="44" height="10" rx="2" fill="#cbfffc" opacity=".45"/>
+    <rect x="0" y="32" width="52" height="10" rx="2" fill="#cbfffc" opacity=".35"/>
+    <rect x="0" y="48" width="36" height="10" rx="2" fill="#fde9ff" opacity=".55"/>
+    <path d="M50 46l6 8 12 -16" stroke="#fde9ff" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  </g>
+  <text x="238" y="208" class="lbl" text-anchor="middle">Preprocessing</text>
+  <text x="238" y="224" class="sub" text-anchor="middle">CLEAN / IMPUTE</text>
+
+  <!-- 3. features -->
+  <rect x="324" y="86" width="124" height="104" rx="8" class="node"/>
+  <g transform="translate(348,106)" fill="none" stroke="#2ef4eb" stroke-width="1.2" opacity=".9">
+    <path d="M0 44h76M0 44V4"/>
+    <path d="M8 36l14-14 12 10 16-22 14 12" stroke="#fde9ff" stroke-width="2"/>
+    <circle cx="8" cy="36" r="2.5" fill="#fde9ff" stroke="none"/>
+    <circle cx="22" cy="22" r="2.5" fill="#fde9ff" stroke="none"/>
+    <circle cx="34" cy="32" r="2.5" fill="#fde9ff" stroke="none"/>
+    <circle cx="50" cy="10" r="2.5" fill="#fde9ff" stroke="none"/>
+    <circle cx="64" cy="22" r="2.5" fill="#fde9ff" stroke="none"/>
+  </g>
+  <text x="386" y="208" class="lbl" text-anchor="middle">Feature Engineering</text>
+  <text x="386" y="224" class="sub" text-anchor="middle">SPATIAL / TEMPORAL</text>
+
+  <!-- 4. model + output -->
+  <rect x="472" y="86" width="140" height="104" rx="8" class="node" stroke="rgba(253,233,255,.35)"/>
+  <g transform="translate(496,104)">
+    <rect x="0" y="44" width="24" height="26" rx="3" fill="#2ef4eb" opacity=".85"/>
+    <rect x="34" y="28" width="24" height="42" rx="3" fill="#cbfffc" opacity=".85"/>
+    <rect x="68" y="12" width="24" height="58" rx="3" fill="#fde9ff" opacity=".9"/>
+    <text x="12" y="82" font-family="ui-monospace,monospace" font-size="9" fill="#93a3a2" text-anchor="middle">LOW</text>
+    <text x="46" y="82" font-family="ui-monospace,monospace" font-size="9" fill="#93a3a2" text-anchor="middle">MED</text>
+    <text x="80" y="82" font-family="ui-monospace,monospace" font-size="9" fill="#93a3a2" text-anchor="middle">HIGH</text>
+  </g>
+  <text x="542" y="208" class="lbl" text-anchor="middle">Severity Class</text>
+  <text x="542" y="224" class="sub" text-anchor="middle">XGBOOST CLASSIFIER</text>
+
+  <!-- flows -->
+  <path class="flow" d="M152 138 H172" marker-end="url(#acc-ar)"/>
+  <path class="flow" d="M300 138 H320" marker-end="url(#acc-ar)"/>
+  <path class="flow" d="M448 138 H468" marker-end="url(#acc-ar)"/>
+
+  <line x1="28" y1="284" x2="612" y2="284" stroke="rgba(255,255,255,.08)"/>
+  <text x="28" y="308" class="sub">PANDAS</text>
+  <text x="110" y="308" class="sub">XGBOOST</text>
+  <text x="204" y="308" class="sub">GEOSPATIAL FEATURES</text>
+  <text x="384" y="308" class="sub">RISK VISUALISATION</text>
+  <text x="28" y="332" class="sub" fill="#707777">Collaborative 4-member project — data preprocessing and interactive risk visualisation</text>
+</svg>

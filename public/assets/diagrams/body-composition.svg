@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360" role="img" aria-labelledby="bc-title bc-desc">
+  <title id="bc-title">Privacy-preserving body composition pipeline</title>
+  <desc id="bc-desc">A 2D binary silhouette is regressed into SMPL body parameters, reconstructed as a 3D mesh, and converted into a body composition estimate. Raw optical imagery never leaves the capture boundary.</desc>
+
+  <defs>
+    <style>
+      .lbl { font-family: ui-sans-serif, system-ui, sans-serif; font-size: 13px; fill: #edfffe; }
+      .sub { font-family: ui-monospace, monospace; font-size: 10px; fill: #93a3a2; letter-spacing: .08em; }
+      .cap { font-family: ui-monospace, monospace; font-size: 10px; fill: #2ef4eb; letter-spacing: .16em; }
+      .node { fill: #003734; stroke: rgba(255,255,255,.10); }
+      .flow { stroke: #2ef4eb; stroke-width: 1.5; fill: none; }
+    </style>
+    <marker id="bc-ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="#2ef4eb"/>
+    </marker>
+  </defs>
+
+  <rect width="640" height="360" fill="#011d1c"/>
+  <text x="28" y="40" class="cap">METHOD PIPELINE</text>
+
+  <!-- privacy boundary -->
+  <rect x="20" y="58" width="286" height="192" rx="10" fill="none" stroke="rgba(46,244,235,.28)" stroke-dasharray="5 5"/>
+  <text x="34" y="80" class="sub" fill="#2ef4eb">PRIVACY BOUNDARY — NO RAW IMAGERY STORED</text>
+
+  <!-- 1. silhouette -->
+  <rect x="40" y="96" width="112" height="104" rx="8" class="node"/>
+  <g transform="translate(78,116)">
+    <path d="M18 4a7 7 0 1 1-.01 0M11 18h14l5 22-6 2 1 26h-4l-2-24h-2l-2 24h-4l1-26-6-2z" fill="#cbfffc" opacity=".92"/>
+  </g>
+  <text x="96" y="216" class="lbl" text-anchor="middle">Silhouette</text>
+  <text x="96" y="232" class="sub" text-anchor="middle">2D BINARY MASK</text>
+
+  <!-- 2. SMPL regression -->
+  <rect x="176" y="96" width="112" height="104" rx="8" class="node"/>
+  <g transform="translate(200,120)" stroke="#2ef4eb" stroke-width="1.4" fill="none" opacity=".95">
+    <circle cx="10" cy="10" r="4"/><circle cx="54" cy="10" r="4"/>
+    <circle cx="10" cy="42" r="4"/><circle cx="54" cy="42" r="4"/>
+    <circle cx="32" cy="26" r="5" fill="#fde9ff" stroke="none"/>
+    <path d="M13 12 29 24M51 12 35 24M13 40 29 28M51 40 35 28"/>
+  </g>
+  <text x="232" y="216" class="lbl" text-anchor="middle">SMPL Regression</text>
+  <text x="232" y="232" class="sub" text-anchor="middle">TRANSFER LEARNING</text>
+
+  <!-- 3. mesh -->
+  <rect x="352" y="96" width="112" height="104" rx="8" class="node"/>
+  <g transform="translate(378,116)" stroke="#cbfffc" stroke-width="1" fill="none" opacity=".85">
+    <path d="M30 2 54 16v30L30 60 6 46V16z"/>
+    <path d="M30 2v58M6 16l48 30M54 16 6 46M6 16l48 0M6 46l48 0"/>
+  </g>
+  <text x="408" y="216" class="lbl" text-anchor="middle">3D Mesh</text>
+  <text x="408" y="232" class="sub" text-anchor="middle">PARAMETRIC VERTICES</text>
+
+  <!-- 4. output -->
+  <rect x="488" y="96" width="112" height="104" rx="8" class="node" stroke="rgba(253,233,255,.35)"/>
+  <g transform="translate(510,122)">
+    <rect x="0" y="26" width="12" height="22" rx="2" fill="#fde9ff" opacity=".9"/>
+    <rect x="20" y="12" width="12" height="36" rx="2" fill="#cbfffc" opacity=".9"/>
+    <rect x="40" y="20" width="12" height="28" rx="2" fill="#2ef4eb" opacity=".9"/>
+    <rect x="60" y="2" width="12" height="46" rx="2" fill="#edfffe" opacity=".9"/>
+  </g>
+  <text x="544" y="216" class="lbl" text-anchor="middle">Composition</text>
+  <text x="544" y="232" class="sub" text-anchor="middle">ESTIMATE</text>
+
+  <!-- flows -->
+  <path class="flow" d="M152 148 H172" marker-end="url(#bc-ar)"/>
+  <path class="flow" d="M288 148 H348" marker-end="url(#bc-ar)"/>
+  <path class="flow" d="M464 148 H484" marker-end="url(#bc-ar)"/>
+
+  <!-- footer strip -->
+  <line x1="28" y1="284" x2="612" y2="284" stroke="rgba(255,255,255,.08)"/>
+  <text x="28" y="308" class="sub">PYTORCH</text>
+  <text x="118" y="308" class="sub">SMPL</text>
+  <text x="188" y="308" class="sub">TRANSFER LEARNING</text>
+  <text x="360" y="308" class="sub">HYPERPARAMETER TUNING</text>
+  <text x="28" y="332" class="sub" fill="#707777">Supervised by Dr. Shivang Agarwal — IJCAI proposal</text>
+</svg>

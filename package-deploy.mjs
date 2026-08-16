@@ -44,6 +44,15 @@ for (const entry of INCLUDE) {
 // previously verified assets are already there.
 await rm(path.join(staging, 'public', '.dist-staging'), { recursive: true, force: true });
 
+// public/ is copied wholesale, so prune anything that must never be served.
+// public/plugins is regenerated on this machine by a local design-tool plugin;
+// deleting it from the repo does not stop it coming back, so it is pruned here
+// (and gitignored) rather than fought with.
+const NEVER_SHIP = ['plugins', 'lax.min.js', 'assets/logos', 'assets/technologies'];
+for (const entry of NEVER_SHIP) {
+	await rm(path.join(staging, 'public', entry), { recursive: true, force: true });
+}
+
 await run('zip', ['-r', '-q', '-X', zipPath, '.'], { cwd: staging });
 await rm(staging, { recursive: true, force: true });
 
