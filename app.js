@@ -25,9 +25,19 @@ app.use(compression());
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Hostinger runs `npm run build` on deploy. If that ever fails, the bundle is
+// missing and the site falls back to its no-JS baseline — log loudly so the
+// cause is visible in the Passenger log instead of being silently degraded.
+if (!fs.existsSync(path.join(__dirname, 'public', 'dist', 'app.js'))) {
+	console.error('[startup] public/dist/app.js is MISSING — run `npm run build`. Serving no-JS baseline.');
+}
+
+// The bundle filenames are not content-hashed, so they must revalidate.
+// Everything else under public/ (images, fonts, favicons) is immutable enough
+// to cache hard.
 app.use(express.static(__dirname + '/public', {
 	setHeaders: (res, filePath) => {
-		const isVersionlessEntry = /(?:index\.html|styles\.min\.css|scripts\.min\.js)$/.test(filePath);
+		const isVersionlessEntry = /(?:index\.html|app\.js|app\.css|build-manifest\.json)$/.test(filePath);
 		const cacheControl = isVersionlessEntry
 			? 'no-cache'
 			: 'public, max-age=604800, stale-while-revalidate=86400';
@@ -35,8 +45,6 @@ app.use(express.static(__dirname + '/public', {
 		res.setHeader('Cache-Control', cacheControl);
 	},
 }));
-app.use('/gsap', express.static(__dirname + '/node_modules/gsap'));
-app.use('/lenis', express.static(__dirname + '/node_modules/lenis'));
 
 const filePath = path.join(__dirname, 'index.html');
 const resumeFilePath = path.join(__dirname, 'private', 'resume.pdf');
@@ -101,11 +109,9 @@ app.get('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-const HOST = process.env.HOST || '127.0.0.1';
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
-	app.listen(PORT, HOST, () => {
-		console.log(`Server listening on http://${HOST}:${PORT}`);
-	});
-}
+const HOST = process.env.HOST || '0.0.0.0';
+app.listen(PORT, HOST, () => {
+	console.log(`Server listening on http://${HOST}:${PORT}`);
+});
 
 export default app;

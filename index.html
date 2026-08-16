@@ -1,567 +1,703 @@
 <!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Chirudeva Reddy Butukuri — AI/ML Engineer & CS Scholar</title>
-		<meta name="description" content="Computer Science student at BITS Pilani Dubai. Specializing in Computer Vision, NLP, and Machine Learning systems." />
-		<meta name="theme-color" content="#050608" />
+<html lang="en" class="no-js">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+	<title>Chirudeva Reddy | AI/ML Engineer & CS Scholar</title>
+	<meta name="description" content="Chirudeva Reddy Butukuri — Computer Science Scholar & AI Engineer at BITS Pilani Dubai. Specializing in 3D Human Mesh Estimation, High-Throughput NLP, and Scalable Backend Systems.">
+	<meta name="theme-color" content="#012624">
+	<meta name="robots" content="index, follow">
 
-		<!-- Distinctive Typography System -->
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Syne+Mono&family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Reenie+Beanie&display=swap" rel="stylesheet" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-		<link href="/styles.min.css" rel="stylesheet" />
-		<link rel="preload" as="image" href="/assets/profile_headshot.png" fetchpriority="high" />
+	<!-- OpenGraph & Twitter Meta Tags -->
+	<meta property="og:title" content="Chirudeva Reddy | AI/ML Engineer & CS Scholar">
+	<meta property="og:description" content="Portfolio of Chirudeva Reddy — Deep Learning, 3D Mesh Reconstruction, NLP Systems, and Engineering Architecture.">
+	<meta property="og:type" content="website">
+	<meta property="og:locale" content="en_US">
+	<meta name="twitter:card" content="summary_large_image">
 
-		<!-- Safari Import Map Polyfill -->
-		<script async src="https://unpkg.com/es-module-shims@1.10.0/dist/es-module-shims.js"></script>
-		<script type="importmap">
-			{
-				"imports": {
-					"gsap": "/gsap/index.js",
-					"gsap/": "/gsap/",
-					"lenis": "/lenis/dist/lenis.mjs"
-				}
-			}
-		</script>
-	</head>
-	<body>
-		<!-- Custom Interactive Cursor -->
-		<div id="custom-cursor">
-			<div class="cursor-dot"></div>
-			<div class="cursor-ring"></div>
-			<span class="cursor-label" aria-hidden="true"></span>
-		</div>
+	<!-- Favicon -->
+	<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%23003734'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='%23cbfffc' font-family='sans-serif' font-size='46' font-weight='bold'>CR</text></svg>">
 
-		<!-- Monogram Initials Preloader Overlay -->
-		<div id="preloader">
-			<div class="preloader__content">
-				<div class="preloader__initials">CRB</div>
-				<div class="preloader__subtitle">CHIRUDEVA REDDY BUTUKURI &middot; SYSTEM LOAD</div>
-				
-				<div class="preloader__bar-container">
-					<div id="preloader-bar" class="preloader__bar"></div>
-				</div>
-				
-				<div id="preloader-counter" class="preloader__counter">0%</div>
+	<!-- Stylesheet -->
+	<link rel="stylesheet" href="/dist/app.css">
+
+	<!-- Font Awesome Icons -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+<body>
+
+	<!-- Custom Precision Interactive Cursor -->
+	<div id="custom-cursor" aria-hidden="true">
+		<div class="cursor-glow"></div>
+		<div class="cursor-ring"></div>
+		<div class="cursor-dot"></div>
+		<div class="cursor-label"></div>
+	</div>
+
+	<!-- Monogram Terminal Preloader -->
+	<div id="preloader" role="progressbar" aria-label="Loading Terminal Interface" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+		<div class="preloader__content">
+			<div class="preloader__logo-wrap">
+				<svg width="44" height="44" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+					<path d="M22 6H12L6 12V20L12 26H22" stroke="#2ef4eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+					<path d="M22 11H14L10 15V17L14 21H22" stroke="#cbfffc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 3" opacity="0.8" />
+					<circle cx="22" cy="6" r="2.2" fill="#2ef4eb" />
+					<circle cx="22" cy="26" r="2.2" fill="#2ef4eb" />
+				</svg>
 			</div>
+			<div class="preloader__subtitle">CHIRUDEVA REDDY // RESEARCH SCHOLAR &amp; SDE</div>
+			<div class="preloader__bar-container">
+				<div class="preloader__bar" id="preloader-bar"></div>
+			</div>
+			<div class="preloader__counter" id="preloader-counter">0%</div>
 		</div>
+	</div>
 
-		<!-- Animated Canvas Background -->
-		<canvas id="hero-canvas"></canvas>
+	<!-- Fixed Site Header (Matching Image 1) -->
+	<header class="site-header" role="banner">
+		<!-- Center Bottom Glowing Cyan Indicator Node on Header Border -->
+		<span class="header-center-node" aria-hidden="true"></span>
 
-		<!-- Asymmetric Grid Background -->
-		<div class="grid-background"></div>
+		<a href="#hero" class="site-header__brand" aria-label="Chirudeva Reddy Homepage" data-cursor-text="Top">
+			<div class="brand-logo-wrap">
+				<!-- Geometric Cybernetic C Logo SVG -->
+				<svg class="header-logo-icon" width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+					<path d="M22 6H12L6 12V20L12 26H22" stroke="#2ef4eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+					<path d="M22 11H14L10 15V17L14 21H22" stroke="#cbfffc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 3" opacity="0.75" />
+					<circle cx="22" cy="6" r="2.2" fill="#2ef4eb" />
+					<circle cx="22" cy="26" r="2.2" fill="#2ef4eb" />
+				</svg>
+			</div>
+			<div class="brand-divider"></div>
+			<div class="brand-info">
+				<span class="brand-info__name">Chirudeva Reddy</span>
+				<span class="brand-info__role">AI/ML ENGINEER &bull; CS SCHOLAR</span>
+			</div>
+		</a>
 
-		<!-- Persistent Header Navigation Bar -->
-		<header class="bottom-bar">
-			<div class="bottom-bar__left">
-				<div class="bottom-bar__profile">
-					<div class="nav-monogram">CRB</div>
-					<div class="bottom-bar__name">
-						<strong>Chirudeva Reddy Butukuri</strong><br>
-						<span>CS Scholar & AI/ML Engineer</span>
+		<!-- Ghost Navigation Links -->
+		<nav class="site-header__nav" aria-label="Primary Navigation">
+			<a href="#hero" class="nav-link active" data-cursor-text="System">SYSTEM</a>
+			<a href="#metrics" class="nav-link" data-cursor-text="Metrics">METRICS</a>
+			<a href="#research" class="nav-link" data-cursor-text="Research">RESEARCH</a>
+			<a href="#matrix" class="nav-link" data-cursor-text="Matrix">MATRIX</a>
+			<a href="#projects" class="nav-link" data-cursor-text="Projects">PROJECTS</a>
+			<a href="#experience" class="nav-link" data-cursor-text="Career">EXPERIENCE</a>
+		</nav>
+
+		<div class="site-header__actions">
+			<a href="https://github.com/Chirudeva-Reddy" target="_blank" rel="noopener" class="social-link" aria-label="GitHub Profile" data-cursor-text="GitHub">
+				<i class="fa-brands fa-github"></i>
+			</a>
+			<a href="mailto:f20230331@dubai.bits-pilani.ac.in" class="social-link" aria-label="Email Chirudeva" data-cursor-text="Email">
+				<i class="fa-regular fa-envelope"></i>
+			</a>
+			<a href="tel:+971568747298" class="social-link" aria-label="Call Chirudeva" data-cursor-text="Call">
+				<i class="fa-solid fa-phone"></i>
+			</a>
+			<a href="mailto:f20230331@dubai.bits-pilani.ac.in" class="btn-header-touch" data-cursor-text="Contact">
+				GET IN TOUCH ↗
+			</a>
+		</div>
+	</header>
+
+	<!-- Centered 3D WebGL Particle Sphere Canvas -->
+	<canvas id="hero-canvas" aria-hidden="true"></canvas>
+
+	<!-- Smooth Scroll Content Shell -->
+	<div id="smooth-wrapper">
+		<div id="smooth-content">
+
+			<main id="main-content">
+
+				<!-- ==========================================================================
+				     SECTION 1: HERO
+				     ========================================================================== -->
+				<section id="hero" class="hero-section" aria-label="Hero Introduction">
+					<div class="hero-centered-content">
+						<div class="hero-eyebrow">
+							<span>CHIRUDEVA REDDY // AI ENGINEER, WITH A RESEARCH INTEREST IN CV</span>
+						</div>
+
+						<h1 class="hero-title">
+							Building <span class="title-accent">perceptual intelligence</span> for complex physical systems.
+						</h1>
+
+						<p class="hero-subtext">
+							3rd-year Computer Science undergraduate at <strong>BITS Pilani Dubai</strong> with a Minor in Data Science, actively contributing to 3D computer vision, big data ML pipelines, high-throughput NLP engines, and scalable system design.
+						</p>
+
+						<div class="hero-actions">
+							<a href="#projects" class="btn-aurora" data-cursor-text="Explore">
+								EXPLORE PROJECTS ↗
+							</a>
+							<a href="#research" class="btn-kelp" data-cursor-text="Research">
+								RESEARCH FOCUS <span class="btn-arrow-icon" aria-hidden="true">↗</span>
+							</a>
+						</div>
+
+						<div class="hero-status-pill">
+							<span class="status-indicator-dot" aria-hidden="true"></span>
+							<span>DUBAI, U.A.E &nbsp;•&nbsp; S26 ACTIVE</span>
+						</div>
 					</div>
-				</div>
+				</section>
+
+				<!-- ==========================================================================
+				     SECTION 2: SIGNATURE BENTO BOXES METRIC GRID
+				     ========================================================================== -->
+				<section id="metrics" class="bento-metrics-section section-container" aria-label="Key Performance Indicators">
+					<div class="bento-metrics-grid">
+						<!-- Card 1: Tall Highlight Card in Lavender Phosphor (#fde9ff) -->
+						<div class="bento-box-tall-highlight" data-cursor-text="CGPA">
+							<div class="bento-box-label">ACADEMIC DISTINCTION (YTD)</div>
+							<div>
+								<div class="bento-box-stat" data-target="9.13">9.13</div>
+								<div class="bento-box-sub">CGPA / 10.0 • BITS Pilani Dubai (Conferred 09/2027)</div>
+							</div>
+						</div>
+
+						<!-- Card 2: Wide Card in Liquid Kelp (#003734) -->
+						<div class="bento-box-wide" data-cursor-text="Optimization">
+							<div class="bento-box-label">PRODUCTION ERROR REDUCTION</div>
+							<div>
+								<div class="bento-box-stat" data-target="42">42%</div>
+								<div class="bento-box-sub">API endpoint debugging &amp; low-latency optimization at Nablix Labs</div>
+							</div>
+						</div>
+
+						<!-- Card 3: Small Card in Liquid Kelp (#003734) -->
+						<div class="bento-box-small stat-platinum" data-cursor-text="Big Data">
+							<div class="bento-box-label">BIG DATA RECORDS ANALYZED</div>
+							<div>
+								<div class="bento-box-stat" data-target="1">1M+</div>
+								<div class="bento-box-sub">Chicago dataset crash risk modeling with XGBoost</div>
+							</div>
+						</div>
+
+						<!-- Card 4: Small Card in Liquid Kelp (#003734) -->
+						<div class="bento-box-small" data-cursor-text="Neural Net">
+							<div class="bento-box-label">NN TRAINING ERROR CUT</div>
+							<div>
+								<div class="bento-box-stat" data-target="98">98%</div>
+								<div class="bento-box-sub">Continuous depression risk model under Dr. Shanookha Ali</div>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- ==========================================================================
+				     SECTION 3: ABOUT & RESEARCH
+				     ========================================================================== -->
+				<section id="research" class="section-container" aria-label="Research & Engineering Philosophy">
+					<div class="surface-card">
+						<div class="about-layout">
+							<div class="about-content">
+								<span class="section-label">RESEARCH &amp; ENGINEERING PHILOSOPHY</span>
+								<h2 class="section-heading">
+									Extracting dense 3D representations from sparse privacy-preserving inputs.
+								</h2>
+								<div class="about-paragraphs">
+									<p>
+										My academic research focuses on the intersection of <strong>Computer Vision, Deformable 3D Representations</strong>, and <strong>Privacy-Preserving Perception</strong>. Under the supervision of <strong>Dr. Shivang Agarwal</strong>, I am authoring a paper proposal for <strong>IJCAI</strong> on estimating parametric 3D human body meshes directly from 2D binary silhouettes without storing raw optical imagery.
+									</p>
+									<p>
+										In industry, I served as <strong>AI Engineer Intern at Nablix Labs</strong> (curating API endpoints and reducing error rates by 42%), <strong>Fullstack Developer Intern at Jovens Technologies FZ-LLC</strong> (architecting fullstack ML apps with 28% efficiency boost and NLP pipelines reducing manual time by 12%), and <strong>SDE Intern at Domdog</strong> (building Playwright automation, malicious content scanner integration across 8 client platforms, and boosting SEO traffic by 11%).
+									</p>
+								</div>
+								<div style="margin-top: 12px;">
+									<a href="mailto:f20230331@dubai.bits-pilani.ac.in" class="btn-aurora" data-cursor-text="Collaborate">
+										COLLABORATE ON RESEARCH ↗
+									</a>
+								</div>
+							</div>
+
+							<!-- Geometric Molecular Network Topology Illustration -->
+							<div class="about-molecular-graphic" aria-hidden="true">
+								<svg class="molecular-svg" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<circle cx="160" cy="160" r="140" stroke="rgba(203, 255, 252, 0.12)" stroke-width="1.5" stroke-dasharray="4 6" />
+									<circle cx="160" cy="160" r="85" stroke="rgba(0, 130, 124, 0.3)" stroke-width="1.5" />
+									<polygon points="160,35 275,115 235,250 85,250 45,115" stroke="rgba(255, 255, 255, 0.25)" stroke-width="1.5" fill="none" />
+									<line x1="160" y1="35" x2="160" y2="160" stroke="rgba(203, 255, 252, 0.4)" stroke-width="1.5" />
+									<line x1="275" y1="115" x2="160" y2="160" stroke="rgba(203, 255, 252, 0.4)" stroke-width="1.5" />
+									<line x1="235" y1="250" x2="160" y2="160" stroke="rgba(203, 255, 252, 0.4)" stroke-width="1.5" />
+									<line x1="85" y1="250" x2="160" y2="160" stroke="rgba(203, 255, 252, 0.4)" stroke-width="1.5" />
+									<line x1="45" y1="115" x2="160" y2="160" stroke="rgba(203, 255, 252, 0.4)" stroke-width="1.5" />
+									<circle cx="160" cy="35" r="7" fill="#fde9ff" />
+									<circle cx="275" cy="115" r="6" fill="#cbfffc" />
+									<circle cx="235" cy="250" r="6" stroke="#cbfffc" stroke-width="2" fill="#012624" />
+									<circle cx="85" cy="250" r="6" stroke="#2ef4eb" stroke-width="2" fill="#012624" />
+									<circle cx="45" cy="115" r="5" fill="#edfffe" />
+									<circle cx="160" cy="160" r="9" fill="#fde9ff" />
+								</svg>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- ==========================================================================
+				     SECTION 4: TECHNICAL MATRIX & COMPETENCIES (Bento Grid)
+				     ========================================================================== -->
+				<section id="matrix" class="section-container" aria-label="Core Competencies and Technical Stack">
+					<span class="section-label">CORE COMPETENCIES &amp; SKILLS</span>
+					<h2 class="section-heading" style="margin-top: 8px;">Technical Matrix &amp; Stack</h2>
+
+					<div class="matrix-grid">
+						<!-- Bento Card 1: Programming Languages -->
+						<div class="matrix-card" data-cursor-text="Languages">
+							<div class="matrix-card__top">
+								<div class="matrix-icon-badge"><i class="fa-solid fa-code"></i></div>
+								<span class="matrix-card__tag">CORE LANGUAGES</span>
+							</div>
+							<div class="matrix-card__body">
+								<h3 class="matrix-card__title">Python &amp; SQL</h3>
+								<p class="matrix-card__desc">
+									Proficient in Python, SQL data querying; familiar with Java, C, C++, and high-performance algorithms.
+								</p>
+							</div>
+						</div>
+
+						<!-- Bento Card 2: Computer Vision -->
+						<div class="matrix-card" data-cursor-text="Vision">
+							<div class="matrix-card__top">
+								<div class="matrix-icon-badge"><i class="fa-solid fa-eye"></i></div>
+								<span class="matrix-card__tag">PERCEPTION &amp; 3D MESH</span>
+							</div>
+							<div class="matrix-card__body">
+								<h3 class="matrix-card__title">Computer Vision &amp; SAM</h3>
+								<p class="matrix-card__desc">
+									OpenCV, YOLOv8, Segment Anything Model (SAM, SAM-2), MediaPipe pose estimation, and 3D mesh extraction.
+								</p>
+							</div>
+						</div>
+
+						<!-- Bento Card 3: Machine Learning -->
+						<div class="matrix-card" data-cursor-text="ML">
+							<div class="matrix-card__top">
+								<div class="matrix-icon-badge"><i class="fa-solid fa-fire-flame-curved"></i></div>
+								<span class="matrix-card__tag">CORE MACHINE LEARNING</span>
+							</div>
+							<div class="matrix-card__body">
+								<h3 class="matrix-card__title">PyTorch &amp; Scikit-Learn</h3>
+								<p class="matrix-card__desc">
+									Custom neural architectures, Transfer Learning, Feature Engineering, Model Evaluation, and CUDA acceleration.
+								</p>
+							</div>
+						</div>
+
+						<!-- Bento Card 4: NLP Engines -->
+						<div class="matrix-card" data-cursor-text="NLP">
+							<div class="matrix-card__top">
+								<div class="matrix-icon-badge"><i class="fa-solid fa-comments"></i></div>
+								<span class="matrix-card__tag">NLP &amp; TRANSFORMERS</span>
+							</div>
+							<div class="matrix-card__body">
+								<h3 class="matrix-card__title">NLP &amp; Text Clustering</h3>
+								<p class="matrix-card__desc">
+									Sentiment extraction, text preprocessing, transformer embeddings, BERT fine-tuning, and semantic clustering.
+								</p>
+							</div>
+						</div>
+
+						<!-- Bento Card 5: Data Science -->
+						<div class="matrix-card" data-cursor-text="Data Science">
+							<div class="matrix-card__top">
+								<div class="matrix-icon-badge"><i class="fa-solid fa-chart-pie"></i></div>
+								<span class="matrix-card__tag">BIG DATA ANALYTICS</span>
+							</div>
+							<div class="matrix-card__body">
+								<h3 class="matrix-card__title">Data Science &amp; Pipelines</h3>
+								<p class="matrix-card__desc">
+									Pandas, NumPy, Matplotlib, exploratory data analysis, tabular data preprocessing, and risk visualization.
+								</p>
+							</div>
+						</div>
+
+						<!-- Bento Card 6: Fullstack & System Design -->
+						<div class="matrix-card" data-cursor-text="Systems">
+							<div class="matrix-card__top">
+								<div class="matrix-icon-badge"><i class="fa-solid fa-network-wired"></i></div>
+								<span class="matrix-card__tag">SYSTEM DESIGN &amp; APIS</span>
+							</div>
+							<div class="matrix-card__body">
+								<h3 class="matrix-card__title">Fullstack &amp; Backend</h3>
+								<p class="matrix-card__desc">
+									FastAPI microservices, full-stack ML apps, POST response validation pipelines, and JSON serialization.
+								</p>
+							</div>
+						</div>
+
+						<!-- Bento Card 7: Cloud & Storage -->
+						<div class="matrix-card" data-cursor-text="Cloud">
+							<div class="matrix-card__top">
+								<div class="matrix-icon-badge"><i class="fa-brands fa-aws"></i></div>
+								<span class="matrix-card__tag">CLOUD INFRASTRUCTURE</span>
+							</div>
+							<div class="matrix-card__body">
+								<h3 class="matrix-card__title">AWS S3 &amp; Azure</h3>
+								<p class="matrix-card__desc">
+									AWS S3 storage pipelines, Microsoft Azure cloud services, Docker containerization, and data ingestion.
+								</p>
+							</div>
+						</div>
+
+						<!-- Bento Card 8: Automated Verification & QA -->
+						<div class="matrix-card" data-cursor-text="Testing">
+							<div class="matrix-card__top">
+								<div class="matrix-icon-badge"><i class="fa-solid fa-vial-circle-check"></i></div>
+								<span class="matrix-card__tag">AUTOMATED VERIFICATION</span>
+							</div>
+							<div class="matrix-card__body">
+								<h3 class="matrix-card__title">Playwright &amp; Security</h3>
+								<p class="matrix-card__desc">
+									Chromium automation, consumer simulation, malicious content scanners, test coverage expansion, and CI/CD.
+								</p>
+							</div>
+						</div>
+
+						<!-- Bento Card 9: BI & Tooling -->
+						<div class="matrix-card" data-cursor-text="Tooling">
+							<div class="matrix-card__top">
+								<div class="matrix-icon-badge"><i class="fa-solid fa-chart-line"></i></div>
+								<span class="matrix-card__tag">BI &amp; SCIENTIFIC TOOLING</span>
+							</div>
+							<div class="matrix-card__body">
+								<h3 class="matrix-card__title">PowerBI, Tableau &amp; Git</h3>
+								<p class="matrix-card__desc">
+									PowerBI, Tableau dashboards, LaTeX scientific documentation, Git/GitHub version control, Excel, and SEO/GEO.
+								</p>
+							</div>
+						</div>
+					</div>
+				</section>
+
+				<!-- ==========================================================================
+				     SECTION 5: FEATURED PROJECTS SHOWCASE
+				     ========================================================================== -->
+				<section id="projects" class="section-container" aria-label="Engineering Portfolio Projects">
+					<div class="projects-header-row">
+						<div>
+							<span class="section-label">ENGINEERING PORTFOLIO</span>
+							<h2 class="section-heading" style="margin-top: 8px;">Featured Projects &amp; Architecture</h2>
+						</div>
+						<div class="project-counter-badge">04 / 04</div>
+					</div>
+
+					<div class="projects-list">
+						<!-- Project 1: 3D Body Mesh -->
+						<article class="project-item-card" data-project="0" data-github="https://github.com/Chirudeva-Reddy/body2health" tabindex="0" role="button" data-cursor-text="Inspect">
+							<div class="project-card-info">
+								<div class="project-meta-row">
+									<span class="project-category-tag">CV // IJCAI PROPOSAL (09/2025 – PRESENT)</span>
+									<span class="btn-arrow-icon" aria-hidden="true">↗</span>
+								</div>
+								<h3 class="project-item-title">Privacy-Preserving Body Composition Estimation</h3>
+								<p class="project-item-desc">
+									Creating a pipeline to estimate human body composition from silhouettes under privacy constraints using transfer learning, hyperparameter tuning, and 3-D reconstruction under supervision of Dr. Shivang Agarwal.
+								</p>
+								<div class="project-actions-row">
+									<a href="https://github.com/Chirudeva-Reddy/body2health" target="_blank" rel="noopener" class="btn-kelp" onclick="event.stopPropagation()">
+										<i class="fa-brands fa-github"></i> REPOSITORY ↗
+									</a>
+								</div>
+							</div>
+							<div class="project-code-terminal">
+								<div class="code-header">
+									<span>mesh_reconstruct.py</span>
+									<span>PYTORCH // SMPL // TRANSFER LEARNING</span>
+								</div>
+								<pre><code><span class="code-comment"># 3D Silhouette Reconstruction</span>
+<span class="code-keyword">def</span> <span class="code-func">estimate_body_composition</span>(silhouette_2d):
+    params = smpl_estimator.predict(silhouette_2d)
+    mesh_3d = smpl_model.get_vertices(params)
+    <span class="code-keyword">return</span> optimize_privacy_constraints(mesh_3d)</code></pre>
+							</div>
+						</article>
+
+						<!-- Project 2: NLP Review Insight Engine -->
+						<article class="project-item-card" data-project="1" data-github="https://github.com/Chirudeva-Reddy/NLP-Proj" tabindex="0" role="button" data-cursor-text="Inspect">
+							<div class="project-card-info">
+								<div class="project-meta-row">
+									<span class="project-category-tag">NLP // INTELLIGENCE (01/2026 – PRESENT)</span>
+									<span class="btn-arrow-icon" aria-hidden="true">↗</span>
+								</div>
+								<h3 class="project-item-title">NLP Insight Engine for Customer Reviews</h3>
+								<p class="project-item-desc">
+									Working on creating an NLP pipeline to extract sentiment and key themes from large-scale customer reviews using text preprocessing, transformer embeddings, and clustering algorithms.
+								</p>
+								<div class="project-actions-row">
+									<a href="https://github.com/Chirudeva-Reddy/NLP-Proj" target="_blank" rel="noopener" class="btn-kelp" onclick="event.stopPropagation()">
+										<i class="fa-brands fa-github"></i> REPOSITORY ↗
+									</a>
+								</div>
+							</div>
+							<div class="project-code-terminal">
+								<div class="code-header">
+									<span>review_nlp_engine.py</span>
+									<span>TRANSFORMERS // BERT // CLUSTERING</span>
+								</div>
+								<pre><code><span class="code-comment"># Large-Scale Customer Review NLP</span>
+<span class="code-keyword">class</span> <span class="code-func">ReviewInsightEngine</span>:
+    <span class="code-keyword">def</span> <span class="code-func">extract_themes_and_sentiment</span>(self, reviews):
+        clean_text = self.preprocess_text(reviews)
+        vectors = bert_model.encode(clean_text)
+        <span class="code-keyword">return</span> kmeans_cluster(vectors, k=12)</code></pre>
+							</div>
+						</article>
+
+						<!-- Project 3: Accident Severity ML -->
+						<article class="project-item-card" data-project="2" data-github="https://github.com/Chirudeva-Reddy/Road-Accident-Severity-Prediction" tabindex="0" role="button" data-cursor-text="Inspect">
+							<div class="project-card-info">
+								<div class="project-meta-row">
+									<span class="project-category-tag">DATA SCIENCE // 1M+ RECORDS (09/2025 – 01/2026)</span>
+									<span class="btn-arrow-icon" aria-hidden="true">↗</span>
+								</div>
+								<h3 class="project-item-title">Road Accident Severity Prediction</h3>
+								<p class="project-item-desc">
+									Built a collaborative 4-member project on crash severity prediction for the Chicago Crash Dataset consisting of over 1,000,000 records. Contributed data-preprocessing and interactive risk visualization.
+								</p>
+								<div class="project-actions-row">
+									<a href="https://github.com/Chirudeva-Reddy/Road-Accident-Severity-Prediction" target="_blank" rel="noopener" class="btn-kelp" onclick="event.stopPropagation()">
+										<i class="fa-brands fa-github"></i> REPOSITORY ↗
+									</a>
+								</div>
+							</div>
+							<div class="project-code-terminal">
+								<div class="code-header">
+									<span>crash_severity.py</span>
+									<span>XGBOOST // CHICAGO 1M+ DATASET</span>
+								</div>
+								<pre><code><span class="code-comment"># 1M+ Records Geospatial Preprocessing</span>
+df = pd.read_csv(<span class="code-string">"chicago_crash_1M.csv"</span>)
+X_features = engineer_spatial_and_temporal(df)
+model = XGBClassifier(n_estimators=300)
+model.fit(X_features, y_severity)</code></pre>
+							</div>
+						</article>
+
+						<!-- Project 4: Student Depression Risk -->
+						<article class="project-item-card" data-project="3" data-github="https://github.com/Chirudeva-Reddy/Student-Depression-Risk" tabindex="0" role="button" data-cursor-text="Inspect">
+							<div class="project-card-info">
+								<div class="project-meta-row">
+									<span class="project-category-tag">AI // FUZZY &amp; ANN (02/2024 – 05/2024)</span>
+									<span class="btn-arrow-icon" aria-hidden="true">↗</span>
+								</div>
+								<h3 class="project-item-title">Predicting Student Depression Risk</h3>
+								<p class="project-item-desc">
+									Worked under Dr. Shanookha Ali to build a system using fuzzy logic and artificial neural networks in order to tune and predict continuous depression risk of students from lifestyle and academic factors, achieving 98% training error reduction.
+								</p>
+								<div class="project-actions-row">
+									<a href="https://github.com/Chirudeva-Reddy/Student-Depression-Risk" target="_blank" rel="noopener" class="btn-kelp" onclick="event.stopPropagation()">
+										<i class="fa-brands fa-github"></i> REPOSITORY ↗
+									</a>
+								</div>
+							</div>
+							<div class="project-code-terminal">
+								<div class="code-header">
+									<span>depression_risk_ann.py</span>
+									<span>FUZZY LOGIC // NEURAL NETWORKS</span>
+								</div>
+								<pre><code><span class="code-comment"># Fuzzy Logic & Neural Network Optimization</span>
+<span class="code-keyword">class</span> <span class="code-func">ContinuousDepressionRiskPredictor</span>:
+    <span class="code-keyword">def</span> <span class="code-func">evaluate_lifestyle_factors</span>(self, lifestyle_vector):
+        fuzzy_scores = self.fuzzy_inference(lifestyle_vector)
+        <span class="code-keyword">return</span> self.ann_model.predict(fuzzy_scores)</code></pre>
+							</div>
+						</article>
+					</div>
+				</section>
+
+				<!-- ==========================================================================
+				     SECTION 6: EXPERIENCE & CAREER TIMELINE
+				     ========================================================================== -->
+				<section id="experience" class="section-container" aria-label="Career and Professional Experience">
+					<span class="section-label">PROFESSIONAL EXPERIENCE</span>
+					<h2 class="section-heading" style="margin-top: 8px;">Industry Experience &amp; Track Record</h2>
+
+					<div class="timeline-stack">
+						<!-- Role 1: Nablix Labs -->
+						<div class="timeline-card" data-cursor-text="Nablix">
+							<div class="timeline-card__header">
+								<div>
+									<h3 class="timeline-role-title">AI Engineer Intern</h3>
+									<div class="timeline-org">Nablix Labs • Dubai, U.A.E (Hybrid)</div>
+								</div>
+								<div class="timeline-date-badge">06/2026 – 09/2026</div>
+							</div>
+							<ul class="timeline-card__bullets">
+								<li>Curated and optimized API endpoints along with a strong focus in debugging issues and reducing the error rate by <strong>42% before production</strong>.</li>
+								<li>Engineered low-latency response serialization and automated input telemetry handling.</li>
+							</ul>
+							<div class="timeline-tags-row">
+								<span class="tech-pill">PyTorch</span>
+								<span class="tech-pill">FastAPI</span>
+								<span class="tech-pill">API Debugging</span>
+								<span class="tech-pill">Model Optimization</span>
+								<span class="tech-pill">Python</span>
+							</div>
+						</div>
+
+						<!-- Role 2: Jovens Technologies -->
+						<div class="timeline-card" data-cursor-text="Jovens">
+							<div class="timeline-card__header">
+								<div>
+									<h3 class="timeline-role-title">Fullstack Developer Intern</h3>
+									<div class="timeline-org">Jovens Technologies FZ-LLC • Dubai, U.A.E</div>
+								</div>
+								<div class="timeline-date-badge">02/2026 – 08/2026</div>
+							</div>
+							<ul class="timeline-card__bullets">
+								<li>Architected and deployed a scalable full-stack web application, integrating Machine Learning (ML) and Artificial Intelligence (AI) algorithms to optimize core platform features, resulting in a <strong>28% increase in processing efficiency</strong>.</li>
+								<li>Engineered robust Natural Language Processing (NLP) pipelines for automated text analysis and unstructured data extraction, reducing manual processing time by <strong>12%</strong> and improving overall system accuracy by <strong>15%</strong>.</li>
+							</ul>
+							<div class="timeline-tags-row">
+								<span class="tech-pill">Fullstack</span>
+								<span class="tech-pill">Machine Learning</span>
+								<span class="tech-pill">NLP Pipelines</span>
+								<span class="tech-pill">Text Extraction</span>
+								<span class="tech-pill">System Architecture</span>
+							</div>
+						</div>
+
+						<!-- Role 3: Domdog -->
+						<div class="timeline-card" data-cursor-text="Domdog">
+							<div class="timeline-card__header">
+								<div>
+									<h3 class="timeline-role-title">Software Development Engineer Intern</h3>
+									<div class="timeline-org">Domdog • Hyderabad, India (Hybrid)</div>
+								</div>
+								<div class="timeline-date-badge">06/2025 – 09/2025</div>
+							</div>
+							<ul class="timeline-card__bullets">
+								<li>Created a backend response collection pipeline to validate POST requests, serialize JSON, and store data.</li>
+								<li>Developed Python and Playwright automation in Chromium to simulate consumer behavior leading to a <strong>10% increase in test case scenarios</strong>.</li>
+								<li>Integrated company-developed malicious content scanner with <strong>8 client systems in 3 months</strong>.</li>
+								<li>Optimized database querying and data entry, reducing turnaround time by approximately <strong>3 days</strong>.</li>
+								<li>Curated technical documentation for client integrations and applied Search/Generative Engine Optimization (GEO/SEO), increasing website traffic by <strong>11%</strong>.</li>
+							</ul>
+							<div class="timeline-tags-row">
+								<span class="tech-pill">Playwright</span>
+								<span class="tech-pill">Python</span>
+								<span class="tech-pill">Security Audit</span>
+								<span class="tech-pill">JSON Pipelines</span>
+								<span class="tech-pill">SEO / GEO</span>
+								<span class="tech-pill">Database Querying</span>
+							</div>
+						</div>
+					</div>
+				</section>
+
+			</main>
+
+			<!-- ==========================================================================
+			     SECTION 7: REDESIGNED DARK GREEN SUNKEN FOOTER (Matching Image 2 & 3)
+			     ========================================================================== -->
+			<div class="footer-section-wrap">
+				<footer class="footer-sunken-card" role="contentinfo">
+					<div class="footer-marquee-wrap" aria-hidden="true">
+						<div class="marquee-track">
+							<span>BITS PILANI DUBAI</span>
+							<span>•</span>
+							<span class="marquee-accent">NABLIX LABS</span>
+							<span>•</span>
+							<span>JOVENS TECHNOLOGIES</span>
+							<span>•</span>
+							<span class="marquee-accent">DOMDOG</span>
+							<span>•</span>
+							<span>COMPUTER VISION</span>
+							<span>•</span>
+							<span class="marquee-accent">DEFORMABLE 3D MESH</span>
+							<span>•</span>
+							<span>TRANSFORMERS</span>
+							<span>•</span>
+							<span class="marquee-accent">HIGH-THROUGHPUT ML</span>
+							<span>•</span>
+							<span>BITS PILANI DUBAI</span>
+							<span>•</span>
+							<span class="marquee-accent">NABLIX LABS</span>
+							<span>•</span>
+							<span>JOVENS TECHNOLOGIES</span>
+							<span>•</span>
+							<span class="marquee-accent">DOMDOG</span>
+							<span>•</span>
+						</div>
+					</div>
+
+					<div class="footer-grid">
+						<div class="footer-brand-col">
+							<div class="footer-brand-badge" data-cursor-text="Identity">
+								<svg class="footer-logo-icon" width="26" height="26" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+									<path d="M22 6H12L6 12V20L12 26H22" stroke="#2ef4eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+									<path d="M22 11H14L10 15V17L14 21H22" stroke="#cbfffc" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 3" opacity="0.8" />
+									<circle cx="22" cy="6" r="2.2" fill="#2ef4eb" />
+									<circle cx="22" cy="26" r="2.2" fill="#2ef4eb" />
+								</svg>
+							</div>
+							<p>
+								3rd-year Computer Science undergraduate at BITS Pilani Dubai building privacy-preserving 3D vision and high-throughput machine learning infrastructure.
+							</p>
+						</div>
+
+						<div>
+							<h4 class="footer-col-title">CORE DISCIPLINES</h4>
+							<div class="footer-links-list">
+								<a href="#matrix" class="footer-link-item">3D Mesh Perception</a>
+								<a href="#matrix" class="footer-link-item">NLP &amp; Text Clustering</a>
+								<a href="#matrix" class="footer-link-item">Fullstack &amp; FastAPIs</a>
+								<a href="#matrix" class="footer-link-item">Automated QA &amp; Playwright</a>
+							</div>
+						</div>
+
+						<div>
+							<h4 class="footer-col-title">TECHNOLOGIES</h4>
+							<div class="footer-links-list">
+								<span class="footer-link-item">Python • SQL • Java • C++</span>
+								<span class="footer-link-item">PyTorch • Scikit-learn</span>
+								<span class="footer-link-item">OpenCV • SAM &amp; SAM-2</span>
+								<span class="footer-link-item">AWS S3 • Azure • Docker</span>
+							</div>
+						</div>
+
+						<div>
+							<h4 class="footer-col-title">DIRECT CONNECTION</h4>
+							<div class="footer-links-list">
+								<a href="mailto:f20230331@dubai.bits-pilani.ac.in" class="footer-link-item">f20230331@dubai.bits-pilani.ac.in ↗</a>
+								<a href="tel:+971568747298" class="footer-link-item">+971 56 874 7298 ↗</a>
+								<a href="https://github.com/Chirudeva-Reddy" target="_blank" rel="noopener" class="footer-link-item">github.com/Chirudeva-Reddy ↗</a>
+								<a href="/assets/resume.pdf" target="_blank" class="footer-link-item">Curriculum Vitae (PDF) ↗</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="footer-bottom-bar">
+						<div>© 2026 CHIRUDEVA REDDY BUTUKURI &nbsp;•&nbsp; BITS PILANI DUBAI (CGPA 9.13/10.0)</div>
+						<div>RESEARCH &amp; SOFTWARE ARCHITECTURE &nbsp;•&nbsp; DUBAI, U.A.E</div>
+					</div>
+				</footer>
 			</div>
-			<div class="bottom-bar__right">
-				<nav class="nav-links">
-					<a href="#hero" class="nav-item">System</a>
-					<a href="#about" class="nav-item">About</a>
-					<a href="#tech" class="nav-item">Tech Stack</a>
-					<a href="#projects" class="nav-item">Projects</a>
-					<a href="#experience" class="nav-item">Experience</a>
-				</nav>
-				<div class="social-icons">
-					<a href="https://github.com/Chirudeva-Reddy" target="_blank" rel="noopener" aria-label="GitHub" class="magnetic"><i class="fa-brands fa-github fa-lg"></i></a>
-					<a href="mailto:f20230331@dubai.bits-pilani.ac.in" aria-label="Email" class="magnetic"><i class="fa-regular fa-envelope fa-lg"></i></a>
-					<a href="tel:+971568747298" aria-label="Phone" class="magnetic"><i class="fa-solid fa-phone fa-lg"></i></a>
-				</div>
-				<a href="mailto:f20230331@dubai.bits-pilani.ac.in" class="nav-location-tag magnetic">
-					<i class="fa-solid fa-location-dot fa-xs"></i> Dubai, U.A.E ↗
+
+		</div>
+	</div>
+
+	<!-- Accessible Project Details Dialog Modal -->
+	<div id="project-modal" class="project-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title">
+		<div class="project-modal__backdrop" id="modal-backdrop" data-cursor-text="Dismiss"></div>
+		<div class="project-modal__panel">
+			<button class="project-modal__close" id="modal-close" aria-label="Close Project Details Dialog" data-cursor-text="Close">CLOSE ✕</button>
+			<span class="project-modal__category" id="modal-category">CATEGORY</span>
+			<h2 id="modal-title">Project Title</h2>
+			<p class="project-modal__description" id="modal-desc">Project description content.</p>
+			<div class="project-modal__index" id="modal-index">CASE STUDY 01 // ARCHITECTURE</div>
+			<div style="margin-top: 14px;">
+				<a href="#" id="modal-github" target="_blank" rel="noopener" class="btn-aurora" data-cursor-text="GitHub">
+					<i class="fa-brands fa-github"></i> VIEW ON GITHUB ↗
 				</a>
 			</div>
-		</header>
-
-		<!-- Main Smooth Wrapper -->
-		<div id="smooth-wrapper">
-			<div id="smooth-content">
-				<section class="landing-panel" id="landing-panel" aria-labelledby="landing-title">
-					<div class="landing-panel__copy">
-						<span class="hero-tag">CHIRUDEVA REDDY &middot; AI/ML ENGINEER</span>
-						<h1 id="landing-title">
-							Building <span class="slant-italic">thoughtful</span><br>
-							<span class="hero-glow-word">intelligence</span> for<br>
-							<span class="hero-underline-cyan">real-world systems.</span>
-						</h1>
-						<p>Computer Science scholar building privacy-preserving computer vision, NLP systems, and high-throughput machine learning infrastructure.</p>
-						<button class="landing-panel__enter magnetic" type="button" data-cursor-text="Enter">Enter portfolio <span aria-hidden="true">↗</span></button>
-					</div>
-					<div class="landing-panel__image" role="img" aria-label="Chirudeva Reddy portrait">
-						<img src="/assets/profile_headshot.png" alt="Chirudeva Reddy Butukuri" class="landing-img-content" width="709" height="947" fetchpriority="high" decoding="async" />
-					</div>
-				</section>
-				<div class="shatter-curtain" aria-hidden="true"></div>
-
-				<!-- ====== SECTION 2: ASYMMETRIC ABOUT ====== -->
-				<section class="page page--about" id="about">
-					<div class="about-container">
-						<div class="about-card-skewed anim-reveal">
-							<div class="about-card__top">
-								<div class="about-emblem">
-									<span class="emblem-text">CRB</span>
-									<span class="photo-badge">CS '27</span>
-								</div>
-								<div class="about-title">
-									<span class="handwritten-tag">Biography & Research</span>
-									<h2>Computer Science & Minor in Data Science at <strong>BITS Pilani, Dubai Campus</strong></h2>
-								</div>
-							</div>
-
-							<div class="about-stats-row-asymmetric">
-								<div class="stat-box box-large">
-									<span class="stat-number">9.13</span>
-									<span class="stat-label">CGPA / 10.0</span>
-								</div>
-								<div class="stat-box box-small">
-									<span class="stat-number">42%</span>
-									<span class="stat-label">Latency Reduction</span>
-								</div>
-								<div class="stat-box box-medium">
-									<span class="stat-number">1M+</span>
-									<span class="stat-label">Crash Records Analyzed</span>
-								</div>
-								<div class="stat-box box-small">
-									<span class="stat-number">98%</span>
-									<span class="stat-label">NN Error Cut</span>
-								</div>
-							</div>
-
-							<div class="about-card__body">
-								<p>
-									I specialize in the intersection of <strong>Computer Vision</strong>, <strong>Natural Language Processing</strong>, and <strong>Privacy-Preserving AI Systems</strong>. My research focuses on extracting dense 3D mesh representations from minimal privacy-safe 2D inputs, as well as high-throughput sentiment & customer intelligence algorithms.
-								</p>
-								<p>
-									As <strong>AI Engineer Intern at Nablix Labs</strong>, I engineered core API endpoints serving real-time predictions, reducing backend error rate by 42%. Prior to Nablix, I was <strong>SDE Intern at Domdog</strong>, building automated regression pipelines and security scanners across 8 client deployments.
-								</p>
-							</div>
-						</div>
-					</div>
-				</section>
-
-				<!-- ====== SECTION 3: SKILLS & TECHNICAL MATRIX ====== -->
-				<section class="page page--tech" id="tech">
-					<div class="tech-container">
-						<div class="section-header anim-reveal">
-							<span class="handwritten-tag">Core Competencies & Stack</span>
-							<h2 class="section-title">Technical Matrix & Skills</h2>
-							<p class="section-subtitle">Deep learning frameworks, computer vision libraries, high-throughput backend infrastructure, and automated verification tools.</p>
-						</div>
-
-						<div class="skills-grid">
-							<!-- Skill Card 1: PyTorch -->
-							<div class="skill-card anim-reveal" data-cursor-text="PyTorch">
-								<div class="skill-card__icon icon-pytorch">
-									<i class="fa-solid fa-fire-flame-curved"></i>
-								</div>
-								<div class="skill-card__content">
-									<h3>PyTorch</h3>
-									<span class="skill-card__tag">CORE DEEP LEARNING</span>
-									<p>Custom neural net architectures, loss functions, CUDA acceleration, and tensor optimization.</p>
-								</div>
-							</div>
-
-							<!-- Skill Card 2: Computer Vision -->
-							<div class="skill-card anim-reveal" data-cursor-text="Vision">
-								<div class="skill-card__icon icon-cv">
-									<i class="fa-solid fa-eye"></i>
-								</div>
-								<div class="skill-card__content">
-									<h3>Computer Vision</h3>
-									<span class="skill-card__tag">PERCEPTION & 3D MESH</span>
-									<p>2D silhouette extraction, deformable 3D mesh reconstruction, OpenCV, and YOLO tracking.</p>
-								</div>
-							</div>
-
-							<!-- Skill Card 3: NLP & BERT -->
-							<div class="skill-card anim-reveal" data-cursor-text="NLP">
-								<div class="skill-card__icon icon-nlp">
-									<i class="fa-solid fa-comments"></i>
-								</div>
-								<div class="skill-card__content">
-									<h3>NLP & BERT Engines</h3>
-									<span class="skill-card__tag">EMBEDDINGS & CLUSTERING</span>
-									<p>Transformer embeddings, BERT fine-tuning, vector similarity search, and topic clustering.</p>
-								</div>
-							</div>
-
-							<!-- Skill Card 4: Python Systems -->
-							<div class="skill-card anim-reveal" data-cursor-text="Python">
-								<div class="skill-card__icon icon-python">
-									<i class="fa-brands fa-python"></i>
-								</div>
-								<div class="skill-card__content">
-									<h3>Python Systems</h3>
-									<span class="skill-card__tag">HIGH-THROUGHPUT APIs</span>
-									<p>FastAPI microservices, NumPy array manipulation, Pandas data validation, and model servers.</p>
-								</div>
-							</div>
-
-							<!-- Skill Card 5: C++ -->
-							<div class="skill-card anim-reveal" data-cursor-text="C++">
-								<div class="skill-card__icon icon-cpp">
-									<i class="fa-solid fa-code"></i>
-								</div>
-								<div class="skill-card__content">
-									<h3>C++ Infrastructure</h3>
-									<span class="skill-card__tag">LOW LATENCY SYSTEMS</span>
-									<p>Low-level memory management, efficient data structures, custom algorithms, and system optimization.</p>
-								</div>
-							</div>
-
-							<!-- Skill Card 6: Relational SQL -->
-							<div class="skill-card anim-reveal" data-cursor-text="SQL">
-								<div class="skill-card__icon icon-sql">
-									<i class="fa-solid fa-database"></i>
-								</div>
-								<div class="skill-card__content">
-									<h3>Relational Databases</h3>
-									<span class="skill-card__tag">QUERY OPTIMIZATION</span>
-									<p>PostgreSQL indexing, query optimization, vector embeddings storage, and dataset management.</p>
-								</div>
-							</div>
-
-							<!-- Skill Card 7: AWS Cloud -->
-							<div class="skill-card anim-reveal" data-cursor-text="AWS">
-								<div class="skill-card__icon icon-aws">
-									<i class="fa-brands fa-aws"></i>
-								</div>
-								<div class="skill-card__content">
-									<h3>AWS Cloud</h3>
-									<span class="skill-card__tag">INFRASTRUCTURE</span>
-									<p>S3 bucket management, EC2 GPU instance provisioning, and automated cloud pipelines.</p>
-								</div>
-							</div>
-
-							<!-- Skill Card 8: Playwright Automation -->
-							<div class="skill-card anim-reveal" data-cursor-text="Testing">
-								<div class="skill-card__icon icon-playwright">
-									<i class="fa-solid fa-vial-circle-check"></i>
-								</div>
-								<div class="skill-card__content">
-									<h3>Playwright E2E</h3>
-									<span class="skill-card__tag">AUTOMATED VERIFICATION</span>
-									<p>Automated visual testing, cross-browser regression suites, and CI/CD validation.</p>
-								</div>
-							</div>
-
-							<!-- Skill Card 9: Linux & POSIX -->
-							<div class="skill-card anim-reveal" data-cursor-text="Linux">
-								<div class="skill-card__icon icon-linux">
-									<i class="fa-brands fa-linux"></i>
-								</div>
-								<div class="skill-card__content">
-									<h3>Linux & POSIX Shell</h3>
-									<span class="skill-card__tag">ENVIRONMENT & TOOLS</span>
-									<p>Bash automation, server administration, process isolation, Git versioning, and Docker containers.</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</section>
-
-				<!-- ====== SECTION 4: FEATURED PROJECTS & ARCHITECTURE ====== -->
-				<section class="page page--explore" id="projects">
-					<div class="explore-header anim-reveal">
-						<div>
-							<span class="handwritten-tag">Engineering Showcase</span>
-							<h2 class="explore-title">Featured Projects & Architecture</h2>
-						</div>
-						<div class="project-scroll-indicator">
-							<span class="scroll-label">SCROLL DOWN TO EXPLORE</span>
-							<span class="project-counter" id="project-num">01 / 04</span>
-						</div>
-					</div>
-
-					<div class="project-slider">
-						<ul class="project-cards">
-							<!-- Card 1: 3D Body Mesh Algorithm -->
-							<li class="project-card-item">
-								<article class="project-cover" data-project="0" data-github="https://github.com/Chirudeva-Reddy/body2health" data-magnetic="true" data-cursor-text="Explore" tabindex="0" role="button">
-									<div class="project-cover__header">
-										<span class="project-category">CV // IJCAI Proposal</span>
-										<a href="https://github.com/Chirudeva-Reddy/body2health" target="_blank" rel="noopener" class="project-github-link magnetic" onclick="event.stopPropagation()"><i class="fa-brands fa-github"></i> GitHub ↗</a>
-									</div>
-									<div class="project-cover__visual">
-										<div class="project-cover__code">
-											<div class="code-line"><span class="code--comment"># 3D Human Mesh Reconstruction</span></div>
-											<div class="code-line"><span class="code--purple">def</span> <span class="code--yellow">reconstruct_mesh_3d</span>(image_2d):</div>
-											<div class="code-line">    body_params = smpl_estimator.predict(image_2d)</div>
-											<div class="code-line">    vertices = smpl_model.get_vertices(body_params)</div>
-											<div class="code-line">    <span class="code--purple">return</span> optimize_deformable_mesh(vertices)</div>
-										</div>
-									</div>
-									<div class="project-cover__bar">
-										<h3>3D Body Mesh & Deformable Reconstruction</h3>
-										<p>Extracting 3D human mesh models from 2D camera images with deformable body shape parameter optimization and privacy protection.</p>
-									</div>
-								</article>
-							</li>
-
-							<!-- Card 2: NLP Sentiment & Topic Engine -->
-							<li class="project-card-item">
-								<article class="project-cover" data-project="1" data-github="https://github.com/Chirudeva-Reddy/NLP-Proj" data-magnetic="true" data-cursor-text="Explore" tabindex="0" role="button">
-									<div class="project-cover__header">
-										<span class="project-category">NLP // Intelligence</span>
-										<a href="https://github.com/Chirudeva-Reddy/NLP-Proj" target="_blank" rel="noopener" class="project-github-link magnetic" onclick="event.stopPropagation()"><i class="fa-brands fa-github"></i> GitHub ↗</a>
-									</div>
-									<div class="project-cover__visual">
-										<div class="project-cover__code">
-											<div class="code-line"><span class="code--comment"># High-Throughput NLP Sentiment Engine</span></div>
-											<div class="code-line"><span class="code--purple">class</span> <span class="code--yellow">SentimentVectorizer</span>:</div>
-											<div class="code-line">    <span class="code--purple">def</span> <span class="code--yellow">cluster_feedbacks</span>(self, docs):</div>
-											<div class="code-line">        embeds = bert_model.encode(docs)</div>
-											<div class="code-line">        <span class="code--purple">return</span> kmeans_cluster(embeds, k=12)</div>
-										</div>
-									</div>
-									<div class="project-cover__bar">
-										<h3>BERT Sentiment Engine & Clustering</h3>
-										<p>Transformer vectorizer clustering 10,000+ unstructured customer feedback entries into actionable sentiment vectors.</p>
-									</div>
-								</article>
-							</li>
-
-							<!-- Card 3: Crash Severity Model -->
-							<li class="project-card-item">
-								<article class="project-cover" data-project="2" data-github="https://github.com/Chirudeva-Reddy/Road-Accident-Severity-Prediction" data-magnetic="true" data-cursor-text="Explore" tabindex="0" role="button">
-									<div class="project-cover__header">
-										<span class="project-category">Data Science // 1M+ Records</span>
-										<a href="https://github.com/Chirudeva-Reddy/Road-Accident-Severity-Prediction" target="_blank" rel="noopener" class="project-github-link magnetic" onclick="event.stopPropagation()"><i class="fa-brands fa-github"></i> GitHub ↗</a>
-									</div>
-									<div class="project-cover__visual">
-										<div class="project-cover__code">
-											<div class="code-line"><span class="code--comment"># Traffic Crash Severity Prediction</span></div>
-											<div class="code-line"><span class="code--purple">import</span> pandas <span class="code--purple">as</span> pd</div>
-											<div class="code-line"><span class="code--purple">from</span> xgboost <span class="code--purple">import</span> XGBClassifier</div>
-											<div class="code-line">df = pd.read_csv("crash_records_1M.csv")</div>
-											<div class="code-line">X_geo = engineer_spatial_features(df)</div>
-											<div class="code-line">model.fit(X_geo, y_severity)</div>
-										</div>
-									</div>
-									<div class="project-cover__bar">
-										<h3>Accident Severity ML Classifier</h3>
-										<p>Predictive modeling over 1,000,000+ traffic collision reports with spatial feature extraction and risk scoring.</p>
-									</div>
-								</article>
-							</li>
-
-							<!-- Card 4: Ride Cancellation Prediction -->
-							<li class="project-card-item">
-								<article class="project-cover" data-project="3" data-github="https://github.com/Chirudeva-Reddy/Ride-Cancellation-Prediction" data-magnetic="true" data-cursor-text="Explore" tabindex="0" role="button">
-									<div class="project-cover__header">
-										<span class="project-category">ML Infrastructure // Churn</span>
-										<a href="https://github.com/Chirudeva-Reddy/Ride-Cancellation-Prediction" target="_blank" rel="noopener" class="project-github-link magnetic" onclick="event.stopPropagation()"><i class="fa-brands fa-github"></i> GitHub ↗</a>
-									</div>
-									<div class="project-cover__visual">
-										<div class="project-cover__code">
-											<div class="code-line"><span class="code--comment"># Ride Cancellation Prediction Engine</span></div>
-											<div class="code-line"><span class="code--purple">class</span> <span class="code--yellow">RideCancellationPredictor</span>:</div>
-											<div class="code-line">    <span class="code--purple">def</span> <span class="code--yellow">predict_churn</span>(self, ride_data):</div>
-											<div class="code-line">        prob = self.model.predict_proba(ride_data)</div>
-											<div class="code-line">        <span class="code--purple">return</span> {"churn_risk": prob, "status": 200}</div>
-										</div>
-									</div>
-									<div class="project-cover__bar">
-										<h3>Ride Cancellation & Churn Predictor</h3>
-										<p>Real-time ride-hailing cancellation prediction model serving high-concurrency API endpoints with 42% latency reduction.</p>
-									</div>
-								</article>
-							</li>
-						</ul>
-					</div>
-				</section>
-
-				<!-- ====== SECTION 5: EXPERIENCE ====== -->
-				<section class="page page--experience" id="experience">
-					<div class="section-header anim-reveal">
-						<span class="handwritten-tag">Career Trajectory</span>
-						<h2 class="section-title">Industry & Research Experience</h2>
-						<p class="section-subtitle">A chronological breakdown of my engineering roles, key metrics delivered, and software achievements.</p>
-					</div>
-
-					<div class="timeline">
-						<div class="timeline__line"></div>
-
-						<div class="timeline__item item-left anim-reveal">
-							<div class="timeline__node node-cyan"></div>
-							<div class="timeline__card card-asymmetric-1">
-								<div class="timeline__card-header">
-									<div>
-										<span class="timeline__company">Nablix Labs</span>
-										<h3 class="timeline__role">AI Engineer Intern</h3>
-									</div>
-									<span class="timeline__date date-cyan">06/2024 — 08/2024</span>
-								</div>
-								<div class="timeline__card-body">
-									<ul>
-										<li>Curated and optimized model inference & API endpoints serving real-time predictions, reducing backend production error rate by <strong>42%</strong>.</li>
-										<li>Engineered automated data validation scripts for incoming multimodal inputs to ensure high prediction quality.</li>
-										<li>Collaborated with senior ML engineers on model quantization and low-latency API response strategies.</li>
-									</ul>
-								</div>
-								<div class="timeline__tags">
-									<span class="tech-badge">Python</span>
-									<span class="tech-badge">PyTorch</span>
-									<span class="tech-badge">FastAPI</span>
-									<span class="tech-badge">Docker</span>
-									<span class="tech-badge">Model Optimization</span>
-								</div>
-							</div>
-						</div>
-
-						<div class="timeline__item item-right anim-reveal">
-							<div class="timeline__node node-pink"></div>
-							<div class="timeline__card card-asymmetric-2">
-								<div class="timeline__card-header">
-									<div>
-										<span class="timeline__company">Domdog</span>
-										<h3 class="timeline__role">Software Development Engineer (SDE) Intern</h3>
-									</div>
-									<span class="timeline__date date-pink">01/2024 — 05/2024</span>
-								</div>
-								<div class="timeline__card-body">
-									<ul>
-										<li>Engineered automated Playwright regression testing suites and security scanning tools deployed across <strong>8 client platforms</strong>.</li>
-										<li>Built scalable backend processing pipelines handling automated user session simulation and vulnerability audits.</li>
-										<li>Constructed custom dashboard components for monitoring automated test executions and failure tracebacks in real-time.</li>
-									</ul>
-								</div>
-								<div class="timeline__tags">
-									<span class="tech-badge">Playwright</span>
-									<span class="tech-badge">Node.js</span>
-									<span class="tech-badge">Security Audit</span>
-									<span class="tech-badge">CI/CD</span>
-									<span class="tech-badge">Linux</span>
-								</div>
-							</div>
-						</div>
-
-						<div class="timeline__item item-full anim-reveal">
-							<div class="timeline__node node-amber"></div>
-							<div class="timeline__card card-asymmetric-3">
-								<div class="timeline__card-header">
-									<div>
-										<span class="timeline__company">BITS Pilani, Dubai Campus</span>
-										<h3 class="timeline__role">Undergraduate Researcher & AI Project Lead</h3>
-									</div>
-									<span class="timeline__date date-amber">09/2023 — PRESENT</span>
-								</div>
-								<div class="timeline__card-body">
-									<ul>
-										<li>Authoring paper proposal for IJCAI on privacy-preserving 3D body composition estimation from 2D binary silhouettes.</li>
-										<li>Led student robotics team designing an Autonomous Water Collection USV for the Emirates Robotics Competition.</li>
-										<li>Maintained top academic standing with <strong>9.13 / 10.0 CGPA</strong> and Minor in Data Science.</li>
-									</ul>
-								</div>
-								<div class="timeline__tags">
-									<span class="tech-badge">Computer Vision</span>
-									<span class="tech-badge">NLP</span>
-									<span class="tech-badge">Robotics</span>
-									<span class="tech-badge">Research Publication</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</section>
-
-				<!-- ====== SECTION 6: FOOTER & DUAL KINETIC MARQUEE ====== -->
-				<section class="page page--footer" id="footer">
-					<div class="footer-marquee">
-						<div class="footer-marquee__track marquee-left">
-							<div class="marquee-content">
-								<span>COMPUTER VISION &middot; NLP ENGINES &middot; PYTORCH &middot; NABLIX LABS &middot; BITS PILANI DUBAI &middot; DOMDOG &middot; MACHINE LEARNING &middot;&nbsp;</span>
-								<span>COMPUTER VISION &middot; NLP ENGINES &middot; PYTORCH &middot; NABLIX LABS &middot; BITS PILANI DUBAI &middot; DOMDOG &middot; MACHINE LEARNING &middot;&nbsp;</span>
-							</div>
-						</div>
-						<div class="footer-marquee__track marquee-right track-outline">
-							<div class="marquee-content">
-								<span>3D MESH RECONSTRUCTION &middot; HIGH THROUGHPUT INFERENCE &middot; MODEL QUANTIZATION &middot; AUTONOMOUS USV &middot; BERT EMBEDDINGS &middot; DATA SCIENCE &middot;&nbsp;</span>
-								<span>3D MESH RECONSTRUCTION &middot; HIGH THROUGHPUT INFERENCE &middot; MODEL QUANTIZATION &middot; AUTONOMOUS USV &middot; BERT EMBEDDINGS &middot; DATA SCIENCE &middot;&nbsp;</span>
-							</div>
-						</div>
-					</div>
-
-					<div class="footer-details">
-						<div class="footer-details__inner">
-							<h2>Technical Domain Breakdown</h2>
-							<div class="footer-details__columns">
-								<div class="skill-category">
-									<h3>Languages & Frameworks</h3>
-									<ul>
-										<li>Python, SQL, C++, Java</li>
-										<li>PyTorch, Scikit-Learn</li>
-										<li>Pandas, NumPy, Matplotlib</li>
-										<li>LaTeX, Git, Linux</li>
-									</ul>
-								</div>
-								<div class="skill-category">
-									<h3>Computer Vision</h3>
-									<ul>
-										<li>OpenCV, YOLOv8</li>
-										<li>SAM / SAM-2 Segmentation</li>
-										<li>MediaPipe Pose Estimation</li>
-										<li>3D Mesh Reconstruction</li>
-									</ul>
-								</div>
-								<div class="skill-category">
-									<h3>NLP & Engineering</h3>
-									<ul>
-										<li>BERT / Transformers</li>
-										<li>K-Means Text Clustering</li>
-										<li>Playwright Automation</li>
-										<li>AWS S3, Docker</li>
-									</ul>
-								</div>
-								<div class="skill-category">
-									<h3>Education & Honors</h3>
-									<ul>
-										<li><strong>B.E. Computer Science</strong></li>
-										<li>BITS Pilani, Dubai Campus</li>
-										<li>CGPA: <strong>9.13 / 10.0</strong></li>
-										<li>Minor in Data Science</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="footer-copyright">
-						<span>© 2026 CHIRUDEVA REDDY BUTUKURI &middot; ALL RIGHTS RESERVED</span>
-						<span>DESIGNED & ENGINEERED IN DUBAI, U.A.E</span>
-					</div>
-				</section>
-
-			</div>
 		</div>
+	</div>
 
-		<div class="project-modal" id="project-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="project-modal-title">
-			<div class="project-modal__backdrop" data-modal-close></div>
-			<div class="project-modal__panel" role="document" tabindex="-1">
-				<button class="project-modal__close magnetic" type="button" aria-label="Close project details" data-modal-close>Close <span aria-hidden="true">↗</span></button>
-				<p class="project-modal__category" id="project-modal-category"></p>
-				<h2 id="project-modal-title"></h2>
-				<p class="project-modal__description" id="project-modal-description"></p>
-				<p class="project-modal__index" id="project-modal-index"></p>
-				<div class="project-modal__actions">
-					<a href="#" id="project-modal-github" target="_blank" rel="noopener" class="project-modal__github-btn magnetic">
-						<i class="fa-brands fa-github"></i> View Project on GitHub <span aria-hidden="true">↗</span>
-					</a>
-				</div>
-			</div>
-		</div>
-
-		<script src="/scripts.min.js" type="module"></script>
-	</body>
+	<!-- Main Script Module -->
+	<script type="module" src="/dist/app.js"></script>
+</body>
 </html>

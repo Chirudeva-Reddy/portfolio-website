@@ -6,16 +6,18 @@
 	"type": "module",
 	"scripts": {
 		"dev": "node app.js",
-		"build": "",
+		"build": "node build.mjs",
 		"start": "node app.js"
 	},
 	"author": "Chirudeva Reddy",
 	"license": "ISC",
 	"dependencies": {
 		"compression": "^1.7.5",
+		"esbuild": "^0.28.2",
 		"express": "^4.21.2",
 		"gsap": "^3.12.5",
 		"helmet": "^8.0.0",
-		"lenis": "^1.1.18"
+		"lenis": "^1.1.18",
+		"three": "^0.185.1"
 	}
 }
