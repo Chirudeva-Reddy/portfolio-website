@@ -118,10 +118,8 @@ body, html {
 }
 
 body {
-	overflow-x: hidden !important;
 	background-color: var(--color-liquid-abyss);
 	color: var(--color-silver-mist);
-	cursor: none;
 	position: relative;
 }
 
@@ -132,8 +130,21 @@ body::-webkit-scrollbar {
 }
 
 a, button, input, select, textarea {
-	cursor: none;
 	touch-action: manipulation;
+}
+
+/* The native pointer is only hidden once JS confirms the custom cursor is
+   actually rendering, and only at widths where #custom-cursor is displayed.
+   If the bundle fails, or below 769px, the user keeps a real cursor. */
+@media (min-width: 769px) {
+	html.js-cursor body,
+	html.js-cursor a,
+	html.js-cursor button,
+	html.js-cursor input,
+	html.js-cursor select,
+	html.js-cursor textarea {
+		cursor: none;
+	}
 }
 
 img, svg, video {
@@ -232,7 +243,14 @@ body.cursor-hover .cursor-label:not(:empty) {
 /* ==========================================================================
    Monogram Terminal Preloader
    ========================================================================== */
+/* The overlay is opt-in: it only exists once the bootstrap script has proved
+   JavaScript is running. Without JS it is never displayed, so it can no longer
+   hide the site. */
 #preloader {
+	display: none;
+}
+
+html.js #preloader {
 	position: fixed;
 	inset: 0;
 	background-color: var(--color-liquid-deep);
@@ -243,7 +261,11 @@ body.cursor-hover .cursor-label:not(:empty) {
 	transition: opacity 0.8s cubic-bezier(0.76, 0, 0.24, 1), transform 0.8s cubic-bezier(0.76, 0, 0.24, 1);
 }
 
-#preloader.preloader--loaded {
+/* Dismissal is driven by the root class the bootstrap script sets, so it does
+   not depend on the module bundle running. The legacy class is kept as a
+   second, independent path to the same state. */
+html.is-loaded #preloader,
+html.js #preloader.preloader--loaded {
 	opacity: 0;
 	transform: translateY(-100%);
 	pointer-events: none;

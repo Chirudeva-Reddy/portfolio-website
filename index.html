@@ -18,8 +18,38 @@
 	<!-- Favicon -->
 	<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%23003734'/><text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' fill='%23cbfffc' font-family='sans-serif' font-size='46' font-weight='bold'>CR</text></svg>">
 
+	<!-- Progressive-enhancement bootstrap. Deliberately a classic inline script
+	     with no imports: it must run even if the module bundle 404s, throws, or
+	     is blocked, so the loader can never outlive the page. -->
+	<script>
+		(function () {
+			var root = document.documentElement;
+			root.classList.remove('no-js');
+			root.classList.add('js');
+
+			function dismissLoader() {
+				root.classList.add('is-loaded');
+			}
+
+			// Normal path: dismiss shortly after the page finishes loading.
+			window.addEventListener('load', function () {
+				window.setTimeout(dismissLoader, 250);
+			});
+			// Failsafe: dismiss regardless of what the module graph does.
+			window.setTimeout(dismissLoader, 3000);
+		})();
+	</script>
+
 	<!-- Stylesheet -->
 	<link rel="stylesheet" href="/dist/app.css">
+
+	<noscript>
+		<style>
+			/* Belt and braces: even if the bootstrap script is blocked rather
+			   than absent, the overlay must not cover the page. */
+			#preloader { display: none !important; }
+		</style>
+	</noscript>
 
 	<!-- Font Awesome Icons -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -35,8 +65,10 @@
 		<div class="cursor-label"></div>
 	</div>
 
-	<!-- Monogram Terminal Preloader -->
-	<div id="preloader" role="progressbar" aria-label="Loading Terminal Interface" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+	<!-- Branded entrance overlay. Purely decorative: it is hidden unless JS is
+	     running, it never reports fake progress, and it is dismissed by the
+	     bootstrap script above rather than by the module bundle. -->
+	<div id="preloader" aria-hidden="true">
 		<div class="preloader__content">
 			<div class="preloader__logo-wrap">
 				<svg width="44" height="44" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -48,9 +80,8 @@
 			</div>
 			<div class="preloader__subtitle">CHIRUDEVA REDDY // RESEARCH SCHOLAR &amp; SDE</div>
 			<div class="preloader__bar-container">
-				<div class="preloader__bar" id="preloader-bar"></div>
+				<div class="preloader__bar"></div>
 			</div>
-			<div class="preloader__counter" id="preloader-counter">0%</div>
 		</div>
 	</div>
 

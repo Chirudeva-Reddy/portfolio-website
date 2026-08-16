@@ -240,7 +240,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		requestAnimationFrame(renderCursor);
 	};
 
-	if (motionEnabled) {
+	if (motionEnabled && cursorDot && cursorRing) {
+		// Only now is it safe to hide the native pointer.
+		document.documentElement.classList.add('js-cursor');
+
 		window.addEventListener('pointermove', (e) => {
 			targetMouseX = e.clientX;
 			targetMouseY = e.clientY;
@@ -274,42 +277,69 @@ document.addEventListener('DOMContentLoaded', () => {
 	// ==========================================================================
 	// 4. Preloader Terminal Counter & Entrance Stagger
 	// ==========================================================================
+	// The overlay is dismissed by the inline bootstrap script in index.html
+	// (root class `is-loaded`), which runs even if this bundle never does.
+	// All this module adds is the hero entrance once the overlay has cleared.
 	const preloader = document.getElementById('preloader');
-	const preloaderBar = document.getElementById('preloader-bar');
-	const preloaderCounter = document.getElementById('preloader-counter');
 
-	if (preloader && preloaderBar && preloaderCounter && !prefersReducedMotion) {
-		let count = 0;
-		const timer = setInterval(() => {
-			count += Math.floor(Math.random() * 8) + 4;
-			if (count >= 100) {
-				count = 100;
-				clearInterval(timer);
-				preloaderBar.style.transform = 'scaleX(1)';
-				preloaderCounter.textContent = '100%';
+	if (preloader && !prefersReducedMotion) {
+		const runHeroEntrance = () => {
+			ScrollTrigger.refresh();
 
-				setTimeout(() => {
-					preloader.classList.add('preloader--loaded');
-					ScrollTrigger.refresh();
-
-					// Hero Entrance Animation Stagger
-					if (motionEnabled) {
-						gsap.from('.hero-eyebrow', { y: 20, opacity: 0, duration: 0.6, ease: 'power2.out' });
-						gsap.from('.hero-title', { y: 32, opacity: 0, duration: 0.8, delay: 0.15, ease: 'power3.out' });
-						gsap.from('.hero-subtext', { y: 24, opacity: 0, duration: 0.7, delay: 0.3, ease: 'power2.out' });
-						gsap.from('.hero-actions', { scale: 0.95, opacity: 0, duration: 0.6, delay: 0.45, ease: 'back.out(1.5)' });
-						gsap.from('.hero-status-pill', { y: 16, opacity: 0, duration: 0.6, delay: 0.55, ease: 'power2.out' });
-					}
-				}, 200);
-			} else {
-				preloaderBar.style.transform = `scaleX(${count / 100})`;
-				preloaderCounter.textContent = `${count}%`;
+			if (motionEnabled) {
+				gsap.from('.hero-eyebrow', { y: 20, opacity: 0, duration: 0.6, ease: 'power2.out' });
+				gsap.from('.hero-title', { y: 32, opacity: 0, duration: 0.8, delay: 0.15, ease: 'power3.out' });
+				gsap.from('.hero-subtext', { y: 24, opacity: 0, duration: 0.7, delay: 0.3, ease: 'power2.out' });
+				gsap.from('.hero-actions', { scale: 0.95, opacity: 0, duration: 0.6, delay: 0.45, ease: 'back.out(1.5)' });
+				gsap.from('.hero-status-pill', { y: 16, opacity: 0, duration: 0.6, delay: 0.55, ease: 'power2.out' });
 			}
-		}, 25);
+		};
+
+		if (document.documentElement.classList.contains('is-loaded')) {
+			runHeroEntrance();
+		} else {
+			window.addEventListener('load', () => window.setTimeout(runHeroEntrance, 300), { once: true });
+		}
 	} else if (preloader) {
 		preloader.classList.add('preloader--loaded');
 		ScrollTrigger.refresh();
 	}
+
+	// Late-loading webfonts change element heights, which is the usual reason a
+	// ScrollTrigger start position ends up measured against a stale layout.
+	if (document.fonts && document.fonts.ready) {
+		document.fonts.ready.then(() => ScrollTrigger.refresh());
+	}
+
+	// Anti-stranding guard. Scroll reveals set opacity to 0 up front, so any
+	// failure to fire leaves content permanently invisible. If an element has
+	// scrolled into view and is still fully transparent, drop the inline styles
+	// so the content wins over the animation.
+	const revealTargets = document.querySelectorAll(
+		'.bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .matrix-card, .project-item-card, .timeline-card'
+	);
+
+	let guardScheduled = false;
+	const unstrandVisibleContent = () => {
+		guardScheduled = false;
+		revealTargets.forEach((el) => {
+			const rect = el.getBoundingClientRect();
+			const hasEnteredViewport = rect.top < window.innerHeight && rect.bottom > 0;
+			if (hasEnteredViewport && Number(getComputedStyle(el).opacity) === 0) {
+				gsap.set(el, { clearProps: 'all' });
+			}
+		});
+	};
+
+	const scheduleGuard = () => {
+		if (guardScheduled) return;
+		guardScheduled = true;
+		requestAnimationFrame(unstrandVisibleContent);
+	};
+
+	window.addEventListener('scroll', scheduleGuard, { passive: true });
+	window.addEventListener('resize', scheduleGuard, { passive: true });
+	window.addEventListener('load', () => window.setTimeout(unstrandVisibleContent, 1200), { once: true });
 
 	// ==========================================================================
 	// 5. Navigation Smooth Anchors & ScrollSpy
@@ -396,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					scrollTrigger: {
 						trigger: '.bento-metrics-grid',
 						start: 'top 85%',
-						toggleActions: 'play none none reverse'
+						toggleActions: 'play none none none'
 					}
 				}
 			);
@@ -417,7 +447,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					scrollTrigger: {
 						trigger: '.matrix-grid',
 						start: 'top 85%',
-						toggleActions: 'play none none reverse'
+						toggleActions: 'play none none none'
 					}
 				}
 			);
@@ -445,7 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					scrollTrigger: {
 						trigger: card,
 						start: 'top 88%',
-						toggleActions: 'play none none reverse'
+						toggleActions: 'play none none none'
 					}
 				}
 			);
@@ -465,7 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
 					scrollTrigger: {
 						trigger: card,
 						start: 'top 85%',
-						toggleActions: 'play none none reverse'
+						toggleActions: 'play none none none'
 					}
 				}
 			);
