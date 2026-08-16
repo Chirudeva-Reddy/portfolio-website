@@ -342,9 +342,84 @@ document.addEventListener('DOMContentLoaded', () => {
 	window.addEventListener('load', () => window.setTimeout(unstrandVisibleContent, 1200), { once: true });
 
 	// ==========================================================================
+	// 4b. Mobile Navigation Panel
+	// ==========================================================================
+	const menuToggle = document.getElementById('menu-toggle');
+	const mobileMenu = document.getElementById('mobile-menu');
+
+	const closeMobileMenu = ({ restoreFocus = true } = {}) => {
+		if (!menuToggle || !mobileMenu || menuToggle.getAttribute('aria-expanded') !== 'true') return;
+
+		menuToggle.setAttribute('aria-expanded', 'false');
+		menuToggle.setAttribute('aria-label', 'Open navigation menu');
+		mobileMenu.classList.remove('is-open');
+		document.body.classList.remove('menu-open');
+
+		// Wait for the fade-out before removing it from the a11y tree.
+		window.setTimeout(() => {
+			if (menuToggle.getAttribute('aria-expanded') !== 'true') mobileMenu.hidden = true;
+		}, 280);
+
+		if (restoreFocus) menuToggle.focus();
+	};
+
+	const openMobileMenu = () => {
+		if (!menuToggle || !mobileMenu) return;
+
+		mobileMenu.hidden = false;
+		// Force a reflow so the opening transition actually runs.
+		void mobileMenu.offsetWidth;
+		menuToggle.setAttribute('aria-expanded', 'true');
+		menuToggle.setAttribute('aria-label', 'Close navigation menu');
+		mobileMenu.classList.add('is-open');
+		document.body.classList.add('menu-open');
+	};
+
+	if (menuToggle && mobileMenu) {
+		menuToggle.addEventListener('click', () => {
+			const isOpen = menuToggle.getAttribute('aria-expanded') === 'true';
+			if (isOpen) closeMobileMenu();
+			else openMobileMenu();
+		});
+
+		// Any navigation choice closes the panel.
+		mobileMenu.querySelectorAll('a[href]').forEach((link) => {
+			link.addEventListener('click', () => closeMobileMenu({ restoreFocus: false }));
+		});
+
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape') closeMobileMenu();
+		});
+
+		// Keep focus inside the panel while it is open.
+		mobileMenu.addEventListener('keydown', (event) => {
+			if (event.key !== 'Tab') return;
+			const focusable = [menuToggle, ...mobileMenu.querySelectorAll('a[href], button')];
+			const first = focusable[0];
+			const last = focusable[focusable.length - 1];
+
+			if (event.shiftKey && document.activeElement === first) {
+				event.preventDefault();
+				last.focus();
+			} else if (!event.shiftKey && document.activeElement === last) {
+				event.preventDefault();
+				first.focus();
+			}
+		});
+
+		// Returning to a desktop width must not strand an open overlay.
+		window.matchMedia('(min-width: 769px)').addEventListener('change', (event) => {
+			if (event.matches) closeMobileMenu({ restoreFocus: false });
+		});
+	}
+
+	// ==========================================================================
 	// 5. Navigation Smooth Anchors & ScrollSpy
 	// ==========================================================================
-	const navLinks = document.querySelectorAll('.site-header__nav a[href^="#"]');
+	// Every in-page anchor, not just the desktop nav — the brand logo, the
+	// footer discipline links and the mobile panel all need this, because Lenis
+	// suppresses native anchor scrolling.
+	const navLinks = document.querySelectorAll('a[href^="#"]:not([href="#"])');
 	navLinks.forEach((link) => {
 		link.addEventListener('click', (e) => {
 			const targetId = link.getAttribute('href');
@@ -359,6 +434,10 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	});
 
+	// Scroll-spy marks only the two real navigations — not the brand link or the
+	// footer's topic links, which happen to share the same hrefs.
+	const spyLinks = document.querySelectorAll('.site-header__nav a[href^="#"], .mobile-menu__link[href^="#"]');
+
 	if (motionEnabled) {
 		const trackedSections = ['hero', 'metrics', 'research', 'matrix', 'projects', 'experience'];
 		trackedSections.forEach((id) => {
@@ -370,7 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
 				end: 'bottom 45%',
 				onToggle: (self) => {
 					if (self.isActive) {
-						navLinks.forEach((a) => {
+						spyLinks.forEach((a) => {
 							const href = a.getAttribute('href')?.replace('#', '');
 							a.classList.toggle('active', href === id);
 						});
@@ -378,6 +457,19 @@ document.addEventListener('DOMContentLoaded', () => {
 				}
 			});
 		});
+	}
+
+	// Honour a deep link once Lenis owns the scroll position. Native fragment
+	// scrolling does not survive smooth-scroll initialisation.
+	const initialHash = window.location.hash;
+	if (initialHash && initialHash.length > 1) {
+		const target = document.querySelector(initialHash);
+		if (target) {
+			window.setTimeout(() => {
+				if (lenis) lenis.scrollTo(initialHash, { offset: -72, immediate: true });
+				else target.scrollIntoView();
+			}, 100);
+		}
 	}
 
 	// ==========================================================================

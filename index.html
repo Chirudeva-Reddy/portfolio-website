@@ -131,7 +131,52 @@
 				GET IN TOUCH ↗
 			</a>
 		</div>
+
+		<!-- Mobile menu trigger: replaces the nav + actions below 769px -->
+		<button
+			type="button"
+			id="menu-toggle"
+			class="menu-toggle"
+			aria-expanded="false"
+			aria-controls="mobile-menu"
+			aria-label="Open navigation menu"
+			data-cursor-text="Menu">
+			<span class="menu-toggle__bars" aria-hidden="true">
+				<span></span>
+				<span></span>
+			</span>
+			<span class="menu-toggle__text">MENU</span>
+		</button>
 	</header>
+
+	<!-- Mobile navigation panel -->
+	<div id="mobile-menu" class="mobile-menu" hidden>
+		<nav class="mobile-menu__nav" aria-label="Mobile Navigation">
+			<a href="#hero" class="mobile-menu__link">SYSTEM</a>
+			<a href="#metrics" class="mobile-menu__link">METRICS</a>
+			<a href="#research" class="mobile-menu__link">RESEARCH</a>
+			<a href="#matrix" class="mobile-menu__link">MATRIX</a>
+			<a href="#projects" class="mobile-menu__link">PROJECTS</a>
+			<a href="#experience" class="mobile-menu__link">EXPERIENCE</a>
+		</nav>
+
+		<div class="mobile-menu__footer">
+			<a href="mailto:f20230331@dubai.bits-pilani.ac.in" class="btn-aurora mobile-menu__cta">
+				GET IN TOUCH ↗
+			</a>
+			<div class="mobile-menu__socials">
+				<a href="https://github.com/Chirudeva-Reddy" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub Profile">
+					<i class="fa-brands fa-github"></i>
+				</a>
+				<a href="mailto:f20230331@dubai.bits-pilani.ac.in" class="social-link" aria-label="Email Chirudeva">
+					<i class="fa-regular fa-envelope"></i>
+				</a>
+				<a href="tel:+971568747298" class="social-link" aria-label="Call Chirudeva">
+					<i class="fa-solid fa-phone"></i>
+				</a>
+			</div>
+		</div>
+	</div>
 
 	<!-- Centered 3D WebGL Particle Sphere Canvas -->
 	<canvas id="hero-canvas" aria-hidden="true"></canvas>
