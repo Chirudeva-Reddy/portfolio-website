@@ -1132,6 +1132,9 @@ html.js #preloader.preloader--loaded {
 .project-actions-row {
 	display: flex;
 	align-items: center;
+	/* Two controls now live here (open details + repository). Without wrapping
+	   the repository link is pushed off-screen on narrow phones. */
+	flex-wrap: wrap;
 	gap: 12px;
 	margin-top: 6px;
 }
@@ -1991,4 +1994,26 @@ body.error-page {
 
 .error-page__action {
 	margin-top: 28px;
+}
+
+/* Short phones (e.g. 320x568, landscape): compress the menu so the CTA and CV
+   action sit above the fold instead of requiring a scroll inside the panel. */
+@media (max-height: 720px) {
+	.mobile-menu {
+		padding: 20px 24px 24px;
+		gap: 18px;
+	}
+
+	.mobile-menu__link {
+		min-height: 46px;
+		font-size: 14px;
+	}
+
+	.mobile-menu__footer {
+		gap: 14px;
+	}
+
+	.mobile-menu__cta {
+		min-height: 44px;
+	}
 }
