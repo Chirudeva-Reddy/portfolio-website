@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	// 3. Custom Cursor Follower & Mouse Tracking
+	const cursorGlow = motionEnabled ? document.querySelector('.cursor-glow') : null;
 	const cursorDot = motionEnabled ? document.querySelector('.cursor-dot') : null;
 	const cursorRing = motionEnabled ? document.querySelector('.cursor-ring') : null;
 	const cursorLabel = motionEnabled ? document.querySelector('.cursor-label') : null;
@@ -72,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const renderCursor = () => {
 		mouseX += (targetMouseX - mouseX) * 0.1;
 		mouseY += (targetMouseY - mouseY) * 0.1;
+		if (cursorGlow) cursorGlow.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
 		if (cursorDot) cursorDot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
 		if (cursorRing) {
 			const ringX = magneticTarget ? magneticTarget.x : mouseX;
@@ -296,22 +298,45 @@ document.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-	// 7. Immediate preloader exit & initial stagger entrance
+	// 7. Preloader Progress Counter & Initial Stagger Entrance
 	const preloader = document.getElementById('preloader');
+	const preloaderBar = document.getElementById('preloader-bar');
+	const preloaderCounter = document.getElementById('preloader-counter');
 
-	if (preloader) {
+	if (preloader && preloaderBar && preloaderCounter && !prefersReducedMotion) {
+		let count = 0;
+		const interval = setInterval(() => {
+			count += Math.floor(Math.random() * 6) + 3;
+			if (count >= 100) {
+				count = 100;
+				clearInterval(interval);
+				preloaderBar.style.transform = 'scaleX(1)';
+				preloaderCounter.textContent = '100%';
+
+				setTimeout(() => {
+					preloader.classList.add('preloader--loaded');
+					preloader.style.pointerEvents = 'none';
+					ScrollTrigger.refresh();
+
+					// Hero Entrance Stagger
+					if (motionEnabled) {
+						gsap.from('.landing-panel__copy .hero-tag', { y: 20, opacity: 0, duration: 0.6, ease: 'power2.out' });
+						gsap.from('.landing-panel__copy h1', { y: 35, opacity: 0, duration: 0.8, delay: 0.15, ease: 'power3.out' });
+						gsap.from('.slant-italic', { rotate: -6, opacity: 0, duration: 0.8, delay: 0.25, ease: 'back.out(1.7)' });
+						gsap.from('.landing-panel__copy p', { y: 25, opacity: 0, duration: 0.7, delay: 0.3, ease: 'power2.out' });
+						gsap.from('.landing-panel__enter', { scale: 0.9, opacity: 0, duration: 0.6, delay: 0.45, ease: 'back.out(1.5)' });
+						gsap.from('.landing-panel__image', { x: 40, opacity: 0, scale: 0.95, duration: 0.9, delay: 0.2, ease: 'power3.out' });
+					}
+				}, 250);
+			} else {
+				preloaderBar.style.transform = `scaleX(${count / 100})`;
+				preloaderCounter.textContent = `${count}%`;
+			}
+		}, 30);
+	} else if (preloader) {
 		preloader.classList.add('preloader--loaded');
 		preloader.style.pointerEvents = 'none';
 		ScrollTrigger.refresh();
-
-		if (motionEnabled) {
-			gsap.from('.landing-panel__copy .hero-tag', { y: 20, opacity: 0, duration: 0.6, ease: 'power2.out' });
-			gsap.from('.landing-panel__copy h1', { y: 35, opacity: 0, duration: 0.8, delay: 0.15, ease: 'power3.out' });
-			gsap.from('.slant-italic', { rotate: -6, opacity: 0, duration: 0.8, delay: 0.25, ease: 'back.out(1.7)' });
-			gsap.from('.landing-panel__copy p', { y: 25, opacity: 0, duration: 0.7, delay: 0.3, ease: 'power2.out' });
-			gsap.from('.landing-panel__enter', { scale: 0.9, opacity: 0, duration: 0.6, delay: 0.45, ease: 'back.out(1.5)' });
-			gsap.from('.landing-panel__image', { x: 40, opacity: 0, scale: 0.95, duration: 0.9, delay: 0.2, ease: 'power3.out' });
-		}
 	}
 
 	// 8. Header Navigation Link Smooth Scroll & ScrollSpy

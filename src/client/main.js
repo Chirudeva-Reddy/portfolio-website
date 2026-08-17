@@ -84,11 +84,16 @@ document.addEventListener('DOMContentLoaded', () => {
 				return texture;
 			};
 
-			// Generate Bioluminescent Particle Sphere
-			const particleCount = 3600;
+			// Generate Bioluminescent Particles with Multi-Shape Morphological Lifecycle (Sphere -> Ultra-Thick DNA & Deep Particulate Field -> Torus -> Galaxy)
+			const particleCount = 6800;
 			const geometry = new THREE.BufferGeometry();
 			particlePositions = new Float32Array(particleCount * 3);
-			basePositions = new Float32Array(particleCount * 3);
+			const spherePositions = new Float32Array(particleCount * 3);
+			const dnaPositions = new Float32Array(particleCount * 3);
+			const torusPositions = new Float32Array(particleCount * 3);
+			const galaxyPositions = new Float32Array(particleCount * 3);
+			const scatterBurstVectors = new Float32Array(particleCount * 3);
+			const noiseOffsets = new Float32Array(particleCount * 3);
 			const colors = new Float32Array(particleCount * 3);
 
 			const colorPalette = [
@@ -100,31 +105,121 @@ document.addEventListener('DOMContentLoaded', () => {
 				new THREE.Color('#ffffff'), // Platinum White
 			];
 
-			const sphereRadius = 2.8;
+			const sphereRadius = 2.45;
+			const dnaHeight = 14.5; // Spans full vertical screen height with overhead margin
+			const dnaRadius = 3.4; // Wide, dramatic radius across screen
+			const strandThickness = 0.95; // Thick volumetric multi-fiber cylindrical body
+			const numRungs = 34; // Dense horizontal hydrogen cross-linking bridges
+			const torusMajor = 2.9;
+			const torusMinor = 1.15;
 
 			for (let i = 0; i < particleCount; i++) {
 				const i3 = i * 3;
-				
-				// Uniform spherical distribution with subtle radial thickness
-				const u = Math.random();
-				const v = Math.random();
-				const theta = u * 2.0 * Math.PI;
-				const phi = Math.acos(2.0 * v - 1.0);
-				const r = sphereRadius + (Math.random() - 0.5) * 0.4;
 
-				const x = r * Math.sin(phi) * Math.cos(theta);
-				const y = r * Math.sin(phi) * Math.sin(theta);
-				const z = r * Math.cos(phi);
+				// 1. Base Shape: Uniform Fibonacci/Spherical Distribution
+				const uSphere = Math.random();
+				const vSphere = Math.random();
+				const thetaSphere = uSphere * 2.0 * Math.PI;
+				const phiSphere = Math.acos(2.0 * vSphere - 1.0);
+				const rSphere = sphereRadius + (Math.random() - 0.5) * 0.4;
 
-				particlePositions[i3] = x;
-				particlePositions[i3 + 1] = y;
-				particlePositions[i3 + 2] = z;
+				const sx = rSphere * Math.sin(phiSphere) * Math.cos(thetaSphere);
+				const sy = rSphere * Math.sin(phiSphere) * Math.sin(thetaSphere);
+				const sz = rSphere * Math.cos(phiSphere);
 
-				basePositions[i3] = x;
-				basePositions[i3 + 1] = y;
-				basePositions[i3 + 2] = z;
+				spherePositions[i3] = sx;
+				spherePositions[i3 + 1] = sy;
+				spherePositions[i3 + 2] = sz;
 
-				// Color selection based on position & random distribution
+				// Initial positions start at sphere
+				particlePositions[i3] = sx;
+				particlePositions[i3 + 1] = sy;
+				particlePositions[i3 + 2] = sz;
+
+				// 2. Shape 2: Ultra-Thick Volumetric DNA Double Helix + Full-Screen Particulate Cloud
+				if (i < 1904) {
+					// Strand Alpha: Multi-fiber Volumetric Cylindrical Helix (28%)
+					const t = i / 1904;
+					const y = (t - 0.5) * dnaHeight;
+					const angle = y * 1.35;
+					const subFiberPhase = (i % 4) * (Math.PI / 2);
+					const subFiberRadius = 0.28;
+					const psi = Math.random() * Math.PI * 2;
+					const rTube = Math.sqrt(Math.random()) * strandThickness;
+					
+					const offX = (rTube * Math.cos(psi) + subFiberRadius * Math.cos(subFiberPhase));
+					const offZ = (rTube * Math.sin(psi) + subFiberRadius * Math.sin(subFiberPhase));
+
+					dnaPositions[i3] = (dnaRadius + offX) * Math.cos(angle) - offZ * Math.sin(angle);
+					dnaPositions[i3 + 1] = y + (Math.random() - 0.5) * 0.16;
+					dnaPositions[i3 + 2] = (dnaRadius + offX) * Math.sin(angle) + offZ * Math.cos(angle);
+				} else if (i < 3808) {
+					// Strand Beta: Multi-fiber Volumetric Cylindrical Helix with PI phase shift (28%)
+					const t = (i - 1904) / 1904;
+					const y = (t - 0.5) * dnaHeight;
+					const angle = y * 1.35 + Math.PI;
+					const subFiberPhase = (i % 4) * (Math.PI / 2);
+					const subFiberRadius = 0.28;
+					const psi = Math.random() * Math.PI * 2;
+					const rTube = Math.sqrt(Math.random()) * strandThickness;
+
+					const offX = (rTube * Math.cos(psi) + subFiberRadius * Math.cos(subFiberPhase));
+					const offZ = (rTube * Math.sin(psi) + subFiberRadius * Math.sin(subFiberPhase));
+
+					dnaPositions[i3] = (dnaRadius + offX) * Math.cos(angle) - offZ * Math.sin(angle);
+					dnaPositions[i3 + 1] = y + (Math.random() - 0.5) * 0.16;
+					dnaPositions[i3 + 2] = (dnaRadius + offX) * Math.sin(angle) + offZ * Math.cos(angle);
+				} else if (i < 5304) {
+					// Hydrogen Base Pair Bridges: Thick Horizontal Connecting Rungs (22%)
+					const rungIdx = Math.floor(((i - 3808) / 1496) * numRungs);
+					const yRung = ((rungIdx / (numRungs - 1)) - 0.5) * (dnaHeight * 0.94);
+					const angle = yRung * 1.35;
+					const alpha = (Math.random() * 2.0 - 1.0) * 0.96;
+					const rungJitterX = (Math.random() - 0.5) * 0.32;
+					const rungJitterZ = (Math.random() - 0.5) * 0.32;
+					const rungJitterY = (Math.random() - 0.5) * 0.20;
+
+					dnaPositions[i3] = alpha * dnaRadius * Math.cos(angle) + rungJitterX;
+					dnaPositions[i3 + 1] = yRung + rungJitterY;
+					dnaPositions[i3 + 2] = alpha * dnaRadius * Math.sin(angle) + rungJitterZ;
+				} else {
+					// Full-Screen Atmospheric DNA Particulate Cloud / High-Volume Molecular Dust (22%)
+					const yCloud = (Math.random() - 0.5) * (dnaHeight * 1.25);
+					const rCloud = dnaRadius + 0.6 + Math.pow(Math.random(), 0.7) * 7.5;
+					const angleCloud = yCloud * 1.35 + (Math.random() - 0.5) * 3.4;
+
+					dnaPositions[i3] = rCloud * Math.cos(angleCloud) + (Math.random() - 0.5) * 2.8;
+					dnaPositions[i3 + 1] = yCloud + (Math.random() - 0.5) * 1.4;
+					dnaPositions[i3 + 2] = rCloud * Math.sin(angleCloud) + (Math.random() - 0.5) * 3.6;
+				}
+
+				// 3. Shape 3: Cybernetic Neural Torus Ring (Matrix Mode)
+				const uTorus = Math.random() * Math.PI * 2;
+				const vTorus = Math.random() * Math.PI * 2;
+				torusPositions[i3] = (torusMajor + torusMinor * Math.cos(vTorus)) * Math.cos(uTorus);
+				torusPositions[i3 + 1] = torusMinor * Math.sin(vTorus) + (Math.random() - 0.5) * 0.22;
+				torusPositions[i3 + 2] = (torusMajor + torusMinor * Math.cos(vTorus)) * Math.sin(uTorus);
+
+				// 4. Shape 4: Cosmic Spiral Galaxy Field
+				const uGal = Math.random();
+				const rGal = 0.6 + 6.4 * Math.pow(uGal, 0.75);
+				const armOffset = (i % 2 === 0) ? 0 : Math.PI;
+				const thetaGal = rGal * 1.4 + armOffset + (Math.random() - 0.5) * 0.45;
+				galaxyPositions[i3] = rGal * Math.cos(thetaGal);
+				galaxyPositions[i3 + 1] = (Math.random() - 0.5) * (0.8 + rGal * 0.25);
+				galaxyPositions[i3 + 2] = rGal * Math.sin(thetaGal);
+
+				// Volumetric Scatter Burst Vectors (for explosive 3D volumetric dispersion)
+				scatterBurstVectors[i3] = (Math.random() - 0.5) * 14.0;
+				scatterBurstVectors[i3 + 1] = (Math.random() - 0.5) * 12.0;
+				scatterBurstVectors[i3 + 2] = (Math.random() - 0.5) * 10.0;
+
+				// Noise & Per-Particle Phase Offsets
+				noiseOffsets[i3] = Math.random() * Math.PI * 2;
+				noiseOffsets[i3 + 1] = Math.random() * Math.PI * 2;
+				noiseOffsets[i3 + 2] = Math.random() * Math.PI * 2;
+
+				// Color assignment
 				const chosenColor = colorPalette[Math.floor(Math.random() * colorPalette.length)];
 				colors[i3] = chosenColor.r;
 				colors[i3 + 1] = chosenColor.g;
@@ -135,11 +230,11 @@ document.addEventListener('DOMContentLoaded', () => {
 			geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
 			const material = new THREE.PointsMaterial({
-				size: 0.085,
+				size: 0.044, // Refined, smaller, crisp high-density bioluminescent particles
 				vertexColors: true,
 				map: createGlowTexture(),
 				transparent: true,
-				opacity: 0.9,
+				opacity: 0.80,
 				blending: THREE.AdditiveBlending,
 				depthWrite: false,
 			});
@@ -166,76 +261,162 @@ document.addEventListener('DOMContentLoaded', () => {
 				threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 			});
 
-			// Render Loop with Organic Wave Perturbation
-			// THREE.Clock is deprecated; elapsed seconds is all this loop needs.
+			// Multi-Stage Interactive Scroll Render Loop
 			const startedAt = performance.now();
-
-			// The sphere is a hero decoration, but the loop used to run for the
-			// entire 6000px scroll — 3600 CPU-side position updates per frame
-			// while the user reads the footer. Suspend it when the hero is gone.
-			let heroInView = true;
+			let smoothScrollProgress = 0;
+			let isSleeping = false;
 			let rafId = null;
 
-			const heroSection = document.getElementById('hero');
-			if (heroSection && 'IntersectionObserver' in window) {
-				new IntersectionObserver(
-					(entries) => {
-						entries.forEach((entry) => {
-							if (entry.isIntersecting === heroInView) return;
-							heroInView = entry.isIntersecting;
-							if (heroInView && rafId === null) {
-								animate3D();
-							}
-						});
-					},
-					{ rootMargin: '120px' }
-				).observe(heroSection);
+			const updateScrollProgress = () => {
+				const scrollY = window.scrollY || window.pageYOffset || 0;
+				const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+				const targetProgress = Math.min(1, Math.max(0, scrollY / maxScroll));
+				smoothScrollProgress += (targetProgress - smoothScrollProgress) * 0.08;
+
+				if (isSleeping && targetProgress < 0.88) {
+					isSleeping = false;
+					if (rafId === null) animate3D();
+				}
+			};
+
+			window.addEventListener('scroll', updateScrollProgress, { passive: true });
+			if (lenis) {
+				lenis.on('scroll', updateScrollProgress);
 			}
 
-			// Browsers already throttle rAF in background tabs, but this also
-			// releases the GPU when the tab is hidden for a long time.
+			// Background tab throttling to release GPU
 			document.addEventListener('visibilitychange', () => {
 				if (document.hidden) {
 					if (rafId !== null) cancelAnimationFrame(rafId);
 					rafId = null;
-				} else if (heroInView && rafId === null) {
+				} else if (!isSleeping && rafId === null) {
 					animate3D();
 				}
 			});
 
 			const animate3D = () => {
-				if (!heroInView || document.hidden) {
+				if (document.hidden) {
 					rafId = null;
 					return;
 				}
+
+				updateScrollProgress();
+
+				// If scrolled into the footer and opacity reaches 0, sleep the render loop
+				if (smoothScrollProgress >= 0.88) {
+					if (particleSystem) {
+						material.opacity = 0;
+						threeRenderer.render(threeScene, threeCamera);
+					}
+					isSleeping = true;
+					rafId = null;
+					return;
+				}
+
 				rafId = requestAnimationFrame(animate3D);
 				const elapsedTime = (performance.now() - startedAt) / 1000;
 
 				if (particleSystem) {
-					// Inertial rotation
-					particleSystem.rotation.y += 0.0025;
+					// 1. Inertial Parallax & Continuous 3D Rotation
+					particleSystem.rotation.y += 0.002 + (smoothScrollProgress * 0.003);
 					particleSystem.rotation.x += (targetRotX - particleSystem.rotation.x) * 0.05;
 					particleSystem.rotation.y += (targetRotY - particleSystem.rotation.y) * 0.05;
 
-					// Gentle wave displacement
+					// 2. Multi-Stage Morphing Weights & Volumetric Scattering Pulse
+					let wSphere = 0;
+					let wDna = 0;
+					let wTorus = 0;
+					let wGalaxy = 0;
+					let scatterWeight = 0;
+
+					if (smoothScrollProgress < 0.12) {
+						// Stage 1: Sphere in Hero
+						wSphere = 1;
+					} else if (smoothScrollProgress < 0.28) {
+						// Stage 1 -> 2: High-Volume Scatter & Morph into Thick DNA Double Helix
+						const t = (smoothScrollProgress - 0.12) / 0.16;
+						const smoothT = t * t * (3 - 2 * t);
+						wSphere = 1 - smoothT;
+						wDna = smoothT;
+						scatterWeight = Math.sin(t * Math.PI) * 0.35; // Volumetric burst during morph
+					} else if (smoothScrollProgress < 0.44) {
+						// Stage 2: Rotating Ultra-Thick DNA Double Helix in Research
+						wDna = 1;
+					} else if (smoothScrollProgress < 0.58) {
+						// Stage 2 -> 3: DNA Unravels into Neural Torus
+						const t = (smoothScrollProgress - 0.44) / 0.14;
+						const smoothT = t * t * (3 - 2 * t);
+						wDna = 1 - smoothT;
+						wTorus = smoothT;
+						scatterWeight = Math.sin(t * Math.PI) * 0.25;
+					} else if (smoothScrollProgress < 0.74) {
+						// Stage 3: Swirling Neural Torus in Matrix
+						wTorus = 1;
+					} else if (smoothScrollProgress < 0.88) {
+						// Stage 3 -> 4: Torus expands into Cosmic Galaxy
+						const t = (smoothScrollProgress - 0.74) / 0.14;
+						const smoothT = t * t * (3 - 2 * t);
+						wTorus = 1 - smoothT;
+						wGalaxy = smoothT;
+						scatterWeight = Math.sin(t * Math.PI) * 0.30;
+					} else {
+						wGalaxy = 1;
+					}
+
+					// Opacity Curve: 0.80 in hero -> 0.70 in DNA -> 0.48 in matrix -> 0.0 near footer
+					let currentOpacity = 0.80;
+					if (smoothScrollProgress > 0.12 && smoothScrollProgress <= 0.45) {
+						currentOpacity = 0.80 - (smoothScrollProgress - 0.12) * 0.30;
+					} else if (smoothScrollProgress > 0.45 && smoothScrollProgress <= 0.75) {
+						currentOpacity = 0.70 - (smoothScrollProgress - 0.45) * 0.73;
+					} else if (smoothScrollProgress > 0.75) {
+						currentOpacity = Math.max(0, 0.48 - (smoothScrollProgress - 0.75) * 3.69);
+					}
+
+					material.opacity = currentOpacity;
+					material.size = 0.044 - (smoothScrollProgress * 0.012);
+
+					// Dynamic Particle Position Calculation
 					const positions = particleSystem.geometry.attributes.position.array;
 					for (let i = 0; i < particleCount; i++) {
 						const i3 = i * 3;
-						const bx = basePositions[i3];
-						const by = basePositions[i3 + 1];
-						const bz = basePositions[i3 + 2];
 
-						const wave = Math.sin(elapsedTime * 1.4 + bx * 1.1 + by * 1.3) * 0.06;
-						positions[i3] = bx + (bx / sphereRadius) * wave;
-						positions[i3 + 1] = by + (by / sphereRadius) * wave;
-						positions[i3 + 2] = bz + (bz / sphereRadius) * wave;
+						const sx = spherePositions[i3];
+						const sy = spherePositions[i3 + 1];
+						const sz = spherePositions[i3 + 2];
+
+						const dnx = dnaPositions[i3];
+						const dny = dnaPositions[i3 + 1];
+						const dnz = dnaPositions[i3 + 2];
+
+						const tx = torusPositions[i3];
+						const ty = torusPositions[i3 + 1];
+						const tz = torusPositions[i3 + 2];
+
+						const gx = galaxyPositions[i3];
+						const gy = galaxyPositions[i3 + 1];
+						const gz = galaxyPositions[i3 + 2];
+
+						const bx = scatterBurstVectors[i3];
+						const by = scatterBurstVectors[i3 + 1];
+						const bz = scatterBurstVectors[i3 + 2];
+
+						// Blended target coordinate with Volumetric Scatter Burst
+						const px = (wSphere * sx + wDna * dnx + wTorus * tx + wGalaxy * gx) + (bx * scatterWeight);
+						const py = (wSphere * sy + wDna * dny + wTorus * ty + wGalaxy * gy) + (by * scatterWeight);
+						const pz = (wSphere * sz + wDna * dnz + wTorus * tz + wGalaxy * gz) + (bz * scatterWeight);
+
+						// Organic fluid wave perturbation
+						const wave = Math.sin(elapsedTime * 1.35 + px * 0.85 + py * 0.95 + noiseOffsets[i3]) * 0.045;
+
+						positions[i3] = px + wave * Math.cos(noiseOffsets[i3]);
+						positions[i3 + 1] = py + wave * Math.sin(noiseOffsets[i3]);
+						positions[i3 + 2] = pz + wave * Math.cos(noiseOffsets[i3] * 0.5);
 					}
 					particleSystem.geometry.attributes.position.needsUpdate = true;
 
-					// Scroll-driven position drift into the abyss
-					const scrollY = window.scrollY || window.pageYOffset || 0;
-					particleSystem.position.y = -scrollY * 0.0016;
-					particleSystem.position.z = Math.sin(scrollY * 0.001) * 0.4;
+					// Subtle Y parallax drift
+					particleSystem.position.y = -smoothScrollProgress * 1.4;
 				}
 
 				threeRenderer.render(threeScene, threeCamera);
@@ -289,7 +470,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		requestAnimationFrame(renderCursor);
 
-		const interactiveEls = document.querySelectorAll('a, button, [data-magnetic="true"], [data-cursor-text], .project-item-card, .matrix-card, .timeline-card, .bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .surface-card, .project-modal__backdrop, .project-modal__close');
+		const interactiveEls = document.querySelectorAll('a, button, [data-magnetic="true"], [data-cursor-text], .project-item-card, .matrix-card, .timeline-card, .bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .surface-card, .about-portrait-card, .project-modal__backdrop, .project-modal__close');
 		interactiveEls.forEach((el) => {
 			el.addEventListener('pointerenter', () => {
 				document.body.classList.add('cursor-hover');
@@ -325,18 +506,25 @@ document.addEventListener('DOMContentLoaded', () => {
 			ScrollTrigger.refresh();
 
 			if (motionEnabled) {
-				gsap.from('.hero-eyebrow', { y: 20, opacity: 0, duration: 0.6, ease: 'power2.out' });
-				gsap.from('.hero-title', { y: 32, opacity: 0, duration: 0.8, delay: 0.15, ease: 'power3.out' });
-				gsap.from('.hero-subtext', { y: 24, opacity: 0, duration: 0.7, delay: 0.3, ease: 'power2.out' });
-				gsap.from('.hero-actions', { scale: 0.95, opacity: 0, duration: 0.6, delay: 0.45, ease: 'back.out(1.5)' });
-				gsap.from('.hero-status-pill', { y: 16, opacity: 0, duration: 0.6, delay: 0.55, ease: 'power2.out' });
+				gsap.fromTo('.hero-eyebrow', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out', clearProps: 'all' });
+				gsap.fromTo('.hero-title', { y: 32, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, delay: 0.15, ease: 'power3.out', clearProps: 'all' });
+				gsap.fromTo('.hero-subtext', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, delay: 0.25, ease: 'power2.out', clearProps: 'all' });
+				gsap.fromTo('.hero-actions', { scale: 0.95, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, delay: 0.35, ease: 'power2.out', clearProps: 'all' });
+				gsap.fromTo('.hero-status-pill', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, delay: 0.45, ease: 'power2.out', clearProps: 'all' });
 			}
 		};
 
 		if (document.documentElement.classList.contains('is-loaded')) {
 			runHeroEntrance();
 		} else {
-			window.addEventListener('load', () => window.setTimeout(runHeroEntrance, 300), { once: true });
+			const observer = new MutationObserver(() => {
+				if (document.documentElement.classList.contains('is-loaded')) {
+					observer.disconnect();
+					window.setTimeout(runHeroEntrance, 120);
+				}
+			});
+			observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+			window.addEventListener('load', () => window.setTimeout(runHeroEntrance, 1500), { once: true });
 		}
 	} else if (preloader) {
 		preloader.classList.add('preloader--loaded');
@@ -354,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// scrolled into view and is still fully transparent, drop the inline styles
 	// so the content wins over the animation.
 	const revealTargets = document.querySelectorAll(
-		'.bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .matrix-card, .project-item-card, .timeline-card'
+		'.bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .matrix-card, .project-item-card, .timeline-card, .about-portrait-card'
 	);
 
 	let guardScheduled = false;
@@ -465,7 +653,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			e.preventDefault();
 
 			if (lenis) {
-				lenis.scrollTo(targetId, { duration: 1.2, offset: -72 });
+				lenis.scrollTo(targetId, { duration: 1.2, offset: -80 });
 			} else {
 				document.querySelector(targetId)?.scrollIntoView({ behavior: 'smooth' });
 			}
@@ -504,7 +692,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const target = document.querySelector(initialHash);
 		if (target) {
 			window.setTimeout(() => {
-				if (lenis) lenis.scrollTo(initialHash, { offset: -72, immediate: true });
+				if (lenis) lenis.scrollTo(initialHash, { offset: -80, immediate: true });
 				else target.scrollIntoView();
 			}, 100);
 		}
@@ -514,7 +702,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// 6. Interactive 3D Perspective Card Tilt
 	// ==========================================================================
 	if (motionEnabled) {
-		const tiltCards = document.querySelectorAll('.matrix-card, .timeline-card, .project-item-card, .surface-card, .bento-box-tall-highlight, .bento-box-wide, .bento-box-small');
+		const tiltCards = document.querySelectorAll('.matrix-card, .timeline-card, .project-item-card, .surface-card, .bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .about-portrait-frame');
 		tiltCards.forEach((card) => {
 			card.addEventListener('mousemove', (e) => {
 				const rect = card.getBoundingClientRect();
@@ -724,15 +912,29 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
 	// ==========================================================================
-	// 9. Velocity-Responsive Kinetic Footer Marquee
+	// 9. Velocity-Responsive Kinetic Footer Marquee (Smooth Flywheel)
 	// ==========================================================================
 	if (lenis && motionEnabled) {
 		const marqueeTrack = document.querySelector('.marquee-track');
-		lenis.on('scroll', (e) => {
-			const speed = Math.min(4, Math.max(0.5, 1 + Math.abs(e.velocity) * 0.04));
-			if (marqueeTrack) {
-				marqueeTrack.style.animationDuration = `${32 / speed}s`;
-			}
-		});
+		if (marqueeTrack) {
+			let targetSpeedMultiplier = 1;
+			let currentSpeedMultiplier = 1;
+
+			lenis.on('scroll', (e) => {
+				// Damped velocity coupling: never exceed 1.45x baseline speed
+				targetSpeedMultiplier = 1 + Math.min(0.45, Math.abs(e.velocity) * 0.005);
+			});
+
+			const updateMarqueeSpeed = () => {
+				// Smooth exponential lerp towards target, with gradual decay back to 1.0
+				currentSpeedMultiplier += (targetSpeedMultiplier - currentSpeedMultiplier) * 0.06;
+				targetSpeedMultiplier += (1.0 - targetSpeedMultiplier) * 0.03;
+
+				marqueeTrack.style.animationDuration = `${48 / Math.max(0.6, currentSpeedMultiplier)}s`;
+				requestAnimationFrame(updateMarqueeSpeed);
+			};
+
+			requestAnimationFrame(updateMarqueeSpeed);
+		}
 	}
 });

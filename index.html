@@ -365,141 +365,231 @@
 						</div>
 					</div>
 				</section>
-
-				<!-- ==========================================================================
-				     SECTION 4: TECHNICAL MATRIX & COMPETENCIES (Bento Grid)
+								<!-- ==========================================================================
+				     SECTION 4: TECHNICAL MATRIX & COMPETENCIES (Orbital Command Center Layout)
 				     ========================================================================== -->
-				<section id="matrix" class="section-container" aria-label="Core Competencies and Technical Stack">
-					<span class="section-label">CORE COMPETENCIES &amp; SKILLS</span>
-					<h2 class="section-heading u-mt-8">Technical Matrix &amp; Stack</h2>
+				<section id="matrix" class="section-container matrix-section-wrap" aria-label="Core Competencies and Technical Stack">
+					
+					<!-- Header matching user reference image -->
+					<div class="matrix-header-center">
+						<div class="matrix-eyebrow-pill">
+							<span class="matrix-eyebrow-node" aria-hidden="true"></span>
+							<span>TECHNICAL MATRIX</span>
+							<span class="matrix-eyebrow-node" aria-hidden="true"></span>
+						</div>
+						<h2 class="matrix-main-title">TECH STACK &amp; EXPERTISE</h2>
+						<p class="matrix-subtitle">
+							The technologies and tools I use to build, train, analyze, and ship intelligent systems at scale.
+						</p>
+					</div>
 
-					<div class="matrix-grid">
-						<!-- Bento Card 1: Programming Languages -->
-						<div class="matrix-card" data-cursor-text="Languages">
-							<div class="matrix-card__top">
+					<!-- Main Orbital Layout -->
+					<div class="matrix-orbital-stage">
+						
+						<!-- Left 3 Cards Column -->
+						<div class="matrix-side-col matrix-side-col--left">
+							<!-- Card 1: Core Languages -->
+							<div class="matrix-card" data-cursor-text="Languages">
 								<div class="matrix-icon-badge"><i class="fa-solid fa-code"></i></div>
-								<span class="matrix-card__tag">CORE LANGUAGES</span>
+								<div class="matrix-card__body">
+									<span class="matrix-card__tag">CORE LANGUAGES</span>
+									<h3 class="matrix-card__title">Python &amp; SQL</h3>
+									<p class="matrix-card__desc">
+										Python, SQL, Java, C, C++ and high-performance algorithms.
+									</p>
+								</div>
+								<span class="card-arrow-link" aria-hidden="true">→</span>
 							</div>
-							<div class="matrix-card__body">
-								<h3 class="matrix-card__title">Python &amp; SQL</h3>
-								<p class="matrix-card__desc">
-									Proficient in Python, SQL data querying; familiar with Java, C, C++, and high-performance algorithms.
-								</p>
-							</div>
-						</div>
 
-						<!-- Bento Card 2: Computer Vision -->
-						<div class="matrix-card" data-cursor-text="Vision">
-							<div class="matrix-card__top">
-								<div class="matrix-icon-badge"><i class="fa-solid fa-eye"></i></div>
-								<span class="matrix-card__tag">PERCEPTION &amp; 3D MESH</span>
-							</div>
-							<div class="matrix-card__body">
-								<h3 class="matrix-card__title">Computer Vision &amp; SAM</h3>
-								<p class="matrix-card__desc">
-									OpenCV, YOLOv8, Segment Anything Model (SAM, SAM-2), MediaPipe pose estimation, and 3D mesh extraction.
-								</p>
-							</div>
-						</div>
-
-						<!-- Bento Card 3: Machine Learning -->
-						<div class="matrix-card" data-cursor-text="ML">
-							<div class="matrix-card__top">
-								<div class="matrix-icon-badge"><i class="fa-solid fa-fire-flame-curved"></i></div>
-								<span class="matrix-card__tag">CORE MACHINE LEARNING</span>
-							</div>
-							<div class="matrix-card__body">
-								<h3 class="matrix-card__title">PyTorch &amp; Scikit-Learn</h3>
-								<p class="matrix-card__desc">
-									Custom neural architectures, Transfer Learning, Feature Engineering, Model Evaluation, and CUDA acceleration.
-								</p>
-							</div>
-						</div>
-
-						<!-- Bento Card 4: NLP Engines -->
-						<div class="matrix-card" data-cursor-text="NLP">
-							<div class="matrix-card__top">
+							<!-- Card 2: NLP & Transformers -->
+							<div class="matrix-card" data-cursor-text="NLP">
 								<div class="matrix-icon-badge"><i class="fa-solid fa-comments"></i></div>
-								<span class="matrix-card__tag">NLP &amp; TRANSFORMERS</span>
+								<div class="matrix-card__body">
+									<span class="matrix-card__tag">NLP &amp; TRANSFORMERS</span>
+									<h3 class="matrix-card__title">NLP &amp; Text Clustering</h3>
+									<p class="matrix-card__desc">
+										Transformers, BERT, embeddings, semantic search and clustering.
+									</p>
+								</div>
+								<span class="card-arrow-link" aria-hidden="true">→</span>
 							</div>
-							<div class="matrix-card__body">
-								<h3 class="matrix-card__title">NLP &amp; Text Clustering</h3>
-								<p class="matrix-card__desc">
-									Sentiment extraction, text preprocessing, transformer embeddings, BERT fine-tuning, and semantic clustering.
-								</p>
-							</div>
-						</div>
 
-						<!-- Bento Card 5: Data Science -->
-						<div class="matrix-card" data-cursor-text="Data Science">
-							<div class="matrix-card__top">
-								<div class="matrix-icon-badge"><i class="fa-solid fa-chart-pie"></i></div>
-								<span class="matrix-card__tag">BIG DATA ANALYTICS</span>
-							</div>
-							<div class="matrix-card__body">
-								<h3 class="matrix-card__title">Data Science &amp; Pipelines</h3>
-								<p class="matrix-card__desc">
-									Pandas, NumPy, Matplotlib, exploratory data analysis, tabular data preprocessing, and risk visualization.
-								</p>
-							</div>
-						</div>
-
-						<!-- Bento Card 6: Fullstack & System Design -->
-						<div class="matrix-card" data-cursor-text="Systems">
-							<div class="matrix-card__top">
-								<div class="matrix-icon-badge"><i class="fa-solid fa-network-wired"></i></div>
-								<span class="matrix-card__tag">SYSTEM DESIGN &amp; APIS</span>
-							</div>
-							<div class="matrix-card__body">
-								<h3 class="matrix-card__title">Fullstack &amp; Backend</h3>
-								<p class="matrix-card__desc">
-									FastAPI microservices, full-stack ML apps, POST response validation pipelines, and JSON serialization.
-								</p>
-							</div>
-						</div>
-
-						<!-- Bento Card 7: Cloud & Storage -->
-						<div class="matrix-card" data-cursor-text="Cloud">
-							<div class="matrix-card__top">
+							<!-- Card 3: Cloud Infrastructure -->
+							<div class="matrix-card" data-cursor-text="Cloud">
 								<div class="matrix-icon-badge"><i class="fa-brands fa-aws"></i></div>
-								<span class="matrix-card__tag">CLOUD INFRASTRUCTURE</span>
-							</div>
-							<div class="matrix-card__body">
-								<h3 class="matrix-card__title">AWS S3 &amp; Azure</h3>
-								<p class="matrix-card__desc">
-									AWS S3 storage pipelines, Microsoft Azure cloud services, Docker containerization, and data ingestion.
-								</p>
-							</div>
-						</div>
-
-						<!-- Bento Card 8: Automated Verification & QA -->
-						<div class="matrix-card" data-cursor-text="Testing">
-							<div class="matrix-card__top">
-								<div class="matrix-icon-badge"><i class="fa-solid fa-vial-circle-check"></i></div>
-								<span class="matrix-card__tag">AUTOMATED VERIFICATION</span>
-							</div>
-							<div class="matrix-card__body">
-								<h3 class="matrix-card__title">Playwright &amp; Security</h3>
-								<p class="matrix-card__desc">
-									Chromium automation, consumer simulation, malicious content scanners, test coverage expansion, and CI/CD.
-								</p>
+								<div class="matrix-card__body">
+									<span class="matrix-card__tag">CLOUD INFRASTRUCTURE</span>
+									<h3 class="matrix-card__title">AWS S3 &amp; Azure</h3>
+									<p class="matrix-card__desc">
+										Cloud storage, data pipelines, Docker, and scalable services.
+									</p>
+								</div>
+								<span class="card-arrow-link" aria-hidden="true">→</span>
 							</div>
 						</div>
 
-						<!-- Bento Card 9: BI & Tooling -->
-						<div class="matrix-card" data-cursor-text="Tooling">
-							<div class="matrix-card__top">
+						<!-- Center Column: Orbital Focal Card -->
+						<div class="matrix-center-stage">
+							<!-- Ambient Glowing Orbital Ring Graphic -->
+							<div class="matrix-orbit-ring" aria-hidden="true">
+								<span class="orbit-node node-t"></span>
+								<span class="orbit-node node-r"></span>
+								<span class="orbit-node node-b"></span>
+								<span class="orbit-node node-l"></span>
+								<span class="orbit-node node-tr"></span>
+								<span class="orbit-node node-bl"></span>
+							</div>
+
+							<!-- Featured White / Lavender Focal Card -->
+							<div class="matrix-card--featured" data-cursor-text="Vision">
+								<div class="matrix-featured__header">
+									<span class="matrix-featured__core-badge">CORE FOCUS</span>
+								</div>
+
+								<div class="matrix-featured__icon-container">
+									<div class="matrix-featured__icon-inner">
+										<i class="fa-solid fa-eye"></i>
+									</div>
+								</div>
+
+								<h3 class="matrix-featured__title">Computer Vision &amp; SAM</h3>
+								<p class="matrix-featured__desc">
+									Perception, segmentation, tracking, pose estimation, and 3D reconstruction.
+								</p>
+
+								<div class="matrix-featured__pills">
+									<span class="tech-pill">OpenCV</span>
+									<span class="tech-pill">YOLOv8</span>
+									<span class="tech-pill">SAM 2</span>
+									<span class="tech-pill">MediaPipe</span>
+								</div>
+
+								<div class="matrix-featured__divider"></div>
+
+								<div class="matrix-featured__highlights">
+									<div class="highlight-item">
+										<i class="fa-solid fa-cube"></i>
+										<span>2D / 3D<br>Understanding</span>
+									</div>
+									<div class="highlight-item">
+										<i class="fa-solid fa-bullseye"></i>
+										<span>Real-time<br>Inference</span>
+									</div>
+									<div class="highlight-item">
+										<i class="fa-solid fa-cubes-stacked"></i>
+										<span>3D Mesh<br>Extraction</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Right 3 Cards Column -->
+						<div class="matrix-side-col matrix-side-col--right">
+							<!-- Card 4: Core Machine Learning -->
+							<div class="matrix-card" data-cursor-text="ML">
+								<div class="matrix-icon-badge"><i class="fa-solid fa-fire-flame-curved"></i></div>
+								<div class="matrix-card__body">
+									<span class="matrix-card__tag">CORE MACHINE LEARNING</span>
+									<h3 class="matrix-card__title">PyTorch &amp; Scikit-Learn</h3>
+									<p class="matrix-card__desc">
+										Deep learning, classical ML, model evaluation &amp; optimization.
+									</p>
+								</div>
+								<span class="card-arrow-link" aria-hidden="true">→</span>
+							</div>
+
+							<!-- Card 5: System Design & APIs -->
+							<div class="matrix-card" data-cursor-text="Systems">
+								<div class="matrix-icon-badge"><i class="fa-solid fa-network-wired"></i></div>
+								<div class="matrix-card__body">
+									<span class="matrix-card__tag">SYSTEM DESIGN &amp; APIS</span>
+									<h3 class="matrix-card__title">Fullstack &amp; Backend</h3>
+									<p class="matrix-card__desc">
+										FastAPI, microservices, REST APIs, and production-ready systems.
+									</p>
+								</div>
+								<span class="card-arrow-link" aria-hidden="true">→</span>
+							</div>
+
+							<!-- Card 6: BI & Scientific Tooling -->
+							<div class="matrix-card" data-cursor-text="Tooling">
 								<div class="matrix-icon-badge"><i class="fa-solid fa-chart-line"></i></div>
-								<span class="matrix-card__tag">BI &amp; SCIENTIFIC TOOLING</span>
-							</div>
-							<div class="matrix-card__body">
-								<h3 class="matrix-card__title">PowerBI, Tableau &amp; Git</h3>
-								<p class="matrix-card__desc">
-									PowerBI, Tableau dashboards, LaTeX scientific documentation, Git/GitHub version control, Excel, and SEO/GEO.
-								</p>
+								<div class="matrix-card__body">
+									<span class="matrix-card__tag">BI &amp; SCIENTIFIC TOOLING</span>
+									<h3 class="matrix-card__title">PowerBI, Tableau &amp; Git</h3>
+									<p class="matrix-card__desc">
+										Dashboards, data storytelling, version control, Excel &amp; LaTeX.
+									</p>
+								</div>
+								<span class="card-arrow-link" aria-hidden="true">→</span>
 							</div>
 						</div>
 					</div>
+
+					<!-- Bottom Row: 2 Centered Cards -->
+					<div class="matrix-bottom-row">
+						<!-- Card 7: Data Analytics -->
+						<div class="matrix-card" data-cursor-text="Data Science">
+							<div class="matrix-icon-badge"><i class="fa-solid fa-chart-pie"></i></div>
+							<div class="matrix-card__body">
+								<span class="matrix-card__tag">DATA ANALYTICS</span>
+								<h3 class="matrix-card__title">Data Science &amp; Pipelines</h3>
+								<p class="matrix-card__desc">
+									Pandas, NumPy, Matplotlib, EDA, preprocessing and visualization.
+								</p>
+							</div>
+							<span class="card-arrow-link" aria-hidden="true">→</span>
+						</div>
+
+						<!-- Card 8: Automated Verification -->
+						<div class="matrix-card" data-cursor-text="Testing">
+							<div class="matrix-icon-badge"><i class="fa-solid fa-shield-halved"></i></div>
+							<div class="matrix-card__body">
+								<span class="matrix-card__tag">AUTOMATED VERIFICATION</span>
+								<h3 class="matrix-card__title">Playwright &amp; Security</h3>
+								<p class="matrix-card__desc">
+									End-to-end testing, vulnerability scanning, CI/CD, and automation workflows.
+								</p>
+							</div>
+							<span class="card-arrow-link" aria-hidden="true">→</span>
+						</div>
+					</div>
+
+					<!-- Bottom Capabilities Glass Bar -->
+					<div class="matrix-capabilities-bar">
+						<div class="cap-item">
+							<i class="fa-solid fa-layer-group"></i>
+							<div class="cap-text">
+								<span class="cap-text__strong">End-to-End</span>
+								<span class="cap-text__sub">ML Lifecycle</span>
+							</div>
+						</div>
+						<div class="cap-divider" aria-hidden="true"></div>
+						<div class="cap-item">
+							<i class="fa-solid fa-rocket"></i>
+							<div class="cap-text">
+								<span class="cap-text__strong">From Research</span>
+								<span class="cap-text__sub">To Production</span>
+							</div>
+						</div>
+						<div class="cap-divider" aria-hidden="true"></div>
+						<div class="cap-item">
+							<i class="fa-solid fa-lock"></i>
+							<div class="cap-text">
+								<span class="cap-text__strong">Secure, Scalable</span>
+								<span class="cap-text__sub">&amp; Reliable</span>
+							</div>
+						</div>
+						<div class="cap-divider" aria-hidden="true"></div>
+						<div class="cap-item">
+							<i class="fa-solid fa-chart-column"></i>
+							<div class="cap-text">
+								<span class="cap-text__strong">Data-Driven</span>
+								<span class="cap-text__sub">Decision Making</span>
+							</div>
+						</div>
+					</div>
+
 				</section>
 
 				<!-- ==========================================================================
