@@ -1218,93 +1218,94 @@ html.js #preloader.preloader--loaded {
 	border: 1px solid rgba(1, 38, 36, 0.14);
 	color: var(--color-liquid-abyss);
 	box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
-	position: sticky;
-	top: calc(72px + 24px); /* Header-safe offset */
+	position: relative;
 	align-self: center;
-	z-index: 10;
-	padding: 30px 26px;
+	z-index: 2;
+	padding: 26px 22px;
 	text-align: center;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	width: 100%;
+	box-sizing: border-box;
 	transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
 .matrix-card--featured:hover {
 	border-color: rgba(1, 38, 36, 0.32);
 	box-shadow: 0 22px 48px rgba(0, 0, 0, 0.42);
+	transform: translateY(-2px);
 }
 
 .matrix-featured__header {
-	margin-bottom: 16px;
+	margin-bottom: 12px;
 }
 
 .matrix-featured__core-badge {
 	font-family: var(--font-matter);
-	font-size: 10.5px;
+	font-size: 10px;
 	font-weight: 700;
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
 	color: var(--color-liquid-abyss);
 	background: rgba(1, 38, 36, 0.10);
-	padding: 5px 14px;
+	padding: 4px 12px;
 	border-radius: 999px;
 	border: 1px solid rgba(1, 38, 36, 0.14);
 }
 
 .matrix-featured__icon-container {
-	width: 68px;
-	height: 68px;
-	border-radius: 18px;
+	width: 56px;
+	height: 56px;
+	border-radius: 16px;
 	background: rgba(1, 38, 36, 0.08);
 	border: 1px solid rgba(1, 38, 36, 0.16);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin-bottom: 16px;
+	margin-bottom: 12px;
 	box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.5);
 }
 
 .matrix-featured__icon-inner {
-	font-size: 26px;
+	font-size: 22px;
 	color: var(--color-liquid-abyss);
 }
 
 .matrix-featured__title {
 	font-family: var(--font-matter);
-	font-size: 1.5rem;
+	font-size: 1.35rem;
 	font-weight: 700;
 	letter-spacing: -0.01em;
 	color: var(--color-liquid-abyss);
-	margin: 0 0 10px 0;
+	margin: 0 0 8px 0;
 }
 
 .matrix-featured__desc {
 	font-family: var(--font-matter);
-	font-size: 13.5px;
-	line-height: 1.48;
+	font-size: 12.5px;
+	line-height: 1.45;
 	color: rgba(1, 38, 36, 0.85);
-	margin: 0 0 18px 0;
-	max-width: 320px;
+	margin: 0 0 14px 0;
+	max-width: 300px;
 }
 
 .matrix-featured__pills {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
-	gap: 8px;
-	margin-bottom: 18px;
+	gap: 6px;
+	margin-bottom: 14px;
 }
 
 .tech-pill {
 	font-family: var(--font-matter);
-	font-size: 11.5px;
+	font-size: 11px;
 	font-weight: 600;
 	color: var(--color-liquid-abyss);
 	background: rgba(1, 38, 36, 0.08);
 	border: 1px solid rgba(1, 38, 36, 0.14);
-	padding: 4px 12px;
+	padding: 3px 10px;
 	border-radius: 999px;
 	transition: background 0.2s ease;
 }
@@ -1316,13 +1317,13 @@ html.js #preloader.preloader--loaded {
 .matrix-featured__divider {
 	width: 100%;
 	border-top: 1px dotted rgba(1, 38, 36, 0.28);
-	margin: 2px 0 16px 0;
+	margin: 2px 0 12px 0;
 }
 
 .matrix-featured__highlights {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
-	gap: 12px;
+	gap: 10px;
 	width: 100%;
 }
 
@@ -1330,15 +1331,15 @@ html.js #preloader.preloader--loaded {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 6px;
-	font-size: 11px;
+	gap: 4px;
+	font-size: 10.5px;
 	font-weight: 600;
-	line-height: 1.25;
+	line-height: 1.2;
 	color: var(--color-liquid-abyss);
 }
 
 .highlight-item i {
-	font-size: 16px;
+	font-size: 15px;
 	color: var(--color-liquid-abyss);
 	opacity: 0.85;
 }
