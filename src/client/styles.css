@@ -2435,3 +2435,219 @@ body.error-page {
 		padding: 12px;
 	}
 }
+
+/* ==========================================================================
+   DEPLOYMENT-FRIENDLY MOTION COMPONENTS (Kokonut, Motion & Bklit Inspired)
+   ========================================================================== */
+
+/* 1. Kokonut Radial Spotlight Card System */
+[data-spotlight],
+.spotlight-card {
+	position: relative;
+	--spotlight-x: 50%;
+	--spotlight-y: 50%;
+	--spotlight-opacity: 0;
+	--spotlight-radius: 440px;
+	--spotlight-color: rgba(46, 244, 235, 0.16);
+	--spotlight-border-color: rgba(46, 244, 235, 0.45);
+	isolation: isolate;
+}
+
+[data-spotlight]::before,
+.spotlight-card::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: radial-gradient(
+		var(--spotlight-radius) circle at var(--spotlight-x) var(--spotlight-y),
+		var(--spotlight-color),
+		transparent 80%
+	);
+	opacity: var(--spotlight-opacity);
+	transition: opacity 0.35s ease;
+	pointer-events: none;
+	z-index: 1;
+	mix-blend-mode: screen;
+}
+
+/* Subtle glowing border highlight tracking the cursor */
+[data-spotlight]::after,
+.spotlight-card::after {
+	content: '';
+	position: absolute;
+	inset: -1px;
+	border-radius: inherit;
+	padding: 1px;
+	background: radial-gradient(
+		320px circle at var(--spotlight-x) var(--spotlight-y),
+		var(--spotlight-border-color),
+		transparent 70%
+	);
+	-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
+	opacity: var(--spotlight-opacity);
+	transition: opacity 0.35s ease;
+	pointer-events: none;
+	z-index: 2;
+}
+
+/* Special treatment for light lavender cards */
+.bento-box-tall-highlight[data-spotlight],
+.matrix-card--featured[data-spotlight],
+.bento-box-tall-highlight.spotlight-card,
+.matrix-card--featured.spotlight-card {
+	--spotlight-color: rgba(0, 130, 124, 0.18);
+	--spotlight-border-color: rgba(0, 130, 124, 0.5);
+}
+
+.bento-box-tall-highlight[data-spotlight]::before,
+.matrix-card--featured[data-spotlight]::before,
+.bento-box-tall-highlight.spotlight-card::before,
+.matrix-card--featured.spotlight-card::before {
+	mix-blend-mode: multiply;
+}
+
+/* Ensure inner card content renders above the spotlight halo */
+[data-spotlight] > *,
+.spotlight-card > * {
+	position: relative;
+	z-index: 3;
+}
+
+/* 2. Magnetic Button Physics */
+[data-magnetic] {
+	display: inline-flex;
+	will-change: transform;
+	transition: transform 0.16s cubic-bezier(0.25, 1, 0.5, 1);
+	transform: translate3d(0, 0, 0);
+}
+
+/* 3. Particle Burst Canvas Overlay */
+.particle-spark-canvas {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	pointer-events: none;
+	z-index: 9999;
+}
+
+/* 4. Bklit UI SVG Sparklines & Metric Tickers */
+.bento-wide-content-row {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 20px;
+	width: 100%;
+}
+
+.bento-sparkline-wrap {
+	width: 100%;
+	height: 38px;
+	margin-top: 10px;
+	opacity: 0.85;
+	overflow: visible;
+}
+
+.bento-sparkline-wrap--wide {
+	width: 140px;
+	height: 44px;
+	margin-top: 0;
+	flex-shrink: 0;
+}
+
+.bento-sparkline {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+.sparkline-path {
+	stroke: #2ef4eb;
+	stroke-width: 2.5;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	fill: none;
+	stroke-dasharray: 300;
+	stroke-dashoffset: 300;
+	transition: stroke-dashoffset 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+	filter: drop-shadow(0 0 6px rgba(46, 244, 235, 0.55));
+}
+
+.sparkline-path--dark {
+	stroke: #012624;
+	stroke-width: 2.8;
+	filter: drop-shadow(0 2px 4px rgba(1, 38, 36, 0.25));
+}
+
+.sparkline-path--teal {
+	stroke: #7EF3D0;
+	filter: drop-shadow(0 0 6px rgba(126, 243, 208, 0.55));
+}
+
+.sparkline-path.revealed {
+	stroke-dashoffset: 0;
+}
+
+.sparkline-dot {
+	fill: #2ef4eb;
+	transition: transform 0.3s ease, opacity 0.3s ease;
+	opacity: 0;
+	transform-origin: center;
+	filter: drop-shadow(0 0 8px #2ef4eb);
+}
+
+.sparkline-dot--dark {
+	fill: #012624;
+	filter: none;
+}
+
+.sparkline-dot--teal {
+	fill: #7EF3D0;
+	filter: drop-shadow(0 0 8px #7EF3D0);
+}
+
+.sparkline-path.revealed + .sparkline-dot {
+	opacity: 1;
+	animation: dot-pulse 2s infinite ease-in-out;
+}
+
+@keyframes dot-pulse {
+	0%, 100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	50% {
+		transform: scale(1.4);
+		opacity: 0.8;
+	}
+}
+
+/* 5. Cybernetic Text Scramble Indicator */
+[data-scramble] {
+	will-change: contents;
+}
+
+/* Accessibility: Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+	.spotlight-card::before,
+	.spotlight-card::after {
+		display: none !important;
+	}
+	[data-magnetic] {
+		transform: none !important;
+		transition: none !important;
+	}
+	.sparkline-path {
+		stroke-dashoffset: 0 !important;
+		transition: none !important;
+	}
+	.sparkline-dot {
+		opacity: 1 !important;
+		animation: none !important;
+	}
+}
+

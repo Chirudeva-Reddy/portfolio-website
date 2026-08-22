@@ -937,4 +937,330 @@ document.addEventListener('DOMContentLoaded', () => {
 			requestAnimationFrame(updateMarqueeSpeed);
 		}
 	}
+
+	// ==========================================================================
+	// 10. Deployment-Friendly Motion Components Engine (Kokonut, Motion & Bklit)
+	// ==========================================================================
+
+	// (A) Kokonut-Style Radial Cursor Spotlight Cards
+	const initSpotlightCards = () => {
+		const spotlightCards = document.querySelectorAll('[data-spotlight]');
+		if (!spotlightCards.length) return;
+
+		spotlightCards.forEach((card) => {
+			card.addEventListener('pointerenter', () => {
+				card.style.setProperty('--spotlight-opacity', '1');
+			});
+
+			card.addEventListener('pointerleave', () => {
+				card.style.setProperty('--spotlight-opacity', '0');
+			});
+
+			card.addEventListener('pointermove', (e) => {
+				const rect = card.getBoundingClientRect();
+				const x = e.clientX - rect.left;
+				const y = e.clientY - rect.top;
+				card.style.setProperty('--spotlight-x', `${x}px`);
+				card.style.setProperty('--spotlight-y', `${y}px`);
+			});
+		});
+	};
+
+	// (B) Magnetic Button Physics with Spring Damping
+	const initMagneticButtons = () => {
+		if (!motionEnabled) return;
+		const magneticButtons = document.querySelectorAll('[data-magnetic]');
+		if (!magneticButtons.length) return;
+
+		magneticButtons.forEach((btn) => {
+			let isHovered = false;
+			let currentX = 0;
+			let currentY = 0;
+			let targetX = 0;
+			let targetY = 0;
+			let rafId = null;
+
+			const updatePosition = () => {
+				currentX += (targetX - currentX) * 0.22;
+				currentY += (targetY - currentY) * 0.22;
+				btn.style.transform = `translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0)`;
+
+				if (isHovered || Math.abs(currentX) > 0.1 || Math.abs(currentY) > 0.1) {
+					rafId = requestAnimationFrame(updatePosition);
+				} else {
+					btn.style.transform = 'translate3d(0, 0, 0)';
+					rafId = null;
+				}
+			};
+
+			btn.addEventListener('pointerenter', () => {
+				isHovered = true;
+				if (!rafId) rafId = requestAnimationFrame(updatePosition);
+			});
+
+			btn.addEventListener('pointermove', (e) => {
+				const rect = btn.getBoundingClientRect();
+				const centerX = rect.left + rect.width / 2;
+				const centerY = rect.top + rect.height / 2;
+				const dx = e.clientX - centerX;
+				const dy = e.clientY - centerY;
+				targetX = Math.max(-12, Math.min(12, dx * 0.35));
+				targetY = Math.max(-12, Math.min(12, dy * 0.35));
+			});
+
+			btn.addEventListener('pointerleave', () => {
+				isHovered = false;
+				targetX = 0;
+				targetY = 0;
+			});
+		});
+	};
+
+	// (C) Kokonut Particle Burst Button Detonation
+	const initParticleBurst = () => {
+		if (!motionEnabled) return;
+		const burstButtons = document.querySelectorAll('[data-particle-burst]');
+		if (!burstButtons.length) return;
+
+		let canvas = document.querySelector('.particle-spark-canvas');
+		if (!canvas) {
+			canvas = document.createElement('canvas');
+			canvas.className = 'particle-spark-canvas';
+			canvas.setAttribute('aria-hidden', 'true');
+			document.body.appendChild(canvas);
+		}
+
+		const ctx = canvas.getContext('2d');
+		let particles = [];
+		let animationFrame = null;
+
+		const resizeCanvas = () => {
+			canvas.width = window.innerWidth;
+			canvas.height = window.innerHeight;
+		};
+		resizeCanvas();
+		window.addEventListener('resize', resizeCanvas, { passive: true });
+
+		const colors = ['#2ef4eb', '#7EF3D0', '#fde9ff', '#cbfffc', '#ffffff'];
+
+		const createSparks = (originX, originY) => {
+			const count = 22;
+			for (let i = 0; i < count; i++) {
+				const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
+				const speed = 2.5 + Math.random() * 4.5;
+				particles.push({
+					x: originX,
+					y: originY,
+					vx: Math.cos(angle) * speed,
+					vy: Math.sin(angle) * speed - 1.2,
+					radius: 1.5 + Math.random() * 2.2,
+					color: colors[Math.floor(Math.random() * colors.length)],
+					alpha: 1,
+					decay: 0.022 + Math.random() * 0.018,
+					gravity: 0.12
+				});
+			}
+
+			if (!animationFrame) {
+				animationFrame = requestAnimationFrame(renderSparks);
+			}
+		};
+
+		const renderSparks = () => {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+			for (let i = particles.length - 1; i >= 0; i--) {
+				const p = particles[i];
+				p.x += p.vx;
+				p.y += p.vy;
+				p.vy += p.gravity;
+				p.alpha -= p.decay;
+				p.radius *= 0.98;
+
+				if (p.alpha <= 0 || p.radius <= 0.2) {
+					particles.splice(i, 1);
+					continue;
+				}
+
+				ctx.save();
+				ctx.globalAlpha = Math.max(0, p.alpha);
+				ctx.fillStyle = p.color;
+				ctx.shadowBlur = 8;
+				ctx.shadowColor = p.color;
+				ctx.beginPath();
+				ctx.arc(p.x, p.y, Math.max(0.5, p.radius), 0, Math.PI * 2);
+				ctx.fill();
+				ctx.restore();
+			}
+
+			if (particles.length > 0) {
+				animationFrame = requestAnimationFrame(renderSparks);
+			} else {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				animationFrame = null;
+			}
+		};
+
+		burstButtons.forEach((btn) => {
+			btn.addEventListener('click', (e) => {
+				const rect = btn.getBoundingClientRect();
+				const x = e.clientX || (rect.left + rect.width / 2);
+				const y = e.clientY || (rect.top + rect.height / 2);
+				createSparks(x, y);
+			});
+		});
+	};
+
+	// (D) Cybernetic Text Scramble Decoder Reveal
+	const initTextScramble = () => {
+		if (!motionEnabled) return;
+		const scrambleElements = document.querySelectorAll('[data-scramble]');
+		if (!scrambleElements.length) return;
+
+		const glyphs = '!<>-_\\/[]{}—=+*^?#________';
+
+		class TextScrambler {
+			constructor(el) {
+				this.el = el;
+				this.originalText = el.getAttribute('data-scramble') || el.innerText;
+				this.frame = 0;
+				this.queue = [];
+				this.isScrambling = false;
+				this.hasPlayed = false;
+			}
+
+			setText(newText) {
+				const oldText = this.el.innerText;
+				const length = Math.max(oldText.length, newText.length);
+				this.queue = [];
+				for (let i = 0; i < length; i++) {
+					const from = oldText[i] || '';
+					const to = newText[i] || '';
+					const start = Math.floor(Math.random() * 12);
+					const end = start + Math.floor(Math.random() * 16) + 10;
+					this.queue.push({ from, to, start, end, char: '' });
+				}
+				this.frame = 0;
+				this.update();
+			}
+
+			update() {
+				let output = '';
+				let complete = 0;
+				for (let i = 0, n = this.queue.length; i < n; i++) {
+					let { from, to, start, end, char } = this.queue[i];
+					if (this.frame >= end) {
+						complete++;
+						output += to;
+					} else if (this.frame >= start) {
+						if (!char || Math.random() < 0.28) {
+							char = glyphs[Math.floor(Math.random() * glyphs.length)];
+							this.queue[i].char = char;
+						}
+						output += `<span style="color: #2ef4eb; opacity: 0.85;">${char}</span>`;
+					} else {
+						output += from;
+					}
+				}
+
+				this.el.innerHTML = output;
+
+				if (complete < this.queue.length) {
+					this.frame++;
+					requestAnimationFrame(() => this.update());
+				} else {
+					this.el.innerText = this.originalText;
+					this.isScrambling = false;
+				}
+			}
+
+			play() {
+				if (this.hasPlayed || this.isScrambling) return;
+				this.hasPlayed = true;
+				this.isScrambling = true;
+				this.setText(this.originalText);
+			}
+		}
+
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						const scrambler = entry.target._scrambler;
+						if (scrambler) scrambler.play();
+					}
+				});
+			},
+			{ threshold: 0.2 }
+		);
+
+		scrambleElements.forEach((el) => {
+			const scrambler = new TextScrambler(el);
+			el._scrambler = scrambler;
+			observer.observe(el);
+		});
+	};
+
+	// (E) Bklit UI Live Animated Metric Counters & SVG Sparklines
+	const initMetricCountersAndSparklines = () => {
+		const metricSection = document.getElementById('metrics');
+		if (!metricSection) return;
+
+		const counterElements = metricSection.querySelectorAll('[data-counter]');
+		const sparklinePaths = metricSection.querySelectorAll('.sparkline-path');
+
+		const animateCounter = (el) => {
+			const target = parseFloat(el.getAttribute('data-counter'));
+			const decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+			const suffix = el.getAttribute('data-suffix') || '';
+			const duration = 1600;
+			const startTime = performance.now();
+
+			const step = (now) => {
+				const elapsed = now - startTime;
+				const progress = Math.min(1, elapsed / duration);
+				const easeOut = 1 - Math.pow(1 - progress, 3);
+				const current = target * easeOut;
+
+				el.textContent = current.toFixed(decimals) + suffix;
+
+				if (progress < 1) {
+					requestAnimationFrame(step);
+				} else {
+					el.textContent = (decimals > 0 ? target.toFixed(decimals) : target) + suffix;
+				}
+			};
+
+			requestAnimationFrame(step);
+		};
+
+		let hasAnimated = false;
+		const observer = new IntersectionObserver(
+			(entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting && !hasAnimated) {
+						hasAnimated = true;
+
+						counterElements.forEach((counter) => animateCounter(counter));
+
+						sparklinePaths.forEach((path, idx) => {
+							setTimeout(() => {
+								path.classList.add('revealed');
+							}, idx * 120);
+						});
+					}
+				});
+			},
+			{ threshold: 0.25 }
+		);
+
+		observer.observe(metricSection);
+	};
+
+	// Initialize all motion modules
+	initSpotlightCards();
+	initMagneticButtons();
+	initParticleBurst();
+	initTextScramble();
+	initMetricCountersAndSparklines();
 });
