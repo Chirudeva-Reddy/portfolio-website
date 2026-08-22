@@ -25,6 +25,8 @@ const inlineScriptHashes = (() => {
 	}
 })();
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 app.use(
 	helmet({
 		contentSecurityPolicy: {
@@ -44,12 +46,13 @@ app.use(
 				'base-uri': ["'self'"],
 				'frame-ancestors': ["'none'"],
 				'form-action': ["'self'"],
-				'upgrade-insecure-requests': [],
+				...(isProduction ? { 'upgrade-insecure-requests': [] } : {}),
 			},
 		},
 		// Hostinger terminates TLS at its CDN; a long HSTS max-age is appropriate
-		// because the domain is already HTTPS-only with a 301 from http.
-		hsts: { maxAge: 31536000, includeSubDomains: true, preload: false },
+		// in production where the domain is already HTTPS-only with a 301 from http.
+		// Disabled on local development so Safari does not force-upgrade localhost to HTTPS.
+		hsts: isProduction ? { maxAge: 31536000, includeSubDomains: true, preload: false } : false,
 		// The site loads Font Awesome from cdnjs, which is not CORP-annotated.
 		crossOriginEmbedderPolicy: false,
 		crossOriginResourcePolicy: { policy: 'cross-origin' },
