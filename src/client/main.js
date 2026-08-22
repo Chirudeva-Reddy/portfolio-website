@@ -942,6 +942,15 @@ document.addEventListener('DOMContentLoaded', () => {
 	// 10. Deployment-Friendly Motion Components Engine (Kokonut, Motion & Bklit)
 	// ==========================================================================
 
+	// Motion flags state for live toggle in Motion Lab
+	const motionState = {
+		tilt: true,
+		magnetic: true,
+		spotlight: true,
+		particles: true,
+		dock: true
+	};
+
 	// (A) Kokonut-Style Radial Cursor Spotlight Cards
 	const initSpotlightCards = () => {
 		const spotlightCards = document.querySelectorAll('[data-spotlight]');
@@ -949,6 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		spotlightCards.forEach((card) => {
 			card.addEventListener('pointerenter', () => {
+				if (!motionState.spotlight) return;
 				card.style.setProperty('--spotlight-opacity', '1');
 			});
 
@@ -957,6 +967,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			});
 
 			card.addEventListener('pointermove', (e) => {
+				if (!motionState.spotlight) return;
 				const rect = card.getBoundingClientRect();
 				const x = e.clientX - rect.left;
 				const y = e.clientY - rect.top;
@@ -981,6 +992,12 @@ document.addEventListener('DOMContentLoaded', () => {
 			let rafId = null;
 
 			const updatePosition = () => {
+				if (!motionState.magnetic) {
+					btn.style.transform = 'translate3d(0, 0, 0)';
+					rafId = null;
+					return;
+				}
+
 				currentX += (targetX - currentX) * 0.22;
 				currentY += (targetY - currentY) * 0.22;
 				btn.style.transform = `translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0)`;
@@ -994,11 +1011,13 @@ document.addEventListener('DOMContentLoaded', () => {
 			};
 
 			btn.addEventListener('pointerenter', () => {
+				if (!motionState.magnetic) return;
 				isHovered = true;
 				if (!rafId) rafId = requestAnimationFrame(updatePosition);
 			});
 
 			btn.addEventListener('pointermove', (e) => {
+				if (!motionState.magnetic) return;
 				const rect = btn.getBoundingClientRect();
 				const centerX = rect.left + rect.width / 2;
 				const centerY = rect.top + rect.height / 2;
@@ -1044,6 +1063,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const colors = ['#2ef4eb', '#7EF3D0', '#fde9ff', '#cbfffc', '#ffffff'];
 
 		const createSparks = (originX, originY) => {
+			if (!motionState.particles) return;
 			const count = 22;
 			for (let i = 0; i < count; i++) {
 				const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.5;
@@ -1112,6 +1132,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	};
 
 	// (D) Cybernetic Text Scramble Decoder Reveal
+	let scramblerInstances = [];
 	const initTextScramble = () => {
 		if (!motionEnabled) return;
 		const scrambleElements = document.querySelectorAll('[data-scramble]');
@@ -1175,7 +1196,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			}
 
 			play() {
-				if (this.hasPlayed || this.isScrambling) return;
+				if (this.isScrambling) return;
 				this.hasPlayed = true;
 				this.isScrambling = true;
 				this.setText(this.originalText);
@@ -1187,16 +1208,18 @@ document.addEventListener('DOMContentLoaded', () => {
 				entries.forEach((entry) => {
 					if (entry.isIntersecting) {
 						const scrambler = entry.target._scrambler;
-						if (scrambler) scrambler.play();
+						if (scrambler && !scrambler.hasPlayed) scrambler.play();
 					}
 				});
 			},
 			{ threshold: 0.2 }
 		);
 
+		scramblerInstances = [];
 		scrambleElements.forEach((el) => {
 			const scrambler = new TextScrambler(el);
 			el._scrambler = scrambler;
+			scramblerInstances.push(scrambler);
 			observer.observe(el);
 		});
 	};
@@ -1257,10 +1280,198 @@ document.addEventListener('DOMContentLoaded', () => {
 		observer.observe(metricSection);
 	};
 
+	// (F) 3D Perspective Parallax Tilt with Specular Glare (taste-skill Section 10)
+	const initParallaxTilt = () => {
+		if (!motionEnabled) return;
+		const tiltCards = document.querySelectorAll('[data-tilt]');
+		if (!tiltCards.length) return;
+
+		const maxTiltAngle = 7.5; // degrees
+
+		tiltCards.forEach((card) => {
+			let rafId = null;
+			let targetRotateX = 0;
+			let targetRotateY = 0;
+			let currentRotateX = 0;
+			let currentRotateY = 0;
+
+			const updateTilt = () => {
+				if (!motionState.tilt) {
+					card.style.transform = '';
+					card.style.setProperty('--glare-opacity', '0');
+					rafId = null;
+					return;
+				}
+
+				currentRotateX += (targetRotateX - currentRotateX) * 0.16;
+				currentRotateY += (targetRotateY - currentRotateY) * 0.16;
+
+				card.style.transform = `perspective(1000px) rotateX(${currentRotateX.toFixed(2)}deg) rotateY(${currentRotateY.toFixed(2)}deg) scale3d(1.015, 1.015, 1.015)`;
+
+				if (Math.abs(targetRotateX - currentRotateX) > 0.05 || Math.abs(targetRotateY - currentRotateY) > 0.05) {
+					rafId = requestAnimationFrame(updateTilt);
+				} else if (targetRotateX === 0 && targetRotateY === 0) {
+					card.style.transform = '';
+					rafId = null;
+				}
+			};
+
+			card.addEventListener('pointerenter', () => {
+				if (!motionState.tilt) return;
+				card.classList.add('tilt-active');
+				card.style.setProperty('--glare-opacity', '0.22');
+			});
+
+			card.addEventListener('pointermove', (e) => {
+				if (!motionState.tilt) return;
+				const rect = card.getBoundingClientRect();
+				const x = (e.clientX - rect.left) / rect.width; // 0 to 1
+				const y = (e.clientY - rect.top) / rect.height; // 0 to 1
+
+				targetRotateX = (0.5 - y) * maxTiltAngle * 2;
+				targetRotateY = (x - 0.5) * maxTiltAngle * 2;
+
+				card.style.setProperty('--glare-x', `${(x * 100).toFixed(1)}%`);
+				card.style.setProperty('--glare-y', `${(y * 100).toFixed(1)}%`);
+
+				if (!rafId) rafId = requestAnimationFrame(updateTilt);
+			});
+
+			card.addEventListener('pointerleave', () => {
+				card.classList.remove('tilt-active');
+				targetRotateX = 0;
+				targetRotateY = 0;
+				card.style.setProperty('--glare-opacity', '0');
+				if (!rafId) rafId = requestAnimationFrame(updateTilt);
+			});
+		});
+	};
+
+	// (G) Mac OS Dynamic Fluid Nav Dock (taste-skill Section 10)
+	const initDockMagnification = () => {
+		if (!motionEnabled || window.innerWidth < 769) return;
+		const nav = document.querySelector('.site-header__nav');
+		if (!nav) return;
+
+		const navLinks = Array.from(nav.querySelectorAll('.nav-link'));
+		const maxScale = 0.14; // +14% scale max
+		const sigma = 50; // spread radius in px
+
+		nav.addEventListener('pointermove', (e) => {
+			if (!motionState.dock) return;
+			const mouseX = e.clientX;
+
+			navLinks.forEach((link) => {
+				const rect = link.getBoundingClientRect();
+				const linkCenterX = rect.left + rect.width / 2;
+				const distance = Math.abs(mouseX - linkCenterX);
+
+				// Gaussian curve: f(d) = maxScale * exp(-d^2 / (2 * sigma^2))
+				const scaleBoost = maxScale * Math.exp(-(distance * distance) / (2 * sigma * sigma));
+				const currentScale = 1 + scaleBoost;
+
+				link.style.transform = `scale(${currentScale.toFixed(3)}) translateY(${-scaleBoost * 8}px)`;
+			});
+		});
+
+		nav.addEventListener('pointerleave', () => {
+			navLinks.forEach((link) => {
+				link.style.transform = '';
+			});
+		});
+	};
+
+	// (H) Tactile Push & Click Shockwave Ripple (taste-skill Section 4.5 & 10)
+	const initTactileRipple = () => {
+		document.addEventListener('click', (e) => {
+			const target = e.target.closest('.btn-aurora, .btn-kelp, .btn-header-touch, .social-link, .tech-pill, .project-card__open');
+			if (!target) return;
+
+			const ripple = document.createElement('span');
+			ripple.className = 'tactile-ripple-wave';
+			ripple.style.left = `${e.clientX}px`;
+			ripple.style.top = `${e.clientY}px`;
+			document.body.appendChild(ripple);
+
+			ripple.addEventListener('animationend', () => {
+				ripple.remove();
+			});
+		});
+	};
+
+	// (I) Interactive Motion Lab & Taste Controls HUD
+	const initMotionLabDock = () => {
+		const lab = document.getElementById('motion-lab');
+		if (!lab) return;
+
+		const toggleBtn = document.getElementById('motion-lab-toggle');
+		const panel = document.getElementById('motion-lab-panel');
+		const closeBtn = document.getElementById('motion-lab-close');
+		const controlButtons = lab.querySelectorAll('.motion-toggle-btn');
+		const retriggerBtn = document.getElementById('retrigger-scramble-btn');
+
+		const togglePanel = (open) => {
+			const shouldOpen = open !== undefined ? open : panel.hidden;
+			panel.hidden = !shouldOpen;
+			toggleBtn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+		};
+
+		toggleBtn.addEventListener('click', () => togglePanel());
+		if (closeBtn) closeBtn.addEventListener('click', () => togglePanel(false));
+
+		// Keyboard shortcut [M] to toggle Motion Lab HUD
+		document.addEventListener('keydown', (e) => {
+			if (e.target.matches('input, textarea')) return;
+			if (e.key === 'm' || e.key === 'M') {
+				e.preventDefault();
+				togglePanel();
+			} else if (e.key === 'Escape' && !panel.hidden) {
+				togglePanel(false);
+			}
+		});
+
+		// Live toggle switches
+		controlButtons.forEach((btn) => {
+			const controlKey = btn.getAttribute('data-control');
+			const label = btn.querySelector('.toggle-state');
+
+			btn.addEventListener('click', () => {
+				motionState[controlKey] = !motionState[controlKey];
+				const isActive = motionState[controlKey];
+
+				btn.classList.toggle('active', isActive);
+				btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+				if (label) label.textContent = isActive ? 'ON' : 'OFF';
+
+				// Apply immediate side-effects
+				if (controlKey === 'spotlight' && !isActive) {
+					document.querySelectorAll('[data-spotlight]').forEach((c) => c.style.setProperty('--spotlight-opacity', '0'));
+				}
+				if (controlKey === 'magnetic' && !isActive) {
+					document.querySelectorAll('[data-magnetic]').forEach((b) => (b.style.transform = 'none'));
+				}
+				if (controlKey === 'tilt' && !isActive) {
+					document.querySelectorAll('[data-tilt]').forEach((t) => (t.style.transform = ''));
+				}
+			});
+		});
+
+		// Re-trigger text scramble decoder
+		if (retriggerBtn) {
+			retriggerBtn.addEventListener('click', () => {
+				scramblerInstances.forEach((scrambler) => scrambler.play());
+			});
+		}
+	};
+
 	// Initialize all motion modules
 	initSpotlightCards();
 	initMagneticButtons();
 	initParticleBurst();
 	initTextScramble();
 	initMetricCountersAndSparklines();
+	initParallaxTilt();
+	initDockMagnification();
+	initTactileRipple();
+	initMotionLabDock();
 });
