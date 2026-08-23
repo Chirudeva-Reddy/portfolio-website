@@ -177,6 +177,7 @@ ul, ol {
 	will-change: transform;
 	filter: blur(24px);
 	mix-blend-mode: screen;
+	opacity: 0;
 	transition: width 0.3s, height 0.3s, opacity 0.3s;
 }
 
@@ -189,7 +190,8 @@ ul, ol {
 	transform: translate3d(-50%, -50%, 0);
 	will-change: transform;
 	box-shadow: 0 0 10px rgba(46, 244, 235, 0.8);
-	transition: width 0.2s, height 0.2s, background-color 0.2s;
+	opacity: 0;
+	transition: width 0.2s, height 0.2s, background-color 0.2s, opacity 0.3s;
 }
 
 .cursor-ring {
@@ -200,7 +202,20 @@ ul, ol {
 	position: fixed;
 	transform: translate3d(-50%, -50%, 0);
 	will-change: transform;
-	transition: width 0.25s, height 0.25s, border-color 0.25s, background-color 0.25s;
+	opacity: 0;
+	transition: width 0.25s, height 0.25s, border-color 0.25s, background-color 0.25s, opacity 0.3s;
+}
+
+body.cursor-active .cursor-glow {
+	opacity: 1;
+}
+
+body.cursor-active .cursor-dot {
+	opacity: 1;
+}
+
+body.cursor-active .cursor-ring {
+	opacity: 1;
 }
 
 .cursor-label {

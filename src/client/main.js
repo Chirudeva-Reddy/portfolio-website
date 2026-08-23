@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	let lastPointerY = 0;
 	let lastPointerTime = performance.now();
 
-	if (canvas && motionEnabled) {
+	if (canvas) {
 		try {
 			threeScene = new THREE.Scene();
 
@@ -552,12 +552,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	if (motionEnabled && cursorDot && cursorRing) {
 		// Only now is it safe to hide the native pointer.
-		document.documentElement.classList.add('js-cursor');
-
 		window.addEventListener('pointermove', (e) => {
+			document.body.classList.add('cursor-active');
 			targetMouseX = e.clientX;
 			targetMouseY = e.clientY;
 		}, { passive: true });
+
+		document.addEventListener('mouseleave', () => {
+			document.body.classList.remove('cursor-active');
+		});
 
 		requestAnimationFrame(renderCursor);
 
