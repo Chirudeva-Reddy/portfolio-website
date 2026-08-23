@@ -369,20 +369,6 @@ html.js #preloader.preloader--loaded {
 	transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
-/* Center Bottom Glowing Cyan Indicator Node on Header Border */
-.header-center-node {
-	position: absolute;
-	bottom: -4px;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 8px;
-	height: 8px;
-	border-radius: 50%;
-	background-color: #2ef4eb;
-	box-shadow: 0 0 12px #2ef4eb, 0 0 24px rgba(46, 244, 235, 0.85);
-	pointer-events: none;
-	z-index: 10;
-}
 
 .site-header__brand {
 	display: flex;
