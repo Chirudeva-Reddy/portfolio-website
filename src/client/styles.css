@@ -356,29 +356,30 @@ html.js #preloader.preloader--loaded {
 	box-sizing: border-box;
 	height: 72px;
 	z-index: 1000;
-	background: rgba(1, 38, 36, 0.92);
-	backdrop-filter: blur(20px);
-	-webkit-backdrop-filter: blur(20px);
-	border-bottom: 1px solid var(--border-hairline);
+	background: #012624;
+	backdrop-filter: blur(24px);
+	-webkit-backdrop-filter: blur(24px);
+	border-bottom: 1px solid rgba(46, 244, 235, 0.18);
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 24px rgba(46, 244, 235, 0.08);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: 16px;
 	padding: 0 48px;
-	transition: background 0.3s, border-color 0.3s;
+	transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 
 /* Center Bottom Glowing Cyan Indicator Node on Header Border */
 .header-center-node {
 	position: absolute;
-	bottom: -3.5px;
+	bottom: -4px;
 	left: 50%;
 	transform: translateX(-50%);
-	width: 7px;
-	height: 7px;
+	width: 8px;
+	height: 8px;
 	border-radius: 50%;
 	background-color: #2ef4eb;
-	box-shadow: 0 0 10px #2ef4eb, 0 0 18px rgba(46, 244, 235, 0.7);
+	box-shadow: 0 0 12px #2ef4eb, 0 0 24px rgba(46, 244, 235, 0.85);
 	pointer-events: none;
 	z-index: 10;
 }
@@ -670,15 +671,25 @@ html.js #preloader.preloader--loaded {
 	align-items: center;
 	gap: 10px;
 	font-family: var(--font-matter);
-	font-size: 12px;
+	font-size: 11.5px;
 	font-weight: 500;
-	letter-spacing: 0.14em;
+	letter-spacing: 0.12em;
 	text-transform: uppercase;
-	color: var(--color-liquid-mist);
-	padding: 6px 14px;
-	border-radius: var(--radius-small);
-	background: rgba(0, 55, 52, 0.45);
-	border: 1px solid var(--border-hairline);
+	color: #E6F1EE;
+	padding: 7.5px 22px;
+	border-radius: 999px;
+	background: #012624;
+	border: 1px solid rgba(46, 244, 235, 0.45);
+	box-shadow: 0 0 18px rgba(46, 244, 235, 0.48), 0 0 36px rgba(46, 244, 235, 0.22), inset 0 1px 0 rgba(203, 255, 252, 0.25);
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	white-space: nowrap;
+}
+
+.hero-eyebrow:hover {
+	transform: translateY(-1px) scale(1.02);
+	border-color: #2ef4eb;
+	color: #ffffff;
+	box-shadow: 0 0 24px rgba(46, 244, 235, 0.7), 0 0 48px rgba(46, 244, 235, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .hero-eyebrow__dot {
@@ -686,13 +697,13 @@ html.js #preloader.preloader--loaded {
 	height: 6px;
 	border-radius: 50%;
 	background-color: #2ef4eb;
-	box-shadow: 0 0 8px #2ef4eb;
+	box-shadow: 0 0 10px #2ef4eb, 0 0 16px rgba(46, 244, 235, 0.8);
 	animation: pulse-dot 2s infinite ease-in-out;
 }
 
 @keyframes pulse-dot {
-	0%, 100% { opacity: 0.6; transform: scale(1); }
-	50% { opacity: 1; transform: scale(1.3); }
+	0%, 100% { opacity: 0.7; transform: scale(1); }
+	50% { opacity: 1; transform: scale(1.35); }
 }
 
 .hero-title {
@@ -1033,22 +1044,27 @@ html.js #preloader.preloader--loaded {
 .matrix-eyebrow-pill {
 	display: inline-flex;
 	align-items: center;
-	gap: 10px;
+	gap: 12px;
 	font-family: var(--font-matter);
 	font-size: 11px;
 	font-weight: 600;
-	letter-spacing: 0.22em;
+	letter-spacing: 0.18em;
 	text-transform: uppercase;
-	color: var(--color-aurora-gradient);
+	color: #2ef4eb;
+	padding: 6px 18px;
+	border-radius: 999px;
+	background: rgba(1, 38, 36, 0.85);
+	border: 1px solid rgba(46, 244, 235, 0.4);
+	box-shadow: 0 0 16px rgba(46, 244, 235, 0.35), 0 0 32px rgba(46, 244, 235, 0.15);
 	margin-bottom: 12px;
 }
 
 .matrix-eyebrow-node {
 	width: 5px;
 	height: 5px;
-	background: var(--color-aurora-gradient);
+	background: #2ef4eb;
 	border-radius: 50%;
-	box-shadow: 0 0 8px var(--color-aurora-gradient);
+	box-shadow: 0 0 10px #2ef4eb;
 }
 
 .matrix-main-title {
@@ -1183,9 +1199,10 @@ html.js #preloader.preloader--loaded {
 	width: 114%;
 	height: 114%;
 	border-radius: 50%;
-	border: 1px dashed rgba(46, 244, 235, 0.28);
+	border: 1px dashed rgba(46, 244, 235, 0.35);
 	pointer-events: none;
 	animation: orbitSlowSpin 90s linear infinite;
+	box-shadow: inset 0 0 30px rgba(46, 244, 235, 0.06), 0 0 30px rgba(46, 244, 235, 0.06);
 }
 
 @keyframes orbitSlowSpin {
@@ -1198,8 +1215,8 @@ html.js #preloader.preloader--loaded {
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
-	background: var(--color-aurora-gradient);
-	box-shadow: 0 0 12px rgba(46, 244, 235, 0.9);
+	background: #2ef4eb;
+	box-shadow: 0 0 12px rgba(46, 244, 235, 0.95);
 }
 
 .orbit-node.node-t { top: -4px; left: 50%; transform: translateX(-50%); }
