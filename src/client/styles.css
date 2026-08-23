@@ -359,14 +359,34 @@ html.js #preloader.preloader--loaded {
 	background: #012624;
 	backdrop-filter: blur(24px);
 	-webkit-backdrop-filter: blur(24px);
-	border-bottom: 1px solid rgba(46, 244, 235, 0.18);
-	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 24px rgba(46, 244, 235, 0.08);
+	border-bottom: 1px solid rgba(46, 244, 235, 0.10);
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	gap: 16px;
 	padding: 0 48px;
 	transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Green/Cyan glowing gradient border highlight that fades away towards the edges */
+.site-header::after {
+	content: '';
+	position: absolute;
+	bottom: -1px;
+	left: 0;
+	width: 100%;
+	height: 1.5px;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(46, 244, 235, 0) 15%,
+		rgba(46, 244, 235, 0.75) 50%,
+		rgba(46, 244, 235, 0) 85%,
+		transparent 100%
+	);
+	box-shadow: 0 0 18px rgba(46, 244, 235, 0.45), 0 0 32px rgba(46, 244, 235, 0.2);
+	pointer-events: none;
 }
 
 
