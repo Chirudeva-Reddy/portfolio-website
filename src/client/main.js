@@ -1435,71 +1435,6 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	};
 
-	// (I) Interactive Motion Lab & Taste Controls HUD
-	const initMotionLabDock = () => {
-		const lab = document.getElementById('motion-lab');
-		if (!lab) return;
-
-		const toggleBtn = document.getElementById('motion-lab-toggle');
-		const panel = document.getElementById('motion-lab-panel');
-		const closeBtn = document.getElementById('motion-lab-close');
-		const controlButtons = lab.querySelectorAll('.motion-toggle-btn');
-		const retriggerBtn = document.getElementById('retrigger-scramble-btn');
-
-		const togglePanel = (open) => {
-			const shouldOpen = open !== undefined ? open : panel.hidden;
-			panel.hidden = !shouldOpen;
-			toggleBtn.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
-		};
-
-		toggleBtn.addEventListener('click', () => togglePanel());
-		if (closeBtn) closeBtn.addEventListener('click', () => togglePanel(false));
-
-		// Keyboard shortcut [M] to toggle Motion Lab HUD
-		document.addEventListener('keydown', (e) => {
-			if (e.target.matches('input, textarea')) return;
-			if (e.key === 'm' || e.key === 'M') {
-				e.preventDefault();
-				togglePanel();
-			} else if (e.key === 'Escape' && !panel.hidden) {
-				togglePanel(false);
-			}
-		});
-
-		// Live toggle switches
-		controlButtons.forEach((btn) => {
-			const controlKey = btn.getAttribute('data-control');
-			const label = btn.querySelector('.toggle-state');
-
-			btn.addEventListener('click', () => {
-				motionState[controlKey] = !motionState[controlKey];
-				const isActive = motionState[controlKey];
-
-				btn.classList.toggle('active', isActive);
-				btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
-				if (label) label.textContent = isActive ? 'ON' : 'OFF';
-
-				// Apply immediate side-effects
-				if (controlKey === 'spotlight' && !isActive) {
-					document.querySelectorAll('[data-spotlight]').forEach((c) => c.style.setProperty('--spotlight-opacity', '0'));
-				}
-				if (controlKey === 'magnetic' && !isActive) {
-					document.querySelectorAll('[data-magnetic]').forEach((b) => (b.style.transform = 'none'));
-				}
-				if (controlKey === 'tilt' && !isActive) {
-					document.querySelectorAll('[data-tilt]').forEach((t) => (t.style.transform = ''));
-				}
-			});
-		});
-
-		// Re-trigger text scramble decoder
-		if (retriggerBtn) {
-			retriggerBtn.addEventListener('click', () => {
-				scramblerInstances.forEach((scrambler) => scrambler.play());
-			});
-		}
-	};
-
 	// Initialize all motion modules
 	initSpotlightCards();
 	initMagneticButtons();
@@ -1509,5 +1444,4 @@ document.addEventListener('DOMContentLoaded', () => {
 	initParallaxTilt();
 	initDockMagnification();
 	initTactileRipple();
-	initMotionLabDock();
 });
