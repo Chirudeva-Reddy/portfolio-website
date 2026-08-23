@@ -45,6 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	let mouseYNorm = 0;
 	let targetRotX = 0;
 	let targetRotY = 0;
+	let mouseWorldX = 0;
+	let mouseWorldY = 0;
+	let mouseVelX = 0;
+	let mouseVelY = 0;
+	let mouseSpeed = 0;
+	let lastPointerX = 0;
+	let lastPointerY = 0;
+	let lastPointerTime = performance.now();
 
 	if (canvas && motionEnabled) {
 		try {
@@ -280,12 +288,30 @@ document.addEventListener('DOMContentLoaded', () => {
 			particleSystem.position.y = 0;
 			threeScene.add(particleSystem);
 
-			// Mouse Move Tracking for 3D Parallax Tilt
+			// Mouse Move Tracking for 3D Parallax Tilt & Kinetic Vector Flow Field
 			window.addEventListener('pointermove', (e) => {
+				const now = performance.now();
+				const dt = Math.max(1, now - lastPointerTime) / 1000;
+				lastPointerTime = now;
+
+				const prevNormX = mouseXNorm;
+				const prevNormY = mouseYNorm;
+
 				mouseXNorm = (e.clientX / window.innerWidth) * 2 - 1;
 				mouseYNorm = -(e.clientY / window.innerHeight) * 2 + 1;
 				targetRotY = mouseXNorm * 0.4;
 				targetRotX = -mouseYNorm * 0.3;
+
+				// Map to 3D World space coordinates at camera distance
+				mouseWorldX = mouseXNorm * 4.6;
+				mouseWorldY = mouseYNorm * 3.0;
+
+				// Instantaneous cursor velocity vector
+				const vx = (mouseXNorm - prevNormX) / dt;
+				const vy = (mouseYNorm - prevNormY) / dt;
+				mouseVelX = mouseVelX * 0.6 + vx * 0.4;
+				mouseVelY = mouseVelY * 0.6 + vy * 0.4;
+				mouseSpeed = Math.min(3.5, Math.sqrt(mouseVelX * mouseVelX + mouseVelY * mouseVelY));
 			}, { passive: true });
 
 			// Resize Handler
@@ -412,7 +438,12 @@ document.addEventListener('DOMContentLoaded', () => {
 					material.opacity = currentOpacity;
 					material.size = 0.044 - (smoothScrollProgress * 0.012);
 
-					// Dynamic Particle Position Calculation
+					// Kinetic velocity decay per frame
+					mouseSpeed *= 0.94;
+					mouseVelX *= 0.92;
+					mouseVelY *= 0.92;
+
+					// Dynamic Particle Position Calculation with 3D Vector Flow Field
 					const positions = particleSystem.geometry.attributes.position.array;
 					for (let i = 0; i < particleCount; i++) {
 						const i3 = i * 3;
@@ -442,12 +473,36 @@ document.addEventListener('DOMContentLoaded', () => {
 						const py = (wSphere * sy + wDna * dny + wTorus * ty + wGalaxy * gy) + (by * scatterWeight);
 						const pz = (wSphere * sz + wDna * dnz + wTorus * tz + wGalaxy * gz) + (bz * scatterWeight);
 
-						// Organic fluid wave perturbation
+						// Ambient organic fluid wave
 						const wave = Math.sin(elapsedTime * 1.35 + px * 0.85 + py * 0.95 + noiseOffsets[i3]) * 0.045;
 
-						positions[i3] = px + wave * Math.cos(noiseOffsets[i3]);
-						positions[i3 + 1] = py + wave * Math.sin(noiseOffsets[i3]);
-						positions[i3 + 2] = pz + wave * Math.cos(noiseOffsets[i3] * 0.5);
+						// 3D Vector Flow Field & Wake Vorticity
+						const dx = px - mouseWorldX;
+						const dy = py - mouseWorldY;
+						const distSq = dx * dx + dy * dy;
+
+						let flowX = 0;
+						let flowY = 0;
+						let flowZ = 0;
+
+						// Flow field active within cursor influence radius (primarily in Hero & early scroll)
+						if (distSq < 11.0 && smoothScrollProgress < 0.40) {
+							const dist = Math.sqrt(distSq) + 0.001;
+							const influence = Math.exp(-distSq / 2.5) * (0.40 + mouseSpeed * 0.32);
+
+							// Vector Curl noise (perpendicular vortex swirl)
+							const curlX = -dy / dist;
+							const curlY = dx / dist;
+
+							// Repulsion + wake swirl displacement
+							flowX = ((dx / dist) * 0.38 + curlX * 0.58 + mouseVelX * 0.06) * influence;
+							flowY = ((dy / dist) * 0.38 + curlY * 0.58 + mouseVelY * 0.06) * influence;
+							flowZ = Math.sin(elapsedTime * 2.5 + noiseOffsets[i3]) * 0.48 * influence;
+						}
+
+						positions[i3] = px + wave * Math.cos(noiseOffsets[i3]) + flowX;
+						positions[i3 + 1] = py + wave * Math.sin(noiseOffsets[i3]) + flowY;
+						positions[i3 + 2] = pz + wave * Math.cos(noiseOffsets[i3] * 0.5) + flowZ;
 					}
 					particleSystem.geometry.attributes.position.needsUpdate = true;
 
