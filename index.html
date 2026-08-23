@@ -117,12 +117,20 @@
 
 	<a href="#main-content" class="skip-link">Skip to main content</a>
 
-	<!-- Custom Precision Interactive Cursor -->
-	<div id="custom-cursor" aria-hidden="true">
-		<div class="cursor-glow"></div>
-		<div class="cursor-ring"></div>
-		<div class="cursor-dot"></div>
-		<div class="cursor-label"></div>
+	<!-- High-Precision Computer Vision Spatial Reticle Cursor -->
+	<div id="cv-cursor" class="cv-cursor" aria-hidden="true">
+		<div class="cv-reticle-box" id="cv-reticle">
+			<span class="cv-bracket bracket-tl"></span>
+			<span class="cv-bracket bracket-tr"></span>
+			<span class="cv-bracket bracket-bl"></span>
+			<span class="cv-bracket bracket-br"></span>
+			<span class="cv-center-crosshair"></span>
+		</div>
+		<div class="cv-telemetry-tag" id="cv-telemetry">
+			<span class="cv-telemetry-coord">X:<span id="cv-coord-x">0000</span> Y:<span id="cv-coord-y">0000</span></span>
+			<span class="cv-telemetry-sep">|</span>
+			<span class="cv-telemetry-status" id="cv-status">CV // READY</span>
+		</div>
 	</div>
 
 	<!-- Branded entrance overlay with smooth kinetic progress bar -->

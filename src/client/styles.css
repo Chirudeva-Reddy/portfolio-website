@@ -158,100 +158,152 @@ ul, ol {
 /* ==========================================================================
    Custom Precision Interactive Cursor
    ========================================================================== */
-#custom-cursor {
+/* ==========================================================================
+   High-Precision Computer Vision Spatial Reticle Cursor
+   ========================================================================== */
+.cv-cursor {
 	position: fixed;
 	top: 0;
 	left: 0;
 	pointer-events: none;
 	z-index: 2147483647;
-}
-
-.cursor-glow {
-	width: 320px;
-	height: 320px;
-	background: radial-gradient(circle, rgba(0, 130, 124, 0.25) 0%, rgba(203, 255, 252, 0.08) 35%, transparent 70%);
-	border-radius: 50%;
-	position: fixed;
-	pointer-events: none;
-	transform: translate3d(-50%, -50%, 0);
-	will-change: transform;
-	filter: blur(24px);
-	mix-blend-mode: screen;
 	opacity: 0;
-	transition: width 0.3s, height 0.3s, opacity 0.3s;
+	transition: opacity 0.2s ease;
 }
 
-.cursor-dot {
-	width: 7px;
-	height: 7px;
-	background-color: var(--color-aurora-gradient);
-	border-radius: 50%;
-	position: fixed;
-	transform: translate3d(-50%, -50%, 0);
-	will-change: transform;
-	box-shadow: 0 0 10px rgba(46, 244, 235, 0.8);
-	opacity: 0;
-	transition: width 0.2s, height 0.2s, background-color 0.2s, opacity 0.3s;
-}
-
-.cursor-ring {
-	width: 34px;
-	height: 34px;
-	border: 1px solid rgba(203, 255, 252, 0.45);
-	border-radius: 50%;
-	position: fixed;
-	transform: translate3d(-50%, -50%, 0);
-	will-change: transform;
-	opacity: 0;
-	transition: width 0.25s, height 0.25s, border-color 0.25s, background-color 0.25s, opacity 0.3s;
-}
-
-body.cursor-active .cursor-glow {
+body.cursor-active .cv-cursor {
 	opacity: 1;
 }
 
-body.cursor-active .cursor-dot {
-	opacity: 1;
-}
-
-body.cursor-active .cursor-ring {
-	opacity: 1;
-}
-
-.cursor-label {
+.cv-reticle-box {
 	position: fixed;
+	width: 24px;
+	height: 24px;
 	transform: translate3d(-50%, -50%, 0);
+	will-change: transform, width, height;
+	transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+	            height 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+	            border-color 0.2s ease,
+	            box-shadow 0.2s ease;
+}
+
+.cv-bracket {
+	position: absolute;
+	width: 6px;
+	height: 6px;
+	border-color: #2ef4eb;
+	border-style: solid;
+	box-shadow: 0 0 8px rgba(46, 244, 235, 0.75);
+	transition: border-color 0.2s ease, width 0.2s ease, height 0.2s ease;
+}
+
+.cv-bracket.bracket-tl {
+	top: 0;
+	left: 0;
+	border-width: 1.5px 0 0 1.5px;
+}
+
+.cv-bracket.bracket-tr {
+	top: 0;
+	right: 0;
+	border-width: 1.5px 1.5px 0 0;
+}
+
+.cv-bracket.bracket-bl {
+	bottom: 0;
+	left: 0;
+	border-width: 0 0 1.5px 1.5px;
+}
+
+.cv-bracket.bracket-br {
+	bottom: 0;
+	right: 0;
+	border-width: 0 1.5px 1.5px 0;
+}
+
+.cv-center-crosshair {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 3px;
+	height: 3px;
+	background-color: #2ef4eb;
+	box-shadow: 0 0 6px rgba(46, 244, 235, 0.95);
+	border-radius: 50%;
+	transform: translate(-50%, -50%);
+	transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+}
+
+.cv-telemetry-tag {
+	position: fixed;
+	transform: translate3d(18px, 14px, 0);
 	font-family: var(--font-mono);
-	font-size: 10px;
+	font-size: 9px;
 	font-weight: 500;
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
-	color: #011d1c;
-	background: var(--color-aurora-gradient);
-	padding: 2px 8px;
-	border-radius: 4px;
-	pointer-events: none;
-	opacity: 0;
-	transition: opacity 0.2s;
-	margin-top: -26px;
-	margin-left: 26px;
+	color: #cbfffc;
+	background: rgba(1, 38, 36, 0.92);
+	border: 1px solid rgba(46, 244, 235, 0.35);
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), inset 0 0 8px rgba(46, 244, 235, 0.12);
+	padding: 3px 8px;
+	border-radius: 3px;
+	backdrop-filter: blur(8px);
 	white-space: nowrap;
+	display: flex;
+	gap: 6px;
+	align-items: center;
+	pointer-events: none;
+	will-change: transform;
 }
 
-body.cursor-hover .cursor-ring {
-	width: 52px;
-	height: 52px;
-	border-color: var(--color-aurora-gradient);
-	background: rgba(0, 130, 124, 0.18);
+.cv-telemetry-sep {
+	color: rgba(46, 244, 235, 0.4);
 }
 
-body.cursor-hover .cursor-dot {
+.cv-telemetry-status {
+	color: #2ef4eb;
+	font-weight: 600;
+}
+
+/* Hover State on Interactive Target Cards & Actions */
+body.cursor-hover .cv-reticle-box {
+	width: 38px;
+	height: 38px;
+}
+
+body.cursor-hover .cv-bracket {
+	border-color: var(--color-lavender-phosphor);
+	box-shadow: 0 0 10px rgba(253, 233, 255, 0.85);
+	width: 8px;
+	height: 8px;
+}
+
+body.cursor-hover .cv-center-crosshair {
 	background-color: var(--color-lavender-phosphor);
-	box-shadow: 0 0 12px var(--color-lavender-phosphor);
+	box-shadow: 0 0 8px var(--color-lavender-phosphor);
+	transform: translate(-50%, -50%) scale(1.3);
 }
 
-body.cursor-hover .cursor-label:not(:empty) {
-	opacity: 1;
+body.cursor-hover .cv-telemetry-tag {
+	border-color: rgba(253, 233, 255, 0.5);
+	color: #fde9ff;
+}
+
+body.cursor-hover .cv-telemetry-status {
+	color: var(--color-lavender-phosphor);
+}
+
+/* Click Action Cinch */
+body.cursor-click .cv-reticle-box {
+	width: 14px !important;
+	height: 14px !important;
+	transition: width 0.08s ease, height 0.08s ease;
+}
+
+body.cursor-click .cv-bracket {
+	border-color: #ffffff;
+	box-shadow: 0 0 14px #ffffff;
 }
 
 /* ==========================================================================

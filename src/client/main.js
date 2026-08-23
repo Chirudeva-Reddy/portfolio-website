@@ -580,12 +580,14 @@ document.addEventListener('DOMContentLoaded', () => {
 	initSeamlessFlowVideo();
 
 	// ==========================================================================
-	// 3. Custom Precision Interactive Cursor
+	// 3. High-Precision Computer Vision Spatial Reticle Cursor
 	// ==========================================================================
-	const cursorGlow = motionEnabled ? document.querySelector('.cursor-glow') : null;
-	const cursorDot = motionEnabled ? document.querySelector('.cursor-dot') : null;
-	const cursorRing = motionEnabled ? document.querySelector('.cursor-ring') : null;
-	const cursorLabel = motionEnabled ? document.querySelector('.cursor-label') : null;
+	const cvCursor = document.getElementById('cv-cursor');
+	const cvReticle = document.getElementById('cv-reticle');
+	const cvTelemetry = document.getElementById('cv-telemetry');
+	const cvCoordX = document.getElementById('cv-coord-x');
+	const cvCoordY = document.getElementById('cv-coord-y');
+	const cvStatus = document.getElementById('cv-status');
 
 	let mouseX = window.innerWidth / 2;
 	let mouseY = window.innerHeight / 2;
@@ -593,25 +595,28 @@ document.addEventListener('DOMContentLoaded', () => {
 	let targetMouseY = mouseY;
 	let magneticTarget = null;
 
-	const renderCursor = () => {
-		mouseX += (targetMouseX - mouseX) * 0.15;
-		mouseY += (targetMouseY - mouseY) * 0.15;
+	const renderCvCursor = () => {
+		mouseX += (targetMouseX - mouseX) * 0.22;
+		mouseY += (targetMouseY - mouseY) * 0.22;
 
-		if (cursorGlow) cursorGlow.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
-		if (cursorDot) cursorDot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
-
-		if (cursorRing) {
-			const ringX = magneticTarget ? magneticTarget.x : mouseX;
-			const ringY = magneticTarget ? magneticTarget.y : mouseY;
-			cursorRing.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
-			if (cursorLabel) cursorLabel.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+		if (cvReticle) {
+			const reticleX = magneticTarget ? magneticTarget.x : mouseX;
+			const reticleY = magneticTarget ? magneticTarget.y : mouseY;
+			cvReticle.style.transform = `translate3d(${reticleX}px, ${reticleY}px, 0) translate(-50%, -50%)`;
 		}
 
-		requestAnimationFrame(renderCursor);
+		if (cvTelemetry) {
+			cvTelemetry.style.transform = `translate3d(${mouseX + 16}px, ${mouseY + 14}px, 0)`;
+			if (cvCoordX && cvCoordY) {
+				cvCoordX.textContent = Math.round(targetMouseX).toString().padStart(4, '0');
+				cvCoordY.textContent = Math.round(targetMouseY).toString().padStart(4, '0');
+			}
+		}
+
+		requestAnimationFrame(renderCvCursor);
 	};
 
-	if (motionEnabled && cursorDot && cursorRing) {
-		// Only now is it safe to hide the native pointer.
+	if (cvCursor && cvReticle) {
 		window.addEventListener('pointermove', (e) => {
 			document.body.classList.add('cursor-active');
 			targetMouseX = e.clientX;
@@ -622,7 +627,17 @@ document.addEventListener('DOMContentLoaded', () => {
 			document.body.classList.remove('cursor-active');
 		});
 
-		requestAnimationFrame(renderCursor);
+		window.addEventListener('pointerdown', () => {
+			document.body.classList.add('cursor-click');
+			if (cvStatus) cvStatus.textContent = 'SYS // CINCH';
+		});
+
+		window.addEventListener('pointerup', () => {
+			document.body.classList.remove('cursor-click');
+			if (cvStatus && !magneticTarget) cvStatus.textContent = 'CV // TRACKING';
+		});
+
+		requestAnimationFrame(renderCvCursor);
 
 		const interactiveEls = document.querySelectorAll('a, button, [data-magnetic="true"], [data-cursor-text], .project-item-card, .matrix-card, .timeline-card, .bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .surface-card, .about-portrait-card, .project-modal__backdrop, .project-modal__close');
 		interactiveEls.forEach((el) => {
@@ -632,16 +647,17 @@ document.addEventListener('DOMContentLoaded', () => {
 				if (el.classList.contains('magnetic') || el.getAttribute('data-magnetic') === 'true') {
 					magneticTarget = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
 				}
-				if (cursorLabel) {
-					cursorLabel.textContent = el.getAttribute('data-cursor-text') || '';
+				if (cvStatus) {
+					const text = el.getAttribute('data-cursor-text') || 'TARGET';
+					cvStatus.textContent = `LOCK // ${text.toUpperCase()}`;
 				}
 			});
 
 			el.addEventListener('pointerleave', () => {
 				document.body.classList.remove('cursor-hover');
 				magneticTarget = null;
-				if (cursorLabel) {
-					cursorLabel.textContent = '';
+				if (cvStatus) {
+					cvStatus.textContent = 'CV // TRACKING';
 				}
 			});
 		});
