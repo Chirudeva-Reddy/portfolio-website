@@ -347,6 +347,40 @@ html.js #preloader.preloader--loaded {
 }
 
 /* ==========================================================================
+   Seamless Google Flow Video Layer (True Black Screen-Blended)
+   ========================================================================== */
+.hero-flow-bg {
+	position: fixed;
+	inset: 0;
+	width: 100vw;
+	height: 100vh;
+	pointer-events: none;
+	z-index: 0;
+	overflow: hidden;
+	opacity: 0.52;
+	transition: opacity 0.6s ease;
+}
+
+.hero-flow-video {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	min-width: 100%;
+	min-height: 100%;
+	width: auto;
+	height: auto;
+	transform: translate(-50%, -50%) scale(1.04);
+	object-fit: cover;
+	mix-blend-mode: screen;
+	opacity: 0;
+	transition: opacity 0.8s ease-in-out;
+}
+
+.hero-flow-video.is-active {
+	opacity: 1;
+}
+
+/* ==========================================================================
    3D WebGL Particle Sphere Canvas (Centered Brand Element)
    ========================================================================== */
 #hero-canvas {

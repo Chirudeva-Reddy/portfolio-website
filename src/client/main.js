@@ -438,6 +438,16 @@ document.addEventListener('DOMContentLoaded', () => {
 					material.opacity = currentOpacity;
 					material.size = 0.044 - (smoothScrollProgress * 0.012);
 
+					// Fade out Google Flow ambient video smoothly when scrolling past Hero
+					const heroFlowBg = document.querySelector('.hero-flow-bg');
+					if (heroFlowBg) {
+						if (smoothScrollProgress < 0.25) {
+							heroFlowBg.style.opacity = Math.max(0, 0.52 * (1 - smoothScrollProgress / 0.25));
+						} else {
+							heroFlowBg.style.opacity = '0';
+						}
+					}
+
 					// Kinetic velocity decay per frame
 					mouseSpeed *= 0.94;
 					mouseVelX *= 0.92;
@@ -518,6 +528,56 @@ document.addEventListener('DOMContentLoaded', () => {
 			console.warn('WebGL Particle Sphere initialization skipped:', err);
 		}
 	}
+
+	// ==========================================================================
+	// 2.1 Seamless Dual-Buffer Crossfading Video Engine (Google Flow Loop)
+	// ==========================================================================
+	const initSeamlessFlowVideo = () => {
+		const videoA = document.getElementById('hero-flow-video-a');
+		const videoB = document.getElementById('hero-flow-video-b');
+		if (!videoA || !videoB) return;
+
+		let current = videoA;
+		let next = videoB;
+		let crossfading = false;
+
+		const startCurrent = () => {
+			current.play().catch(() => {});
+		};
+
+		startCurrent();
+		window.addEventListener('pointerdown', startCurrent, { once: true });
+
+		const loopCrossfade = () => {
+			if (current && current.duration && !crossfading) {
+				const timeLeft = current.duration - current.currentTime;
+				if (timeLeft <= 0.85 && timeLeft > 0) {
+					crossfading = true;
+					next.currentTime = 0;
+					next.play().then(() => {
+						next.classList.add('is-active');
+						current.classList.remove('is-active');
+						setTimeout(() => {
+							current.pause();
+							current.currentTime = 0;
+							// Swap active buffers
+							const temp = current;
+							current = next;
+							next = temp;
+							crossfading = false;
+						}, 800);
+					}).catch(() => {
+						crossfading = false;
+					});
+				}
+			}
+			requestAnimationFrame(loopCrossfade);
+		};
+
+		requestAnimationFrame(loopCrossfade);
+	};
+
+	initSeamlessFlowVideo();
 
 	// ==========================================================================
 	// 3. Custom Precision Interactive Cursor
