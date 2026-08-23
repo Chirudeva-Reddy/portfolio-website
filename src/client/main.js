@@ -116,22 +116,58 @@ document.addEventListener('DOMContentLoaded', () => {
 			for (let i = 0; i < particleCount; i++) {
 				const i3 = i * 3;
 
-				// 1. Base Shape: Uniform Fibonacci/Spherical Distribution
-				const uSphere = Math.random();
-				const vSphere = Math.random();
-				const thetaSphere = uSphere * 2.0 * Math.PI;
-				const phiSphere = Math.acos(2.0 * vSphere - 1.0);
-				const rSphere = sphereRadius + (Math.random() - 0.5) * 0.4;
+				// 1. Base Shape: Celestial Particle Globe with Saturn Planetary Rings & Stardust Stream (Asymmetric 3D Orbit)
+				let sx = 0, sy = 0, sz = 0;
 
-				const sx = rSphere * Math.sin(phiSphere) * Math.cos(thetaSphere);
-				const sy = rSphere * Math.sin(phiSphere) * Math.sin(thetaSphere);
-				const sz = rSphere * Math.cos(phiSphere);
+				if (i < 4200) {
+					// Core Celestial Sphere (62%)
+					const uSphere = Math.random();
+					const vSphere = Math.random();
+					const thetaSphere = uSphere * 2.0 * Math.PI;
+					const phiSphere = Math.acos(2.0 * vSphere - 1.0);
+					const rSphere = sphereRadius + (Math.random() - 0.5) * 0.35;
+
+					sx = rSphere * Math.sin(phiSphere) * Math.cos(thetaSphere);
+					sy = rSphere * Math.sin(phiSphere) * Math.sin(thetaSphere);
+					sz = rSphere * Math.cos(phiSphere);
+				} else if (i < 5800) {
+					// Saturn-Style Planetary Orbital Rings (24%): Concentric tilted elliptical rings
+					const ringU = (i - 4200) / 1600;
+					const ringAngle = ringU * Math.PI * 2.0 + (Math.random() - 0.5) * 0.15;
+					const ringRadius = 3.6 + Math.pow(Math.random(), 0.6) * 1.8;
+					const ringTiltX = 0.42; // Tilt around X-axis
+					const ringTiltY = 0.32; // Tilt around Y-axis
+					
+					let rx = ringRadius * Math.cos(ringAngle);
+					let ry = (Math.random() - 0.5) * 0.14;
+					let rz = ringRadius * Math.sin(ringAngle);
+
+					// Apply 3D rotation matrix for realistic orbital slant
+					const cosX = Math.cos(ringTiltX), sinX = Math.sin(ringTiltX);
+					const ry1 = ry * cosX - rz * sinX;
+					const rz1 = ry * sinX + rz * cosX;
+
+					const cosY = Math.cos(ringTiltY), sinY = Math.sin(ringTiltY);
+					sx = rx * cosY + rz1 * sinY;
+					sy = ry1;
+					sz = -rx * sinY + rz1 * cosY;
+				} else {
+					// Flowing Galactic Stardust Stream / Particle Tail (14%)
+					const tTail = (i - 5800) / 1000;
+					const tailAngle = tTail * Math.PI * 2.8 - 0.8;
+					const tailRadius = 2.8 + tTail * 4.2;
+					const tailSpread = (Math.random() - 0.5) * (0.4 + tTail * 1.2);
+
+					sx = tailRadius * Math.cos(tailAngle) + (Math.random() - 0.5) * 0.5;
+					sy = -0.8 + Math.sin(tailAngle * 1.2) * 1.6 + tailSpread;
+					sz = tailRadius * Math.sin(tailAngle) * 0.6 + (Math.random() - 0.5) * 0.8;
+				}
 
 				spherePositions[i3] = sx;
 				spherePositions[i3 + 1] = sy;
 				spherePositions[i3 + 2] = sz;
 
-				// Initial positions start at sphere
+				// Initial positions start at celestial globe + rings
 				particlePositions[i3] = sx;
 				particlePositions[i3 + 1] = sy;
 				particlePositions[i3 + 2] = sz;
