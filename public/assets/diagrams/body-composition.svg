@@ -20,7 +20,7 @@
 
   <!-- privacy boundary -->
   <rect x="20" y="58" width="286" height="192" rx="10" fill="none" stroke="rgba(46,244,235,.28)" stroke-dasharray="5 5"/>
-  <text x="34" y="80" class="sub" fill="#2ef4eb">PRIVACY BOUNDARY — NO RAW IMAGERY STORED</text>
+  <text x="34" y="80" class="sub" fill="#2ef4eb">PRIVACY BOUNDARY: NO RAW IMAGERY STORED</text>
 
   <!-- 1. silhouette -->
   <rect x="40" y="96" width="112" height="104" rx="8" class="node"/>
@@ -72,5 +72,5 @@
   <text x="118" y="308" class="sub">SMPL</text>
   <text x="188" y="308" class="sub">TRANSFER LEARNING</text>
   <text x="360" y="308" class="sub">HYPERPARAMETER TUNING</text>
-  <text x="28" y="332" class="sub" fill="#707777">Supervised by Dr. Shivang Agarwal — IJCAI proposal</text>
+  <text x="28" y="332" class="sub" fill="#707777">Supervised by Dr. Shivang Agarwal, IJCAI proposal</text>
 </svg>

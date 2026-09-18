@@ -77,5 +77,5 @@
   <text x="110" y="308" class="sub">XGBOOST</text>
   <text x="204" y="308" class="sub">GEOSPATIAL FEATURES</text>
   <text x="384" y="308" class="sub">RISK VISUALISATION</text>
-  <text x="28" y="332" class="sub" fill="#707777">Collaborative 4-member project — data preprocessing and interactive risk visualisation</text>
+  <text x="28" y="332" class="sub" fill="#707777">Collaborative 4-member project: data preprocessing and interactive risk visualisation</text>
 </svg>

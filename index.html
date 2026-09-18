@@ -32,19 +32,19 @@
 	<link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/icon-180.png">
 	<link rel="manifest" href="/assets/favicon/site.webmanifest">
 
-	<!-- Progressive-enhancement bootstrap. Drives smooth loading progress bar and
-	     dismisses overlay seamlessly once complete. Deliberately inline with no imports
-	     so the loader can never outlive or block the page. -->
+	<!-- Progressive-enhancement bootstrap. Drives the boot sequence: the progress
+	     curve, the diagnostic log reveal, the hex offset and the shutter wipe.
+	     Deliberately inline with no imports so the loader can never outlive or
+	     block the page — the module bundle is not on this critical path, which is
+	     why the sequence is not orchestrated with GSAP. app.js hashes this script
+	     at startup for the CSP, so edits here need no other change. -->
 	<script>
 		(function () {
 			var root = document.documentElement;
 			root.classList.remove('no-js');
 			root.classList.add('js');
 
-			var bar = null;
-			var counter = null;
-			var duration = 900;
-			var startTime = null;
+			var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 			var isDismissed = false;
 
 			function dismissLoader() {
@@ -53,9 +53,34 @@
 				root.classList.add('is-loaded');
 			}
 
+			// Reduced motion gets no boot sequence at all — straight to the hero.
+			if (reduced) {
+				dismissLoader();
+				return;
+			}
+
+			var bar = null;
+			var counter = null;
+			var offset = null;
+			var sync = null;
+			var logLines = null;
+			var revealed = 0;
+			// 1000ms curve + 180ms hold + a 500ms shutter lands the full reveal at
+			// ~1.68s, inside the 1.2-1.8s budget, so it never becomes an obstacle
+			// between a recruiter and the page.
+			var duration = 1000;
+			var startTime = null;
+			// Each diagnostic line appears as the bar crosses its threshold, so the
+			// log and the bar can never drift apart on a slow frame.
+			var thresholds = [6, 30, 55, 78];
+			var baseOffset = 0x7FFFD000;
+
 			function step(timestamp) {
 				if (!bar) bar = document.querySelector('.preloader__bar');
 				if (!counter) counter = document.getElementById('preloader-counter');
+				if (!offset) offset = document.getElementById('preloader-offset');
+				if (!sync) sync = document.getElementById('preloader-sync');
+				if (!logLines) logLines = document.querySelectorAll('.preloader__log-line');
 				if (!startTime) startTime = timestamp;
 
 				var elapsed = timestamp - startTime;
@@ -66,8 +91,23 @@
 				if (bar) {
 					bar.style.transform = 'scaleX(' + (percent / 100) + ')';
 				}
-				if (counter) {
-					counter.textContent = (percent < 10 ? '0' + percent : percent) + '%';
+				// Write the text node only, so the blinking caret span survives.
+				if (counter && counter.firstChild) {
+					counter.firstChild.nodeValue = (percent < 10 ? '0' + percent : percent) + '%';
+				}
+				if (offset) {
+					// Decorative: a plausible address walk, not a real allocation.
+					offset.textContent = '0x' + (baseOffset + percent * 4096).toString(16).toUpperCase();
+				}
+				if (logLines) {
+					while (revealed < thresholds.length && percent >= thresholds[revealed]) {
+						if (logLines[revealed]) logLines[revealed].classList.add('is-visible');
+						revealed++;
+					}
+				}
+				if (sync && percent >= 78) {
+					sync.textContent = 'IN SYNC';
+					sync.classList.add('is-synced');
 				}
 
 				if (t < 1) {
@@ -113,7 +153,11 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 </head>
-<body>
+	<body>
+		<div class="scroll-progress" role="progressbar" aria-label="Page scroll progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="0% scrolled, 100% remaining">
+			<span class="scroll-progress__track" aria-hidden="true"><span class="scroll-progress__fill"></span></span>
+			<span class="scroll-progress__readout" aria-hidden="true"><b>00</b><span>%</span><em>100 LEFT</em></span>
+		</div>
 
 	<a href="#main-content" class="skip-link">Skip to main content</a>
 
@@ -133,9 +177,22 @@
 		</div>
 	</div>
 
-	<!-- Branded entrance overlay with smooth kinetic progress bar -->
+	<!-- Systems boot overlay. Every value is decorative: the bar is driven by a
+	     fixed easing curve, not by real load progress, and the diagnostic lines
+	     are static strings revealed against that curve. -->
 	<div id="preloader" aria-hidden="true">
 		<div class="preloader__content">
+
+			<div class="preloader__vcs">
+				<svg class="preloader__octocat" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+					<path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+				</svg>
+				<span class="preloader__vcs-branch">git: <b>main</b></span>
+				<span class="preloader__vcs-sep">&middot;</span>
+				<span class="preloader__vcs-commit">commit c0d3x8f</span>
+				<span class="preloader__vcs-sync" id="preloader-sync">SYNCING</span>
+			</div>
+
 			<div class="preloader__logo-wrap">
 				<svg width="44" height="44" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
 					<path d="M22 6H12L6 12V20L12 26H22" stroke="#2ef4eb" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
@@ -144,11 +201,24 @@
 					<circle cx="22" cy="26" r="2.2" fill="#2ef4eb" />
 				</svg>
 			</div>
+
 			<div class="preloader__subtitle">CHIRUDEVA REDDY // RESEARCH SCHOLAR &amp; SDE</div>
+
+			<ol class="preloader__log" id="preloader-log">
+				<li class="preloader__log-line"><span class="preloader__log-msg">&gt; initializing pytorch cuda runtime</span><span class="preloader__log-status">[OK]</span></li>
+				<li class="preloader__log-line"><span class="preloader__log-msg">&gt; mounting smpl 3d mesh reconstruction weights</span><span class="preloader__log-status">[OK]</span></li>
+				<li class="preloader__log-line"><span class="preloader__log-msg">&gt; loading bert transformer embeddings matrix</span><span class="preloader__log-status">[OK]</span></li>
+				<li class="preloader__log-line"><span class="preloader__log-msg">&gt; establishing secure posix stream (dubai, uae)</span><span class="preloader__log-status preloader__log-status--link">[CONNECTED]</span></li>
+			</ol>
+
 			<div class="preloader__bar-container">
 				<div class="preloader__bar"></div>
 			</div>
-			<div class="preloader__counter" id="preloader-counter">00%</div>
+
+			<div class="preloader__readout">
+				<span class="preloader__offset" id="preloader-offset">0x7FFFD000</span>
+				<span class="preloader__counter" id="preloader-counter">00%<span class="preloader__caret" aria-hidden="true"></span></span>
+			</div>
 		</div>
 	</div>
 
@@ -190,6 +260,11 @@
 			</a>
 			<a href="tel:+971568747298" class="social-link" aria-label="Call Chirudeva" data-cursor-text="Call" data-magnetic>
 				<i class="fa-solid fa-phone"></i>
+			</a>
+			<a href="/api/resume?mode=view" target="_blank" rel="noopener noreferrer" class="nav-resume-pill" aria-label="View resume as PDF in a new tab" data-cursor-text="Resume" data-magnetic>
+				<span class="nav-resume-pill__pulse" aria-hidden="true"></span>
+				<i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
+				<span class="nav-resume-pill__label">RESUME ↗</span>
 			</a>
 			<a href="mailto:f20230331@dubai.bits-pilani.ac.in" class="btn-header-touch" data-cursor-text="Contact" data-magnetic data-particle-burst>
 				GET IN TOUCH ↗
@@ -246,22 +321,19 @@
 	</div>
 
 	<!-- Seamless Google Flow Background Video Layer -->
+	<!-- The clip is baked loop-perfect: its tail is cross-dissolved onto its own
+	     head, so frame 215 -> frame 0 is a consecutive-frame step. Native loop is
+	     seamless on its own, which is why there is no crossfade script. -->
 	<div class="hero-flow-bg" aria-hidden="true">
 		<video
-			id="hero-flow-video-a"
+			id="hero-flow-video"
 			class="hero-flow-video is-active"
+			autoplay
+			loop
 			muted
 			playsinline
 			preload="auto"
-			src="/assets/flow_v2.mp4">
-		</video>
-		<video
-			id="hero-flow-video-b"
-			class="hero-flow-video"
-			muted
-			playsinline
-			preload="auto"
-			src="/assets/flow_v2.mp4">
+			src="/assets/flow_v3.mp4">
 		</video>
 	</div>
 
@@ -293,11 +365,17 @@
 						</p>
 
 						<div class="hero-actions">
-							<a href="#projects" class="btn-aurora" data-cursor-text="Explore" data-magnetic data-particle-burst>
-								EXPLORE PROJECTS ↗
-							</a>
-							<a href="#research" class="btn-kelp" data-cursor-text="Research" data-magnetic>
-								RESEARCH FOCUS <span class="btn-arrow-icon" aria-hidden="true">↗</span>
+							<div class="hero-resume-group">
+								<a href="/api/resume?mode=view" target="_blank" rel="noopener noreferrer" class="btn-aurora btn-resume" data-cursor-text="Resume" data-magnetic data-particle-burst>
+									<i class="fa-solid fa-file-pdf" aria-hidden="true"></i>
+									VIEW RESUME / CV ↗
+								</a>
+								<a href="/api/resume?mode=download" class="btn-resume-dl" aria-label="Download resume as PDF" title="Download PDF" data-cursor-text="Download" data-magnetic>
+									<i class="fa-solid fa-arrow-down" aria-hidden="true"></i>
+								</a>
+							</div>
+							<a href="#metrics" class="btn-kelp" data-cursor-text="Enter" data-magnetic>
+								ENTER PORTFOLIO <span class="btn-arrow-icon" aria-hidden="true">↓</span>
 							</a>
 						</div>
 
@@ -649,208 +727,204 @@
 				</section>
 
 				<!-- ==========================================================================
-				     SECTION 5: FEATURED PROJECTS SHOWCASE
+				     SECTION 5: FEATURED PROJECTS INDEX
 				     ========================================================================== -->
 				<section id="projects" class="section-container" aria-label="Engineering Portfolio Projects">
-					<div class="projects-header-row">
-						<div>
-							<span class="section-label" data-scramble="ENGINEERING PORTFOLIO">ENGINEERING PORTFOLIO</span>
-							<h2 class="section-heading u-mt-8" data-scramble="Featured Projects & Architecture">Featured Projects &amp; Architecture</h2>
+					<h2 class="section-heading projects-heading">Featured Projects &amp; Architecture</h2>
+
+					<div class="projects-index">
+						<!-- Desktop well. Decorative copies: each diagram and its alt text also live inside its own article. -->
+						<div class="projects-viewer" aria-hidden="true">
+							<img class="projects-viewer__img is-active" data-project="0" src="/assets/diagrams/body-composition.svg?v=2" alt="" width="640" height="360" loading="lazy" decoding="async">
+							<img class="projects-viewer__img" data-project="1" src="/assets/diagrams/nlp-insight-engine.svg?v=2" alt="" width="640" height="360" loading="lazy" decoding="async">
+							<img class="projects-viewer__img" data-project="2" src="/assets/diagrams/accident-severity.svg?v=2" alt="" width="640" height="360" loading="lazy" decoding="async">
+							<img class="projects-viewer__img" data-project="3" src="/assets/diagrams/depression-risk.svg?v=2" alt="" width="640" height="360" loading="lazy" decoding="async">
 						</div>
-						<div class="project-counter-badge">04 / 04</div>
-					</div>
 
-					<div class="projects-list">
-						<!-- Project 1: 3D Body Mesh -->
-						<article class="project-item-card" data-spotlight data-tilt data-project="0" data-github="https://github.com/Chirudeva-Reddy/body2health" data-cursor-text="Inspect">
-							<div class="project-card-info">
-								<div class="project-meta-row">
-									<span class="project-category-tag">CV // IJCAI PROPOSAL (09/2025 - PRESENT)</span>
-									<span class="btn-arrow-icon" aria-hidden="true">↗</span>
-								</div>
+						<div class="projects-rows">
+							<!-- Project 1: Body composition -->
+							<article class="project-item-card" data-project="0" data-active data-github="https://github.com/Chirudeva-Reddy/body2health">
 								<h3 class="project-item-title">Privacy-Preserving Body Composition Estimation</h3>
-								<p class="project-item-desc">
-									Creating a pipeline to estimate human body composition from silhouettes under privacy constraints using transfer learning, hyperparameter tuning, and 3-D reconstruction under supervision of Dr. Shivang Agarwal.
+								<p class="project-meta">
+									<span class="project-category-tag">Computer vision, IJCAI proposal</span>
+									<span class="project-dates">09/2025 - Present</span>
 								</p>
-								<div class="project-actions-row">
-									<button type="button" class="project-card__open" data-open-project data-magnetic>VIEW DETAILS</button>
-									<a href="https://github.com/Chirudeva-Reddy/body2health" target="_blank" rel="noopener" class="btn-kelp" data-magnetic>
-										<i class="fa-brands fa-github"></i> REPOSITORY ↗
+								<p class="project-item-desc">Creating a pipeline to estimate human body composition from silhouettes under privacy constraints using transfer learning, hyperparameter tuning, and 3-D reconstruction under supervision of Dr. Shivang Agarwal.</p>
+								<p class="project-stack">PyTorch, SMPL, transfer learning</p>
+								<figure class="project-figure" role="region" aria-label="Privacy-Preserving Body Composition Estimation pipeline diagram" tabindex="0">
+									<img class="project-diagram" src="/assets/diagrams/body-composition.svg?v=2"
+											 alt="Pipeline diagram: a 2D binary silhouette is regressed into SMPL body parameters, reconstructed as a 3D mesh, and converted into a body composition estimate. Raw imagery never leaves the privacy boundary."
+											 width="640" height="360" loading="lazy" decoding="async">
+								</figure>
+								<div class="project-links">
+									<button type="button" class="project-card__open" data-open-project data-cursor-text="Pipeline">View pipeline<span class="sr-only">: Privacy-Preserving Body Composition Estimation</span></button>
+									<a class="project-repo" href="https://github.com/Chirudeva-Reddy/body2health" target="_blank" rel="noopener" data-cursor-text="GitHub">
+										<i class="fa-brands fa-github" aria-hidden="true"></i><span class="project-repo__name">body2health</span><span class="sr-only"> on GitHub (opens in a new tab)</span>
 									</a>
 								</div>
-							</div>
-							<div class="project-code-terminal">
-								<div class="code-header">
-									<span>mesh_reconstruct.py</span>
-									<span>PYTORCH // SMPL // TRANSFER LEARNING</span>
-								</div>
-								<img class="project-diagram" src="/assets/diagrams/body-composition.svg"
-										 alt="Pipeline diagram: a 2D binary silhouette is regressed into SMPL body parameters, reconstructed as a 3D mesh, and converted into a body composition estimate. Raw imagery never leaves the privacy boundary."
-										 width="640" height="360" loading="lazy" decoding="async">
-							</div>
-						</article>
+							</article>
 
-						<!-- Project 2: NLP Review Insight Engine -->
-						<article class="project-item-card" data-spotlight data-tilt data-project="1" data-github="https://github.com/Chirudeva-Reddy/NLP-Proj" data-cursor-text="Inspect">
-							<div class="project-card-info">
-								<div class="project-meta-row">
-									<span class="project-category-tag">NLP // INTELLIGENCE (01/2026 - PRESENT)</span>
-									<span class="btn-arrow-icon" aria-hidden="true">↗</span>
-								</div>
+							<!-- Project 2: NLP insight engine -->
+							<article class="project-item-card" data-project="1" data-github="https://github.com/Chirudeva-Reddy/NLP-Proj">
 								<h3 class="project-item-title">NLP Insight Engine for Customer Reviews</h3>
-								<p class="project-item-desc">
-									Working on creating an NLP pipeline to extract sentiment and key themes from large-scale customer reviews using text preprocessing, transformer embeddings, and clustering algorithms.
+								<p class="project-meta">
+									<span class="project-category-tag">NLP, review intelligence</span>
+									<span class="project-dates">01/2026 - Present</span>
 								</p>
-								<div class="project-actions-row">
-									<button type="button" class="project-card__open" data-open-project data-magnetic>VIEW DETAILS</button>
-									<a href="https://github.com/Chirudeva-Reddy/NLP-Proj" target="_blank" rel="noopener" class="btn-kelp" data-magnetic>
-										<i class="fa-brands fa-github"></i> REPOSITORY ↗
+								<p class="project-item-desc">Working on creating an NLP pipeline to extract sentiment and key themes from large-scale customer reviews using text preprocessing, transformer embeddings, and clustering algorithms.</p>
+								<p class="project-stack">Transformers, BERT, clustering</p>
+								<figure class="project-figure" role="region" aria-label="NLP Insight Engine for Customer Reviews pipeline diagram" tabindex="0">
+									<img class="project-diagram" src="/assets/diagrams/nlp-insight-engine.svg?v=2"
+											 alt="Pipeline diagram: raw customer reviews are preprocessed, encoded into transformer embeddings, then k-means clustered into ranked themes and sentiment."
+											 width="640" height="360" loading="lazy" decoding="async">
+								</figure>
+								<div class="project-links">
+									<button type="button" class="project-card__open" data-open-project data-cursor-text="Pipeline">View pipeline<span class="sr-only">: NLP Insight Engine for Customer Reviews</span></button>
+									<a class="project-repo" href="https://github.com/Chirudeva-Reddy/NLP-Proj" target="_blank" rel="noopener" data-cursor-text="GitHub">
+										<i class="fa-brands fa-github" aria-hidden="true"></i><span class="project-repo__name">NLP-Proj</span><span class="sr-only"> on GitHub (opens in a new tab)</span>
 									</a>
 								</div>
-							</div>
-							<div class="project-code-terminal">
-								<div class="code-header">
-									<span>review_nlp_engine.py</span>
-									<span>TRANSFORMERS // BERT // CLUSTERING</span>
-								</div>
-								<img class="project-diagram" src="/assets/diagrams/nlp-insight-engine.svg"
-										 alt="Pipeline diagram: raw customer reviews are preprocessed, encoded into transformer embeddings, then k-means clustered into ranked themes and sentiment."
-										 width="640" height="360" loading="lazy" decoding="async">
-							</div>
-						</article>
+							</article>
 
-						<!-- Project 3: Accident Severity ML -->
-						<article class="project-item-card" data-spotlight data-tilt data-project="2" data-github="https://github.com/Chirudeva-Reddy/Road-Accident-Severity-Prediction" data-cursor-text="Inspect">
-							<div class="project-card-info">
-								<div class="project-meta-row">
-									<span class="project-category-tag">DATA SCIENCE // 1M+ RECORDS (09/2025 - 01/2026)</span>
-									<span class="btn-arrow-icon" aria-hidden="true">↗</span>
-								</div>
+							<!-- Project 3: Accident severity -->
+							<article class="project-item-card" data-project="2" data-github="https://github.com/Chirudeva-Reddy/Road-Accident-Severity-Prediction">
 								<h3 class="project-item-title">Road Accident Severity Prediction</h3>
-								<p class="project-item-desc">
-									Built a collaborative 4-member project on crash severity prediction for the Chicago Crash Dataset consisting of over 1,000,000 records. Contributed data-preprocessing and interactive risk visualization.
+								<p class="project-meta">
+									<span class="project-category-tag">Data science, 1M+ records</span>
+									<span class="project-dates">09/2025 - 01/2026</span>
 								</p>
-								<div class="project-actions-row">
-									<button type="button" class="project-card__open" data-open-project data-magnetic>VIEW DETAILS</button>
-									<a href="https://github.com/Chirudeva-Reddy/Road-Accident-Severity-Prediction" target="_blank" rel="noopener" class="btn-kelp" data-magnetic>
-										<i class="fa-brands fa-github"></i> REPOSITORY ↗
+								<p class="project-item-desc">Built a collaborative 4-member project on crash severity prediction for the Chicago Crash Dataset consisting of over 1,000,000 records. Contributed data-preprocessing and interactive risk visualization.</p>
+								<p class="project-stack">XGBoost, pandas, geospatial features</p>
+								<figure class="project-figure" role="region" aria-label="Road Accident Severity Prediction pipeline diagram" tabindex="0">
+									<img class="project-diagram" src="/assets/diagrams/accident-severity.svg?v=2"
+											 alt="Pipeline diagram: over one million Chicago crash records are preprocessed, engineered into spatial and temporal features, and classified by XGBoost into low, medium and high severity."
+											 width="640" height="360" loading="lazy" decoding="async">
+								</figure>
+								<div class="project-links">
+									<button type="button" class="project-card__open" data-open-project data-cursor-text="Pipeline">View pipeline<span class="sr-only">: Road Accident Severity Prediction</span></button>
+									<a class="project-repo" href="https://github.com/Chirudeva-Reddy/Road-Accident-Severity-Prediction" target="_blank" rel="noopener" data-cursor-text="GitHub">
+										<i class="fa-brands fa-github" aria-hidden="true"></i><span class="project-repo__name">Road-Accident-Severity-Prediction</span><span class="sr-only"> on GitHub (opens in a new tab)</span>
 									</a>
 								</div>
-							</div>
-							<div class="project-code-terminal">
-								<div class="code-header">
-									<span>crash_severity.py</span>
-									<span>XGBOOST // CHICAGO 1M+ DATASET</span>
-								</div>
-								<img class="project-diagram" src="/assets/diagrams/accident-severity.svg"
-										 alt="Pipeline diagram: over one million Chicago crash records are preprocessed, engineered into spatial and temporal features, and classified by XGBoost into low, medium and high severity."
-										 width="640" height="360" loading="lazy" decoding="async">
-							</div>
-						</article>
+							</article>
 
-						<!-- Project 4: Student Depression Risk -->
-						<article class="project-item-card" data-spotlight data-tilt data-project="3" data-github="https://github.com/Chirudeva-Reddy/Student-Depression-Risk" data-cursor-text="Inspect">
-							<div class="project-card-info">
-								<div class="project-meta-row">
-									<span class="project-category-tag">AI // FUZZY &amp; ANN (02/2024 - 05/2024)</span>
-									<span class="btn-arrow-icon" aria-hidden="true">↗</span>
-								</div>
+							<!-- Project 4: Student depression risk -->
+							<article class="project-item-card" data-project="3" data-github="https://github.com/Chirudeva-Reddy/Student-Depression-Risk">
 								<h3 class="project-item-title">Predicting Student Depression Risk</h3>
-								<p class="project-item-desc">
-									Worked under Dr. Shanookha Ali to build a system using fuzzy logic and artificial neural networks in order to tune and predict continuous depression risk of students from lifestyle and academic factors, achieving 98% training error reduction.
+								<p class="project-meta">
+									<span class="project-category-tag">AI, fuzzy logic + ANN</span>
+									<span class="project-dates">02/2024 - 05/2024</span>
 								</p>
-								<div class="project-actions-row">
-									<button type="button" class="project-card__open" data-open-project data-magnetic>VIEW DETAILS</button>
-									<a href="https://github.com/Chirudeva-Reddy/Student-Depression-Risk" target="_blank" rel="noopener" class="btn-kelp" data-magnetic>
-										<i class="fa-brands fa-github"></i> REPOSITORY ↗
+								<p class="project-item-desc">Worked under Dr. Shanookha Ali to build a system using fuzzy logic and artificial neural networks in order to tune and predict continuous depression risk of students from lifestyle and academic factors, achieving 98% training error reduction.</p>
+								<p class="project-stack">Hyperparameter tuning, continuous regression</p>
+								<figure class="project-figure" role="region" aria-label="Predicting Student Depression Risk pipeline diagram" tabindex="0">
+									<img class="project-diagram" src="/assets/diagrams/depression-risk.svg?v=2"
+											 alt="Pipeline diagram: lifestyle and academic factors pass through a fuzzy inference layer into membership degrees, then an artificial neural network produces a continuous risk score."
+											 width="640" height="360" loading="lazy" decoding="async">
+								</figure>
+								<div class="project-links">
+									<button type="button" class="project-card__open" data-open-project data-cursor-text="Pipeline">View pipeline<span class="sr-only">: Predicting Student Depression Risk</span></button>
+									<a class="project-repo" href="https://github.com/Chirudeva-Reddy/Student-Depression-Risk" target="_blank" rel="noopener" data-cursor-text="GitHub">
+										<i class="fa-brands fa-github" aria-hidden="true"></i><span class="project-repo__name">Student-Depression-Risk</span><span class="sr-only"> on GitHub (opens in a new tab)</span>
 									</a>
 								</div>
-							</div>
-							<div class="project-code-terminal">
-								<div class="code-header">
-									<span>depression_risk_ann.py</span>
-									<span>FUZZY LOGIC // NEURAL NETWORKS</span>
-								</div>
-								<img class="project-diagram" src="/assets/diagrams/depression-risk.svg"
-										 alt="Pipeline diagram: lifestyle and academic factors pass through a fuzzy inference layer into membership degrees, then an artificial neural network produces a continuous risk score."
-										 width="640" height="360" loading="lazy" decoding="async">
-							</div>
-						</article>
+							</article>
+						</div>
 					</div>
 				</section>
 
 				<!-- ==========================================================================
 				     SECTION 6: EXPERIENCE & CAREER TIMELINE
 				     ========================================================================== -->
-				<section id="experience" class="section-container" aria-label="Career and Professional Experience">
-					<span class="section-label" data-scramble="PROFESSIONAL EXPERIENCE">PROFESSIONAL EXPERIENCE</span>
-					<h2 class="section-heading u-mt-8" data-scramble="Industry Experience & Track Record">Industry Experience &amp; Track Record</h2>
+				<section id="experience" class="section-container experience-section" aria-label="Career and Professional Experience">
+					<div class="experience-particles" aria-hidden="true">
+						<i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+					</div>
+					<div class="experience-heading">
+						<div>
+							<span class="section-label" data-scramble="PROFESSIONAL EXPERIENCE">PROFESSIONAL EXPERIENCE</span>
+							<h2 class="section-heading u-mt-8" data-scramble="Industry Experience & Track Record">Industry Experience &amp; Track Record</h2>
+						</div>
+						<p class="experience-heading__lede">Three engineering environments. One through-line: turning fragile systems into measurable, production-ready outcomes.</p>
+					</div>
 
 					<div class="timeline-stack">
 						<!-- Role 1: Nablix Labs -->
-						<div class="timeline-card spotlight-card" data-spotlight data-tilt data-cursor-text="Nablix">
-							<div class="timeline-card__header">
+						<article class="timeline-card spotlight-card" data-spotlight data-tilt data-cursor-text="Nablix">
+							<div class="timeline-card__rail" aria-hidden="true"><span>01</span><i></i></div>
+							<div class="timeline-card__body">
+								<div class="timeline-card__header">
 								<div>
-									<h3 class="timeline-role-title">Incoming AI Engineer Intern</h3>
+									<h3 class="timeline-role-title">AI Engineer Intern</h3>
 									<div class="timeline-org">Nablix Labs • Dubai, U.A.E (Hybrid)</div>
 								</div>
 								<div class="timeline-date-badge">06/2026 - 09/2026</div>
-							</div>
-							<ul class="timeline-card__bullets">
+								</div>
+								<ul class="timeline-card__bullets">
 								<li>Curated and optimized API endpoints along with a strong focus in debugging issues and reducing the error rate by <strong>42% before production</strong>.</li>
 								<li>Engineered low-latency response serialization and automated input telemetry handling.</li>
-							</ul>
-							<div class="timeline-tags-row">
+								</ul>
+								<div class="timeline-tags-row">
 								<span class="tech-pill">PyTorch</span>
 								<span class="tech-pill">FastAPI</span>
 								<span class="tech-pill">API Debugging</span>
 								<span class="tech-pill">Model Optimization</span>
 								<span class="tech-pill">Python</span>
+								</div>
 							</div>
-						</div>
+							<div class="timeline-card__impact"><span>ERROR RATE</span><strong>−42%</strong><small>before production</small></div>
+						</article>
 
 						<!-- Role 2: Jovens Technologies -->
-						<div class="timeline-card spotlight-card" data-spotlight data-tilt data-cursor-text="Jovens">
-							<div class="timeline-card__header">
+						<article class="timeline-card spotlight-card" data-spotlight data-tilt data-cursor-text="Jovens">
+							<div class="timeline-card__rail" aria-hidden="true"><span>02</span><i></i></div>
+							<div class="timeline-card__body">
+								<div class="timeline-card__header">
 								<div>
 									<h3 class="timeline-role-title">Fullstack Developer Intern</h3>
 									<div class="timeline-org">Jovens Technologies FZ-LLC • Dubai, U.A.E</div>
 								</div>
 								<div class="timeline-date-badge">02/2026 - 08/2026</div>
-							</div>
-							<ul class="timeline-card__bullets">
+								</div>
+								<ul class="timeline-card__bullets">
 								<li>Architected and deployed a scalable full-stack web application, integrating Machine Learning (ML) and Artificial Intelligence (AI) algorithms to optimize core platform features, resulting in a <strong>28% increase in processing efficiency</strong>.</li>
 								<li>Engineered robust Natural Language Processing (NLP) pipelines for automated text analysis and unstructured data extraction, reducing manual processing time by <strong>12%</strong> and improving overall system accuracy by <strong>15%</strong>.</li>
-							</ul>
-							<div class="timeline-tags-row">
+								</ul>
+								<div class="timeline-tags-row">
 								<span class="tech-pill">Fullstack ML</span>
 								<span class="tech-pill">NLP Pipelines</span>
 								<span class="tech-pill">System Architecture</span>
 								<span class="tech-pill">Data Pipelines</span>
+								</div>
 							</div>
-						</div>
+							<div class="timeline-card__impact"><span>PROCESSING</span><strong>+28%</strong><small>efficiency lift</small></div>
+						</article>
 
 						<!-- Role 3: Domdog -->
-						<div class="timeline-card spotlight-card" data-spotlight data-tilt data-cursor-text="Domdog">
-							<div class="timeline-card__header">
+						<article class="timeline-card spotlight-card" data-spotlight data-tilt data-cursor-text="Domdog">
+							<div class="timeline-card__rail" aria-hidden="true"><span>03</span><i></i></div>
+							<div class="timeline-card__body">
+								<div class="timeline-card__header">
 								<div>
 									<h3 class="timeline-role-title">Software Development Engineer Intern</h3>
 									<div class="timeline-org">Domdog • Bengaluru, India (Remote)</div>
 								</div>
 								<div class="timeline-date-badge">08/2025 - 10/2025</div>
-							</div>
-							<ul class="timeline-card__bullets">
+								</div>
+								<ul class="timeline-card__bullets">
 								<li>Engineered automated end-to-end (E2E) testing suites using Playwright, automating regression tests and expanding test coverage across <strong>8 client platforms</strong>.</li>
 								<li>Integrated a malicious content scanner to actively monitor and safeguard web applications from malicious threats and unauthorized script injections.</li>
 								<li>Optimized critical frontend rendering workflows and asset delivery pipelines, boosting search indexing and SEO visibility by <strong>11%</strong>.</li>
-							</ul>
-							<div class="timeline-tags-row">
+								</ul>
+								<div class="timeline-tags-row">
 								<span class="tech-pill">Playwright</span>
 								<span class="tech-pill">E2E Automation</span>
 								<span class="tech-pill">Security Scanner</span>
 								<span class="tech-pill">Performance &amp; SEO</span>
+								</div>
 							</div>
-						</div>
+							<div class="timeline-card__impact"><span>COVERAGE</span><strong>8</strong><small>client platforms</small></div>
+						</article>
 					</div>
 				</section>
 
@@ -947,17 +1021,21 @@
 	</div>
 
 	<!-- Accessible Project Details Dialog Modal -->
-	<div id="project-modal" class="project-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title">
+	<div id="project-modal" class="project-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title" inert>
 		<div class="project-modal__backdrop" id="modal-backdrop" data-cursor-text="Dismiss"></div>
-		<div class="project-modal__panel spotlight-card" data-spotlight tabindex="-1">
+		<div class="project-modal__panel spotlight-card" data-spotlight data-lenis-prevent tabindex="-1">
 			<button class="project-modal__close" id="modal-close" aria-label="Close Project Details Dialog" data-cursor-text="Close" data-magnetic>CLOSE ✕</button>
 			<span class="project-modal__category" id="modal-category">CATEGORY</span>
 			<h2 id="modal-title">Project Title</h2>
+			<!-- src is copied from the row's diagram on open, so nothing loads up front. -->
+			<figure class="project-modal__figure" role="region" aria-label="Pipeline diagram, scrollable" tabindex="0">
+				<img id="modal-diagram" alt="" width="640" height="360" decoding="async">
+			</figure>
 			<p class="project-modal__description" id="modal-desc">Project description content.</p>
-			<div class="project-modal__index" id="modal-index">CASE STUDY 01 // ARCHITECTURE</div>
+			<div class="project-modal__index" id="modal-index"></div>
 			<div class="u-mt-14">
 				<a href="#" id="modal-github" target="_blank" rel="noopener" class="btn-aurora" data-cursor-text="GitHub" data-magnetic data-particle-burst>
-					<i class="fa-brands fa-github"></i> VIEW ON GITHUB ↗
+					<i class="fa-brands fa-github" aria-hidden="true"></i> GitHub<span class="sr-only"> (opens in a new tab)</span>
 				</a>
 			</div>
 		</div>

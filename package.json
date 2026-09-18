@@ -9,7 +9,8 @@
 		"build": "node build.mjs",
 		"start": "node app.js",
 		"preflight": "node preflight.mjs",
-		"package": "node preflight.mjs && node package-deploy.mjs"
+		"package": "node preloader.test.mjs && node preflight.mjs && node package-deploy.mjs",
+		"test": "node preloader.test.mjs"
 	},
 	"author": "Chirudeva Reddy",
 	"license": "ISC",

@@ -36,6 +36,36 @@ document.addEventListener('DOMContentLoaded', () => {
 		gsap.ticker.lagSmoothing(0);
 	}
 
+	// Page-level scroll telemetry stays independent of WebGL so it remains
+	// useful on reduced-motion devices and when the 3D canvas is unavailable.
+	const pageProgress = document.querySelector('.scroll-progress');
+	const pageProgressReadout = pageProgress?.querySelector('.scroll-progress__readout b');
+	const pageProgressRemaining = pageProgress?.querySelector('.scroll-progress__readout em');
+	let pageProgressFrame = null;
+
+	const renderPageProgress = () => {
+		pageProgressFrame = null;
+		if (!pageProgress) return;
+		const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+		const progress = Math.min(1, Math.max(0, window.scrollY / maxScroll));
+		const percent = Math.round(progress * 100);
+		pageProgress.style.setProperty('--page-progress', progress.toFixed(4));
+		pageProgress.setAttribute('aria-valuenow', String(percent));
+		pageProgress.setAttribute('aria-valuetext', `${percent}% scrolled, ${100 - percent}% remaining`);
+		if (pageProgressReadout) pageProgressReadout.textContent = String(percent).padStart(2, '0');
+		if (pageProgressRemaining) pageProgressRemaining.textContent = `${100 - percent} LEFT`;
+	};
+
+	const schedulePageProgress = () => {
+		if (pageProgressFrame !== null) return;
+		pageProgressFrame = requestAnimationFrame(renderPageProgress);
+	};
+
+	window.addEventListener('scroll', schedulePageProgress, { passive: true });
+	window.addEventListener('resize', schedulePageProgress, { passive: true });
+	if (lenis) lenis.on('scroll', schedulePageProgress);
+	renderPageProgress();
+
 	// ==========================================================================
 	// 2. 3D WebGL Bioluminescent Particle Sphere (Auros Centered Signature Visual)
 	// ==========================================================================
@@ -532,52 +562,16 @@ document.addEventListener('DOMContentLoaded', () => {
 	// ==========================================================================
 	// 2.1 Seamless Dual-Buffer Crossfading Video Engine (Google Flow Loop)
 	// ==========================================================================
-	const initSeamlessFlowVideo = () => {
-		const videoA = document.getElementById('hero-flow-video-a');
-		const videoB = document.getElementById('hero-flow-video-b');
-		if (!videoA || !videoB) return;
+	// The hero clip is baked loop-perfect (its tail is cross-dissolved onto its
+	// own head), so `loop` on the element is genuinely seamless and the whole
+	// dual-buffer crossfade this used to need is gone. All that is left is the
+	// reduced-motion case, which CSS cannot express for video playback.
+	const heroFlowVideo = document.getElementById('hero-flow-video');
 
-		let current = videoA;
-		let next = videoB;
-		let crossfading = false;
-
-		const startCurrent = () => {
-			current.play().catch(() => {});
-		};
-
-		startCurrent();
-		window.addEventListener('pointerdown', startCurrent, { once: true });
-
-		const loopCrossfade = () => {
-			if (current && current.duration && !crossfading) {
-				const timeLeft = current.duration - current.currentTime;
-				if (timeLeft <= 0.85 && timeLeft > 0) {
-					crossfading = true;
-					next.currentTime = 0;
-					next.play().then(() => {
-						next.classList.add('is-active');
-						current.classList.remove('is-active');
-						setTimeout(() => {
-							current.pause();
-							current.currentTime = 0;
-							// Swap active buffers
-							const temp = current;
-							current = next;
-							next = temp;
-							crossfading = false;
-						}, 800);
-					}).catch(() => {
-						crossfading = false;
-					});
-				}
-			}
-			requestAnimationFrame(loopCrossfade);
-		};
-
-		requestAnimationFrame(loopCrossfade);
-	};
-
-	initSeamlessFlowVideo();
+	if (heroFlowVideo && prefersReducedMotion) {
+		heroFlowVideo.autoplay = false;
+		heroFlowVideo.pause();
+	}
 
 	// ==========================================================================
 	// 3. High-Precision Computer Vision Spatial Reticle Cursor
@@ -616,8 +610,14 @@ document.addEventListener('DOMContentLoaded', () => {
 		requestAnimationFrame(renderCvCursor);
 	};
 
-	if (cvCursor && cvReticle) {
+	// Touch devices get no reticle at all: a tap emits pointermove, which used to
+	// strand the crosshair at the tap point and leave the rAF loop running.
+	if (cvCursor && cvReticle && !hasCoarsePointer) {
 		window.addEventListener('pointermove', (e) => {
+			// `js-cursor` is what actually hides the native arrow. Setting it here,
+			// on real pointer movement, means a failed bundle never leaves the page
+			// with no visible cursor at all.
+			document.documentElement.classList.add('js-cursor');
 			document.body.classList.add('cursor-active');
 			targetMouseX = e.clientX;
 			targetMouseY = e.clientY;
@@ -639,7 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		requestAnimationFrame(renderCvCursor);
 
-		const interactiveEls = document.querySelectorAll('a, button, [data-magnetic="true"], [data-cursor-text], .project-item-card, .matrix-card, .timeline-card, .bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .surface-card, .about-portrait-card, .project-modal__backdrop, .project-modal__close');
+		const interactiveEls = document.querySelectorAll('a, button, [data-magnetic="true"], [data-cursor-text], .matrix-card, .timeline-card, .bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .surface-card, .about-portrait-card, .project-modal__backdrop, .project-modal__close');
 		interactiveEls.forEach((el) => {
 			el.addEventListener('pointerenter', () => {
 				document.body.classList.add('cursor-hover');
@@ -712,7 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// scrolled into view and is still fully transparent, drop the inline styles
 	// so the content wins over the animation.
 	const revealTargets = document.querySelectorAll(
-		'.bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .matrix-card, .project-item-card, .timeline-card, .about-portrait-card'
+		'.bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .matrix-card, .timeline-card, .about-portrait-card'
 	);
 
 	let guardScheduled = false;
@@ -872,7 +872,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// 6. Interactive 3D Perspective Card Tilt
 	// ==========================================================================
 	if (motionEnabled) {
-		const tiltCards = document.querySelectorAll('.matrix-card, .timeline-card, .project-item-card, .surface-card, .bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .about-portrait-frame');
+		const tiltCards = document.querySelectorAll('.matrix-card, .timeline-card, .surface-card, .bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .about-portrait-frame');
 		tiltCards.forEach((card) => {
 			card.addEventListener('mousemove', (e) => {
 				const rect = card.getBoundingClientRect();
@@ -933,41 +933,13 @@ document.addEventListener('DOMContentLoaded', () => {
 					stagger: 0.08,
 					ease: 'power3.out',
 					scrollTrigger: {
-						trigger: '.matrix-grid',
+						trigger: '.matrix-orbital-stage',
 						start: 'top 85%',
 						toggleActions: 'play none none none'
 					}
 				}
 			);
 		}
-
-		// Projects alternating slide-in reveal (Even from left, Odd from right)
-		const projectCards = document.querySelectorAll('.project-item-card');
-		projectCards.forEach((card, index) => {
-			const isEven = index % 2 === 0;
-			const initialOffset = isEven ? -20 : 20; // percentage shift
-
-			gsap.fromTo(
-				card,
-				{
-					opacity: 0,
-					xPercent: initialOffset,
-					scale: 0.96
-				},
-				{
-					opacity: 1,
-					xPercent: 0,
-					scale: 1,
-					duration: 0.9,
-					ease: 'power3.out',
-					scrollTrigger: {
-						trigger: card,
-						start: 'top 88%',
-						toggleActions: 'play none none none'
-					}
-				}
-			);
-		});
 
 		// Experience Timeline cards reveal
 		const timelineCards = document.querySelectorAll('.timeline-card');
@@ -998,6 +970,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const modalCategory = document.getElementById('modal-category');
 	const modalDescription = document.getElementById('modal-desc');
 	const modalIndex = document.getElementById('modal-index');
+	const modalDiagram = document.getElementById('modal-diagram');
 	const modalGithub = document.getElementById('modal-github');
 	const modalClose = document.getElementById('modal-close');
 	const modalBackdrop = document.getElementById('modal-backdrop');
@@ -1013,18 +986,26 @@ document.addEventListener('DOMContentLoaded', () => {
 		modalTitle.textContent = card.querySelector('.project-item-title')?.textContent || 'Project';
 		modalCategory.textContent = card.querySelector('.project-category-tag')?.textContent || 'Project';
 		modalDescription.textContent = card.querySelector('.project-item-desc')?.textContent || '';
-		modalIndex.textContent = `CASE STUDY 0${Number(card.getAttribute('data-project') || 0) + 1} // ARCHITECTURE`;
+		modalIndex.textContent = card.querySelector('.project-dates')?.textContent || '';
+
+		const diagram = card.querySelector('.project-diagram');
+		if (modalDiagram && diagram) {
+			modalDiagram.src = diagram.src;
+			modalDiagram.alt = diagram.alt;
+		}
 
 		if (modalGithub) {
 			const githubUrl = card.getAttribute('data-github') || 'https://github.com/Chirudeva-Reddy';
 			modalGithub.setAttribute('href', githubUrl);
 		}
 
+		projectModal.removeAttribute('inert');
 		projectModal.classList.add('is-open');
 		projectModal.setAttribute('aria-hidden', 'false');
 		pageContent?.setAttribute('inert', '');
 		document.body.classList.add('modal-open');
 		if (lenis) lenis.stop();
+		modalPanel?.scrollTo(0, 0);
 		modalPanel?.focus({ preventScroll: true });
 	};
 
@@ -1032,6 +1013,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (!projectModal) return;
 		projectModal.classList.remove('is-open');
 		projectModal.setAttribute('aria-hidden', 'true');
+		// opacity:0 alone leaves the closed dialog's controls in the tab order.
+		projectModal.setAttribute('inert', '');
 		pageContent?.removeAttribute('inert');
 		document.body.classList.remove('modal-open');
 		if (lenis) lenis.start();
@@ -1040,29 +1023,17 @@ document.addEventListener('DOMContentLoaded', () => {
 	};
 
 	projectCardsList.forEach((card) => {
-		// The card itself stays clickable as a pointer affordance, but it is no
-		// longer a role="button" wrapping links. Keyboard and screen-reader users
-		// get the real <button> inside the actions row instead.
-		card.addEventListener('click', (event) => {
-			if (event.target.closest('a[href]')) return;
+		card.querySelector('[data-open-project]')?.addEventListener('click', (event) => {
+			lastFocusedTrigger = event.currentTarget;
 			openProjectModal(card);
 		});
-
-		const openButton = card.querySelector('[data-open-project]');
-		if (openButton) {
-			openButton.addEventListener('click', (event) => {
-				event.stopPropagation();
-				lastFocusedTrigger = openButton;
-				openProjectModal(card);
-			});
-		}
 	});
 
 	modalClose?.addEventListener('click', closeProjectModal);
 	modalBackdrop?.addEventListener('click', closeProjectModal);
 
 	document.addEventListener('keydown', (event) => {
-		if (event.key === 'Escape') closeProjectModal();
+		if (event.key === 'Escape' && projectModal?.classList.contains('is-open')) closeProjectModal();
 	});
 
 	projectModal?.addEventListener('keydown', (event) => {
@@ -1071,7 +1042,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (focusable.length === 0) return;
 		const first = focusable[0];
 		const last = focusable[focusable.length - 1];
-		if (event.shiftKey && document.activeElement === first) {
+		// The panel itself takes focus on open, so Shift+Tab from it must wrap too.
+		if (event.shiftKey && (document.activeElement === first || document.activeElement === modalPanel)) {
 			event.preventDefault();
 			last.focus();
 		}
@@ -1080,6 +1052,74 @@ document.addEventListener('DOMContentLoaded', () => {
 			first.focus();
 		}
 	});
+
+	// ==========================================================================
+	// 8b. Projects Index: the sticky diagram well follows the active row
+	// ==========================================================================
+	// CSS only shows the well above 1024px without reduced motion; everywhere
+	// else rows keep their inline diagrams, so this wiring is inert there.
+	const projectsIndex = document.querySelector('.projects-index');
+	const viewerImages = projectsIndex ? projectsIndex.querySelectorAll('.projects-viewer__img') : [];
+
+	if (projectsIndex && viewerImages.length && projectCardsList.length) {
+		const enhancedLayout = window.matchMedia('(min-width: 1025px) and (prefers-reduced-motion: no-preference)');
+		const projectFigures = projectsIndex.querySelectorAll('.project-figure');
+		let bandCard = null;
+		let focusLocked = false;
+
+		const setActiveProject = (card) => {
+			const index = card.getAttribute('data-project');
+			projectCardsList.forEach((row) => row.toggleAttribute('data-active', row === card));
+			viewerImages.forEach((img) => img.classList.toggle('is-active', img.getAttribute('data-project') === index));
+		};
+
+		// Keyboard focus beats scroll position, until focus leaves the index or the
+		// pointer takes over again (a wheel after Escape must not stay frozen).
+		projectCardsList.forEach((card) => {
+			card.addEventListener('focusin', (event) => {
+				focusLocked = event.target.matches(':focus-visible');
+				setActiveProject(card);
+			});
+		});
+
+		const releaseFocusLock = () => {
+			if (!focusLocked) return;
+			focusLocked = false;
+			if (bandCard) setActiveProject(bandCard);
+		};
+		projectsIndex.addEventListener('focusout', (event) => {
+			if (!projectsIndex.contains(event.relatedTarget)) releaseFocusLock();
+		});
+		// keydown covers PageDown/arrows/Home/End; Tab re-locks via focusin right after.
+		['wheel', 'pointerdown', 'touchstart', 'keydown'].forEach((type) => window.addEventListener(type, releaseFocusLock, { passive: true }));
+
+		// A thin band just above the viewport centre, level with the pinned well.
+		const rowObserver = new IntersectionObserver((entries) => {
+			entries.forEach((entry) => {
+				if (!entry.isIntersecting) return;
+				bandCard = entry.target;
+				if (!focusLocked) setActiveProject(bandCard);
+			});
+		}, { rootMargin: '-40% 0px -55% 0px' });
+		projectCardsList.forEach((card) => rowObserver.observe(card));
+
+		// The pan frames are keyboard stops only while they are actually on screen.
+		const syncProjectFigures = () => {
+			projectFigures.forEach((figure) => {
+				if (enhancedLayout.matches) figure.removeAttribute('tabindex');
+				else figure.setAttribute('tabindex', '0');
+			});
+		};
+
+		projectsIndex.classList.add('is-enhanced');
+		syncProjectFigures();
+		// The enhanced layout is ~1600px shorter than the one earlier triggers measured.
+		if (enhancedLayout.matches) ScrollTrigger.refresh();
+		enhancedLayout.addEventListener('change', () => {
+			syncProjectFigures();
+			ScrollTrigger.refresh();
+		});
+	}
 
 	// ==========================================================================
 	// 9. Velocity-Responsive Kinetic Footer Marquee (Smooth Flywheel)
@@ -1554,7 +1594,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	// (H) Tactile Push & Click Shockwave Ripple (taste-skill Section 4.5 & 10)
 	const initTactileRipple = () => {
 		document.addEventListener('click', (e) => {
-			const target = e.target.closest('.btn-aurora, .btn-kelp, .btn-header-touch, .social-link, .tech-pill, .project-card__open');
+			const target = e.target.closest('.btn-aurora, .btn-kelp, .btn-header-touch, .social-link, .tech-pill');
 			if (!target) return;
 
 			const ripple = document.createElement('span');

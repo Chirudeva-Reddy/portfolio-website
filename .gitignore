@@ -1,11 +1,7 @@
 node_modules
-.next
 .playwright-cli
-tsconfig.tsbuildinfo
 .DS_Store
-.vercel
 public/dist
 .build-staging
 deploy.zip
 .deploy-staging
-public/plugins
