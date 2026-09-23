@@ -1,7 +1,13 @@
 import * as THREE from 'three';
+import { Reflector } from 'three/addons/objects/Reflector.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
+import { initChat } from './chat.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -67,510 +73,292 @@ document.addEventListener('DOMContentLoaded', () => {
 	renderPageProgress();
 
 	// ==========================================================================
-	// 2. 3D WebGL Bioluminescent Particle Sphere (Auros Centered Signature Visual)
+	// 2. Hero Story: 3D Fin Corridor + Scroll-Driven Steps
 	// ==========================================================================
+	// A row of tall metal fins recedes along a reflective floor, backlit by a
+	// teal wall so light bleeds through the gaps. Scrolling through #hero
+	// dollies the camera down the row while the story steps crossfade on top.
 	const canvas = document.getElementById('hero-canvas');
-	let threeScene, threeCamera, threeRenderer, particleSystem, particlePositions, basePositions;
-	let mouseXNorm = 0;
-	let mouseYNorm = 0;
-	let targetRotX = 0;
-	let targetRotY = 0;
-	let mouseWorldX = 0;
-	let mouseWorldY = 0;
-	let mouseVelX = 0;
-	let mouseVelY = 0;
-	let mouseSpeed = 0;
-	let lastPointerX = 0;
-	let lastPointerY = 0;
-	let lastPointerTime = performance.now();
+	const heroStory = document.getElementById('hero');
+	const heroSteps = heroStory ? [...heroStory.querySelectorAll('.hero-step')] : [];
+	const heroRailDots = heroStory ? [...heroStory.querySelectorAll('.hero-story__rail li')] : [];
+	const storyLive = !prefersReducedMotion && heroSteps.length > 0;
+	if (storyLive) heroStory.classList.add('hero-story--live');
+
+	let heroP = 0; // 0 at the top of #hero, 1 when its sticky stage releases
+	let heroFade = 1; // 1 while the hero fills the screen, 0 once it has scrolled away
+
+	const renderStory = () => {
+		const t = heroP * (heroSteps.length - 1);
+		heroSteps.forEach((step, i) => {
+			let d = t - i;
+			if (i === 0) d = Math.max(0, d);
+			if (i === heroSteps.length - 1) d = Math.min(0, d);
+			// Fully readable for the middle half of each step, blank between steps
+			const o = Math.min(1, Math.max(0, (0.5 - Math.abs(d)) * 4));
+			step.style.opacity = o.toFixed(3);
+			step.style.transform = `translate3d(0, ${(-d * 80).toFixed(1)}px, 0)`;
+			step.inert = o < 0.5;
+			if (heroRailDots[i]) heroRailDots[i].classList.toggle('is-active', Math.round(t) === i);
+		});
+	};
+
+	const onStoryScroll = () => {
+		if (!heroStory) return;
+		const rect = heroStory.getBoundingClientRect();
+		const vh = window.innerHeight;
+		heroP = Math.min(1, Math.max(0, -rect.top / Math.max(1, rect.height - vh)));
+		heroFade = Math.min(1, Math.max(0, 1 - (vh - rect.bottom) / (vh * 0.8)));
+		// The legibility scrim is viewport-fixed and fades with the corridor, so the hand-off to Metrics has no edge
+		heroStory.style.setProperty('--hero-fade', heroFade.toFixed(3));
+		if (storyLive) renderStory();
+	};
+
+	window.addEventListener('scroll', onStoryScroll, { passive: true });
+	window.addEventListener('resize', onStoryScroll);
+	if (lenis) lenis.on('scroll', onStoryScroll);
+	onStoryScroll();
 
 	if (canvas) {
 		try {
-			threeScene = new THREE.Scene();
+			const isSmall = window.innerWidth < 768;
+			const renderer = new THREE.WebGLRenderer({ canvas, antialias: !isSmall, powerPreference: 'high-performance' });
+			renderer.setPixelRatio(Math.min(window.devicePixelRatio, isSmall ? 1.5 : 2));
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.toneMapping = THREE.ACESFilmicToneMapping;
+			renderer.toneMappingExposure = 0.95;
 
-			threeCamera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
-			threeCamera.position.z = 7.2;
+			// The scene stays teal while the UI uses amber for interactive priority.
+			const BG = new THREE.Color('#030605'); // --color-liquid-deep
+			const TEAL = new THREE.Color('#63dac8');
+			const scene = new THREE.Scene();
+			scene.background = BG;
+			scene.fog = new THREE.FogExp2(BG, 0.062);
 
-			threeRenderer = new THREE.WebGLRenderer({
-				canvas,
-				alpha: true,
-				antialias: true,
-				powerPreference: 'high-performance',
-			});
-			threeRenderer.setSize(window.innerWidth, window.innerHeight);
-			threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+			const camera = new THREE.PerspectiveCamera(isSmall ? 58 : 42, window.innerWidth / window.innerHeight, 0.1, 120);
 
-			// Soft circular glow point texture generated programmatically
-			const createGlowTexture = () => {
-				const size = 64;
-				const tempCanvas = document.createElement('canvas');
-				tempCanvas.width = size;
-				tempCanvas.height = size;
-				const ctx = tempCanvas.getContext('2d');
+			// Corridor layout: fins stand perpendicular to a wall at x = WALL_X,
+			// starting near the camera and receding down -z.
+			const FIN_COUNT = isSmall ? 40 : 64;
+			const FIN_SPACING = 0.85;
+			const FIN_DEPTH = 1.3; // how far a fin sticks out of the wall
+			const FIN_HEIGHT = 10;
+			const WALL_X = 2.6;
+			const ROW_START_Z = 6;
 
-				const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-				gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-				gradient.addColorStop(0.2, 'rgba(203, 255, 252, 0.9)');
-				gradient.addColorStop(0.5, 'rgba(0, 130, 124, 0.4)');
-				gradient.addColorStop(1, 'rgba(0, 38, 36, 0)');
-
-				ctx.fillStyle = gradient;
-				ctx.fillRect(0, 0, size, size);
-
-				const texture = new THREE.CanvasTexture(tempCanvas);
-				texture.needsUpdate = true;
-				return texture;
+			const uniforms = {
+				uTime: { value: 0 },
+				uScroll: { value: 0 },
+				uGlow: { value: TEAL.clone().multiplyScalar(0.6) },
 			};
 
-			// Generate Bioluminescent Particles with Multi-Shape Morphological Lifecycle (Sphere -> Ultra-Thick DNA & Deep Particulate Field -> Torus -> Galaxy)
-			const particleCount = 6800;
-			const geometry = new THREE.BufferGeometry();
-			particlePositions = new Float32Array(particleCount * 3);
-			const spherePositions = new Float32Array(particleCount * 3);
-			const dnaPositions = new Float32Array(particleCount * 3);
-			const torusPositions = new Float32Array(particleCount * 3);
-			const galaxyPositions = new Float32Array(particleCount * 3);
-			const scatterBurstVectors = new Float32Array(particleCount * 3);
-			const noiseOffsets = new Float32Array(particleCount * 3);
-			const colors = new Float32Array(particleCount * 3);
+			// One instanced box per fin. The vertex shader bends the front edge into
+			// an S-step (recessed below, proud above) whose height rides a slow wave
+			// down the row, so the wall "breathes" and shifts as you scroll.
+			const finGeometry = new THREE.BoxGeometry(FIN_DEPTH, FIN_HEIGHT, 0.05, 1, 160, 1);
+			finGeometry.translate(0, FIN_HEIGHT / 2, 0);
+			const finIndex = new Float32Array(FIN_COUNT);
+			for (let i = 0; i < FIN_COUNT; i++) finIndex[i] = i / FIN_COUNT;
+			finGeometry.setAttribute('aIdx', new THREE.InstancedBufferAttribute(finIndex, 1));
 
-			const colorPalette = [
-				new THREE.Color('#00827c'), // Deep Teal
-				new THREE.Color('#2ef4eb'), // Vibrant Cyan
-				new THREE.Color('#cbfffc'), // Pale Aqua
-				new THREE.Color('#edfffe'), // Liquid Mist
-				new THREE.Color('#fde9ff'), // Lavender Phosphor Pink
-				new THREE.Color('#ffffff'), // Platinum White
-			];
+			const finMaterial = new THREE.MeshStandardMaterial({ color: '#020807', metalness: 0.9, roughness: 0.3 });
+			// Dims whatever is close to the camera so the nearest fins and wall never
+			// blow out; the glow lives in the middle distance, as in a long-lens shot.
+			const dimNear = (shader) => {
+				shader.vertexShader = shader.vertexShader
+					.replace('#include <common>', '#include <common>\nvarying float vViewDepth;')
+					.replace('#include <project_vertex>', '#include <project_vertex>\nvViewDepth = -mvPosition.z;');
+				shader.fragmentShader = shader.fragmentShader
+					.replace('#include <common>', '#include <common>\nvarying float vViewDepth;')
+					.replace('#include <opaque_fragment>', 'outgoingLight *= mix(0.22, 1.0, smoothstep(2.0, 14.0, vViewDepth));\n#include <opaque_fragment>');
+			};
 
-			const sphereRadius = 2.45;
-			const dnaHeight = 14.5; // Spans full vertical screen height with overhead margin
-			const dnaRadius = 3.4; // Wide, dramatic radius across screen
-			const strandThickness = 0.95; // Thick volumetric multi-fiber cylindrical body
-			const numRungs = 34; // Dense horizontal hydrogen cross-linking bridges
-			const torusMajor = 2.9;
-			const torusMinor = 1.15;
+			finMaterial.onBeforeCompile = (shader) => {
+				Object.assign(shader.uniforms, uniforms);
+				dimNear(shader);
+				shader.vertexShader = shader.vertexShader
+					.replace('#include <common>', `#include <common>
+						attribute float aIdx;
+						uniform float uTime;
+						uniform float uScroll;
+						varying float vBack;
+						varying float vHeight;`)
+					.replace('#include <beginnormal_vertex>', `
+						float stepY = 1.0 + 2.4 * pow(1.0 - aIdx, 1.6) + sin(uTime * 0.55 - aIdx * 24.0 + uScroll * 7.0) * 0.6 + uScroll * 0.8;
+						float stepW = 0.6;
+						float su = clamp((position.y - stepY + stepW) / (2.0 * stepW), 0.0, 1.0);
+						float stepK = su * su * (3.0 - 2.0 * su);
+						float stepSlope = 6.0 * su * (1.0 - su) / (2.0 * stepW);
+						float isFront = step(position.x, 0.0);
+						float recess = 0.75;
+						vec3 objectNormal = vec3(normal);
+						if (normal.x < -0.5) objectNormal = normalize(vec3(-1.0, recess * stepSlope, 0.0));
+						#ifdef USE_TANGENT
+							vec3 objectTangent = vec3(tangent.xyz);
+						#endif`)
+					.replace('#include <begin_vertex>', `
+						vec3 transformed = vec3(position);
+						transformed.x += isFront * (1.0 - stepK) * recess;
+						vBack = transformed.x / ${FIN_DEPTH.toFixed(2)} + 0.5;
+						vHeight = position.y;`);
+				shader.fragmentShader = shader.fragmentShader
+					.replace('#include <common>', `#include <common>
+						uniform vec3 uGlow;
+						varying float vBack;
+						varying float vHeight;`)
+					.replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+						// Wall light bleeding onto the fin faces: strongest at the back edge and low down
+						float bleed = pow(clamp(vBack, 0.0, 1.0), 3.0) * (0.25 + 0.75 * smoothstep(8.0, 0.5, vHeight));
+						totalEmissiveRadiance += uGlow * bleed;`);
+			};
 
-			for (let i = 0; i < particleCount; i++) {
-				const i3 = i * 3;
+			const fins = new THREE.InstancedMesh(finGeometry, finMaterial, FIN_COUNT);
+			const finMatrix = new THREE.Matrix4();
+			for (let i = 0; i < FIN_COUNT; i++) {
+				finMatrix.makeTranslation(WALL_X - FIN_DEPTH / 2, 0, ROW_START_Z - i * FIN_SPACING);
+				fins.setMatrixAt(i, finMatrix);
+			}
+			scene.add(fins);
 
-				// 1. Base Shape: Celestial Particle Globe with Saturn Planetary Rings & Stardust Stream (Asymmetric 3D Orbit)
-				let sx = 0, sy = 0, sz = 0;
+			// Glowing wall behind the fins: what shows through the gaps
+			const wallTexture = (() => {
+				const c = document.createElement('canvas');
+				c.width = 4;
+				c.height = 256;
+				const ctx = c.getContext('2d');
+				const g = ctx.createLinearGradient(0, 256, 0, 0);
+				// Same sea-glass hue as TEAL (#63dac8) so the gaps and the fin bleed match
+				g.addColorStop(0, 'rgba(160,236,224,1)');
+				g.addColorStop(0.35, 'rgba(99,218,200,0.7)');
+				g.addColorStop(0.8, 'rgba(38,110,100,0.18)');
+				g.addColorStop(1, 'rgba(5,18,15,0)');
+				ctx.fillStyle = g;
+				ctx.fillRect(0, 0, 4, 256);
+				const tex = new THREE.CanvasTexture(c);
+				tex.colorSpace = THREE.SRGBColorSpace;
+				return tex;
+			})();
+			const rowLength = FIN_COUNT * FIN_SPACING + 10;
+			const wall = new THREE.Mesh(
+				new THREE.PlaneGeometry(rowLength, FIN_HEIGHT),
+				new THREE.MeshBasicMaterial({ map: wallTexture, color: new THREE.Color(1.15, 1.15, 1.15), transparent: true }),
+			);
+			wall.material.onBeforeCompile = dimNear;
+			wall.rotation.y = -Math.PI / 2;
+			wall.position.set(WALL_X + 0.03, FIN_HEIGHT / 2, ROW_START_Z - rowLength / 2 + 5);
+			scene.add(wall);
 
-				if (i < 4200) {
-					// Core Celestial Sphere (62%)
-					const uSphere = Math.random();
-					const vSphere = Math.random();
-					const thetaSphere = uSphere * 2.0 * Math.PI;
-					const phiSphere = Math.acos(2.0 * vSphere - 1.0);
-					const rSphere = sphereRadius + (Math.random() - 0.5) * 0.35;
+			// Floor: a real mirror on desktop, dimmed by a translucent film on top;
+			// phones get a plain glossy floor to skip the second render pass.
+			if (!isSmall) {
+				const mirror = new Reflector(new THREE.PlaneGeometry(80, 80), {
+					textureWidth: Math.round(window.innerWidth * 0.5),
+					textureHeight: Math.round(window.innerHeight * 0.5),
+					color: 0x6f7f7c,
+				});
+				mirror.rotation.x = -Math.PI / 2;
+				scene.add(mirror);
+			}
+			const floorFilm = new THREE.Mesh(
+				new THREE.PlaneGeometry(80, 80),
+				isSmall
+					? new THREE.MeshStandardMaterial({ color: '#031412', metalness: 0.6, roughness: 0.45 })
+					: new THREE.MeshBasicMaterial({ color: BG, transparent: true, opacity: 0.72 }),
+			);
+			floorFilm.rotation.x = -Math.PI / 2;
+			floorFilm.position.y = 0.003;
+			scene.add(floorFilm);
 
-					sx = rSphere * Math.sin(phiSphere) * Math.cos(thetaSphere);
-					sy = rSphere * Math.sin(phiSphere) * Math.sin(thetaSphere);
-					sz = rSphere * Math.cos(phiSphere);
-				} else if (i < 5800) {
-					// Saturn-Style Planetary Orbital Rings (24%): Concentric tilted elliptical rings
-					const ringU = (i - 4200) / 1600;
-					const ringAngle = ringU * Math.PI * 2.0 + (Math.random() - 0.5) * 0.15;
-					const ringRadius = 3.6 + Math.pow(Math.random(), 0.6) * 1.8;
-					const ringTiltX = 0.42; // Tilt around X-axis
-					const ringTiltY = 0.32; // Tilt around Y-axis
-					
-					let rx = ringRadius * Math.cos(ringAngle);
-					let ry = (Math.random() - 0.5) * 0.14;
-					let rz = ringRadius * Math.sin(ringAngle);
-
-					// Apply 3D rotation matrix for realistic orbital slant
-					const cosX = Math.cos(ringTiltX), sinX = Math.sin(ringTiltX);
-					const ry1 = ry * cosX - rz * sinX;
-					const rz1 = ry * sinX + rz * cosX;
-
-					const cosY = Math.cos(ringTiltY), sinY = Math.sin(ringTiltY);
-					sx = rx * cosY + rz1 * sinY;
-					sy = ry1;
-					sz = -rx * sinY + rz1 * cosY;
-				} else {
-					// Flowing Galactic Stardust Stream / Particle Tail (14%)
-					const tTail = (i - 5800) / 1000;
-					const tailAngle = tTail * Math.PI * 2.8 - 0.8;
-					const tailRadius = 2.8 + tTail * 4.2;
-					const tailSpread = (Math.random() - 0.5) * (0.4 + tTail * 1.2);
-
-					sx = tailRadius * Math.cos(tailAngle) + (Math.random() - 0.5) * 0.5;
-					sy = -0.8 + Math.sin(tailAngle * 1.2) * 1.6 + tailSpread;
-					sz = tailRadius * Math.sin(tailAngle) * 0.6 + (Math.random() - 0.5) * 0.8;
-				}
-
-				spherePositions[i3] = sx;
-				spherePositions[i3 + 1] = sy;
-				spherePositions[i3 + 2] = sz;
-
-				// Initial positions start at celestial globe + rings
-				particlePositions[i3] = sx;
-				particlePositions[i3 + 1] = sy;
-				particlePositions[i3 + 2] = sz;
-
-				// 2. Shape 2: Ultra-Thick Volumetric DNA Double Helix + Full-Screen Particulate Cloud
-				if (i < 1904) {
-					// Strand Alpha: Multi-fiber Volumetric Cylindrical Helix (28%)
-					const t = i / 1904;
-					const y = (t - 0.5) * dnaHeight;
-					const angle = y * 1.35;
-					const subFiberPhase = (i % 4) * (Math.PI / 2);
-					const subFiberRadius = 0.28;
-					const psi = Math.random() * Math.PI * 2;
-					const rTube = Math.sqrt(Math.random()) * strandThickness;
-					
-					const offX = (rTube * Math.cos(psi) + subFiberRadius * Math.cos(subFiberPhase));
-					const offZ = (rTube * Math.sin(psi) + subFiberRadius * Math.sin(subFiberPhase));
-
-					dnaPositions[i3] = (dnaRadius + offX) * Math.cos(angle) - offZ * Math.sin(angle);
-					dnaPositions[i3 + 1] = y + (Math.random() - 0.5) * 0.16;
-					dnaPositions[i3 + 2] = (dnaRadius + offX) * Math.sin(angle) + offZ * Math.cos(angle);
-				} else if (i < 3808) {
-					// Strand Beta: Multi-fiber Volumetric Cylindrical Helix with PI phase shift (28%)
-					const t = (i - 1904) / 1904;
-					const y = (t - 0.5) * dnaHeight;
-					const angle = y * 1.35 + Math.PI;
-					const subFiberPhase = (i % 4) * (Math.PI / 2);
-					const subFiberRadius = 0.28;
-					const psi = Math.random() * Math.PI * 2;
-					const rTube = Math.sqrt(Math.random()) * strandThickness;
-
-					const offX = (rTube * Math.cos(psi) + subFiberRadius * Math.cos(subFiberPhase));
-					const offZ = (rTube * Math.sin(psi) + subFiberRadius * Math.sin(subFiberPhase));
-
-					dnaPositions[i3] = (dnaRadius + offX) * Math.cos(angle) - offZ * Math.sin(angle);
-					dnaPositions[i3 + 1] = y + (Math.random() - 0.5) * 0.16;
-					dnaPositions[i3 + 2] = (dnaRadius + offX) * Math.sin(angle) + offZ * Math.cos(angle);
-				} else if (i < 5304) {
-					// Hydrogen Base Pair Bridges: Thick Horizontal Connecting Rungs (22%)
-					const rungIdx = Math.floor(((i - 3808) / 1496) * numRungs);
-					const yRung = ((rungIdx / (numRungs - 1)) - 0.5) * (dnaHeight * 0.94);
-					const angle = yRung * 1.35;
-					const alpha = (Math.random() * 2.0 - 1.0) * 0.96;
-					const rungJitterX = (Math.random() - 0.5) * 0.32;
-					const rungJitterZ = (Math.random() - 0.5) * 0.32;
-					const rungJitterY = (Math.random() - 0.5) * 0.20;
-
-					dnaPositions[i3] = alpha * dnaRadius * Math.cos(angle) + rungJitterX;
-					dnaPositions[i3 + 1] = yRung + rungJitterY;
-					dnaPositions[i3 + 2] = alpha * dnaRadius * Math.sin(angle) + rungJitterZ;
-				} else {
-					// Full-Screen Atmospheric DNA Particulate Cloud / High-Volume Molecular Dust (22%)
-					const yCloud = (Math.random() - 0.5) * (dnaHeight * 1.25);
-					const rCloud = dnaRadius + 0.6 + Math.pow(Math.random(), 0.7) * 7.5;
-					const angleCloud = yCloud * 1.35 + (Math.random() - 0.5) * 3.4;
-
-					dnaPositions[i3] = rCloud * Math.cos(angleCloud) + (Math.random() - 0.5) * 2.8;
-					dnaPositions[i3 + 1] = yCloud + (Math.random() - 0.5) * 1.4;
-					dnaPositions[i3 + 2] = rCloud * Math.sin(angleCloud) + (Math.random() - 0.5) * 3.6;
-				}
-
-				// 3. Shape 3: Cybernetic Neural Torus Ring (Matrix Mode)
-				const uTorus = Math.random() * Math.PI * 2;
-				const vTorus = Math.random() * Math.PI * 2;
-				torusPositions[i3] = (torusMajor + torusMinor * Math.cos(vTorus)) * Math.cos(uTorus);
-				torusPositions[i3 + 1] = torusMinor * Math.sin(vTorus) + (Math.random() - 0.5) * 0.22;
-				torusPositions[i3 + 2] = (torusMajor + torusMinor * Math.cos(vTorus)) * Math.sin(uTorus);
-
-				// 4. Shape 4: Cosmic Spiral Galaxy Field
-				const uGal = Math.random();
-				const rGal = 0.6 + 6.4 * Math.pow(uGal, 0.75);
-				const armOffset = (i % 2 === 0) ? 0 : Math.PI;
-				const thetaGal = rGal * 1.4 + armOffset + (Math.random() - 0.5) * 0.45;
-				galaxyPositions[i3] = rGal * Math.cos(thetaGal);
-				galaxyPositions[i3 + 1] = (Math.random() - 0.5) * (0.8 + rGal * 0.25);
-				galaxyPositions[i3 + 2] = rGal * Math.sin(thetaGal);
-
-				// Volumetric Scatter Burst Vectors (for explosive 3D volumetric dispersion)
-				scatterBurstVectors[i3] = (Math.random() - 0.5) * 14.0;
-				scatterBurstVectors[i3 + 1] = (Math.random() - 0.5) * 12.0;
-				scatterBurstVectors[i3 + 2] = (Math.random() - 0.5) * 10.0;
-
-				// Noise & Per-Particle Phase Offsets
-				noiseOffsets[i3] = Math.random() * Math.PI * 2;
-				noiseOffsets[i3 + 1] = Math.random() * Math.PI * 2;
-				noiseOffsets[i3 + 2] = Math.random() * Math.PI * 2;
-
-				// Color assignment
-				const chosenColor = colorPalette[Math.floor(Math.random() * colorPalette.length)];
-				colors[i3] = chosenColor.r;
-				colors[i3 + 1] = chosenColor.g;
-				colors[i3 + 2] = chosenColor.b;
+			// Key light rakes the fin edges from down the corridor; fill keeps faces from going pure black
+			const keyLight = new THREE.DirectionalLight('#f5daae', 1.8) // --color-accent-soft: edge highlights echo the amber UI;
+			keyLight.position.set(-4, 7, -12);
+			scene.add(keyLight);
+			scene.add(new THREE.HemisphereLight('#0a2e2b', '#000000', 0.15));
+			for (let i = 0; i < 4; i++) {
+				const glow = new THREE.PointLight(TEAL, 1.5, 5, 2);
+				glow.position.set(WALL_X + 0.2, 0.4, ROW_START_Z - 1 - i * 5);
+				scene.add(glow);
 			}
 
-			geometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-			geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+			const composer = new EffectComposer(renderer);
+			composer.addPass(new RenderPass(scene, camera));
+			const bloom = new UnrealBloomPass(new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2), 0.55, 0.5, 0.55);
+			composer.addPass(bloom);
+			composer.addPass(new OutputPass());
 
-			const material = new THREE.PointsMaterial({
-				size: 0.044, // Refined, smaller, crisp high-density bioluminescent particles
-				vertexColors: true,
-				map: createGlowTexture(),
-				transparent: true,
-				opacity: 0.80,
-				blending: THREE.AdditiveBlending,
-				depthWrite: false,
-			});
+			// Camera path keyed to story progress: look down the row, swing toward
+			// the fins mid-story, then glide deeper down the corridor.
+			const CAMERA_KEYS = [
+				{ p: 0, pos: [-3.2, 1.1, 11], look: [0.8, 2.2, -6] },
+				{ p: 0.5, pos: [-1.6, 2.2, 3.5], look: [2.6, 1.6, -4] },
+				{ p: 1, pos: [-2.8, 1.5, -6], look: [1.2, 2.4, -24] },
+			];
+			const camPos = new THREE.Vector3();
+			const camLook = new THREE.Vector3();
+			const targetPos = new THREE.Vector3();
+			const targetLook = new THREE.Vector3();
+			const keyAt = (p) => {
+				let k = 0;
+				while (k < CAMERA_KEYS.length - 2 && p > CAMERA_KEYS[k + 1].p) k++;
+				const a = CAMERA_KEYS[k];
+				const b = CAMERA_KEYS[k + 1];
+				let t = Math.min(1, Math.max(0, (p - a.p) / (b.p - a.p)));
+				t = t * t * (3 - 2 * t);
+				targetPos.set(...a.pos).lerp(new THREE.Vector3(...b.pos), t);
+				targetLook.set(...a.look).lerp(new THREE.Vector3(...b.look), t);
+			};
+			keyAt(0);
+			camPos.copy(targetPos);
+			camLook.copy(targetLook);
 
-			particleSystem = new THREE.Points(geometry, material);
-			particleSystem.position.x = 0; // Centered behind the Hero text stack
-			particleSystem.position.y = 0;
-			threeScene.add(particleSystem);
-
-			// Mouse Move Tracking for 3D Parallax Tilt & Kinetic Vector Flow Field
+			let pointerX = 0;
+			let pointerY = 0;
 			window.addEventListener('pointermove', (e) => {
-				const now = performance.now();
-				const dt = Math.max(1, now - lastPointerTime) / 1000;
-				lastPointerTime = now;
-
-				const prevNormX = mouseXNorm;
-				const prevNormY = mouseYNorm;
-
-				mouseXNorm = (e.clientX / window.innerWidth) * 2 - 1;
-				mouseYNorm = -(e.clientY / window.innerHeight) * 2 + 1;
-				targetRotY = mouseXNorm * 0.4;
-				targetRotX = -mouseYNorm * 0.3;
-
-				// Map to 3D World space coordinates at camera distance
-				mouseWorldX = mouseXNorm * 4.6;
-				mouseWorldY = mouseYNorm * 3.0;
-
-				// Instantaneous cursor velocity vector
-				const vx = (mouseXNorm - prevNormX) / dt;
-				const vy = (mouseYNorm - prevNormY) / dt;
-				mouseVelX = mouseVelX * 0.6 + vx * 0.4;
-				mouseVelY = mouseVelY * 0.6 + vy * 0.4;
-				mouseSpeed = Math.min(3.5, Math.sqrt(mouseVelX * mouseVelX + mouseVelY * mouseVelY));
+				pointerX = (e.clientX / window.innerWidth) * 2 - 1;
+				pointerY = (e.clientY / window.innerHeight) * 2 - 1;
 			}, { passive: true });
 
-			// Resize Handler
 			window.addEventListener('resize', () => {
-				if (!threeCamera || !threeRenderer) return;
-				threeCamera.aspect = window.innerWidth / window.innerHeight;
-				threeCamera.updateProjectionMatrix();
-				threeRenderer.setSize(window.innerWidth, window.innerHeight);
-				threeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize(window.innerWidth, window.innerHeight);
+				composer.setSize(window.innerWidth, window.innerHeight);
 			});
 
-			// Multi-Stage Interactive Scroll Render Loop
-			const startedAt = performance.now();
-			let smoothScrollProgress = 0;
-			let isSleeping = false;
+			const clockStart = performance.now();
 			let rafId = null;
-
-			const updateScrollProgress = () => {
-				const scrollY = window.scrollY || window.pageYOffset || 0;
-				const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-				const targetProgress = Math.min(1, Math.max(0, scrollY / maxScroll));
-				smoothScrollProgress += (targetProgress - smoothScrollProgress) * 0.08;
-
-				if (isSleeping && targetProgress < 0.88) {
-					isSleeping = false;
-					if (rafId === null) animate3D();
+			const renderCorridor = () => {
+				if (document.hidden) {
+					rafId = null;
+					return;
 				}
+				rafId = requestAnimationFrame(renderCorridor);
+
+				const p = prefersReducedMotion ? 0 : heroP;
+				if (!prefersReducedMotion) uniforms.uTime.value = (performance.now() - clockStart) / 1000;
+				uniforms.uScroll.value += (p - uniforms.uScroll.value) * 0.08;
+
+				keyAt(p);
+				targetPos.x += pointerX * 0.35;
+				targetPos.y -= pointerY * 0.2;
+				camPos.lerp(targetPos, 0.07);
+				camLook.lerp(targetLook, 0.07);
+				camera.position.copy(camPos);
+				camera.lookAt(camLook);
+
+				// Past the hero the corridor recedes into a dim backdrop for the rest of the page
+				canvas.style.opacity = (0.1 + 0.9 * heroFade).toFixed(3);
+				if (heroFade > 0.02) composer.render();
+				else renderer.render(scene, camera);
 			};
 
-			window.addEventListener('scroll', updateScrollProgress, { passive: true });
-			if (lenis) {
-				lenis.on('scroll', updateScrollProgress);
-			}
-
-			// Background tab throttling to release GPU
 			document.addEventListener('visibilitychange', () => {
-				if (document.hidden) {
-					if (rafId !== null) cancelAnimationFrame(rafId);
-					rafId = null;
-				} else if (!isSleeping && rafId === null) {
-					animate3D();
-				}
+				if (!document.hidden && rafId === null) renderCorridor();
 			});
-
-			const animate3D = () => {
-				if (document.hidden) {
-					rafId = null;
-					return;
-				}
-
-				updateScrollProgress();
-
-				// If scrolled into the footer and opacity reaches 0, sleep the render loop
-				if (smoothScrollProgress >= 0.88) {
-					if (particleSystem) {
-						material.opacity = 0;
-						threeRenderer.render(threeScene, threeCamera);
-					}
-					isSleeping = true;
-					rafId = null;
-					return;
-				}
-
-				rafId = requestAnimationFrame(animate3D);
-				const elapsedTime = (performance.now() - startedAt) / 1000;
-
-				if (particleSystem) {
-					// 1. Inertial Parallax & Continuous 3D Rotation
-					particleSystem.rotation.y += 0.002 + (smoothScrollProgress * 0.003);
-					particleSystem.rotation.x += (targetRotX - particleSystem.rotation.x) * 0.05;
-					particleSystem.rotation.y += (targetRotY - particleSystem.rotation.y) * 0.05;
-
-					// 2. Multi-Stage Morphing Weights & Volumetric Scattering Pulse
-					let wSphere = 0;
-					let wDna = 0;
-					let wTorus = 0;
-					let wGalaxy = 0;
-					let scatterWeight = 0;
-
-					if (smoothScrollProgress < 0.12) {
-						// Stage 1: Sphere in Hero
-						wSphere = 1;
-					} else if (smoothScrollProgress < 0.28) {
-						// Stage 1 -> 2: High-Volume Scatter & Morph into Thick DNA Double Helix
-						const t = (smoothScrollProgress - 0.12) / 0.16;
-						const smoothT = t * t * (3 - 2 * t);
-						wSphere = 1 - smoothT;
-						wDna = smoothT;
-						scatterWeight = Math.sin(t * Math.PI) * 0.35; // Volumetric burst during morph
-					} else if (smoothScrollProgress < 0.44) {
-						// Stage 2: Rotating Ultra-Thick DNA Double Helix in Research
-						wDna = 1;
-					} else if (smoothScrollProgress < 0.58) {
-						// Stage 2 -> 3: DNA Unravels into Neural Torus
-						const t = (smoothScrollProgress - 0.44) / 0.14;
-						const smoothT = t * t * (3 - 2 * t);
-						wDna = 1 - smoothT;
-						wTorus = smoothT;
-						scatterWeight = Math.sin(t * Math.PI) * 0.25;
-					} else if (smoothScrollProgress < 0.74) {
-						// Stage 3: Swirling Neural Torus in Matrix
-						wTorus = 1;
-					} else if (smoothScrollProgress < 0.88) {
-						// Stage 3 -> 4: Torus expands into Cosmic Galaxy
-						const t = (smoothScrollProgress - 0.74) / 0.14;
-						const smoothT = t * t * (3 - 2 * t);
-						wTorus = 1 - smoothT;
-						wGalaxy = smoothT;
-						scatterWeight = Math.sin(t * Math.PI) * 0.30;
-					} else {
-						wGalaxy = 1;
-					}
-
-					// Opacity Curve: 0.80 in hero -> 0.70 in DNA -> 0.48 in matrix -> 0.0 near footer
-					let currentOpacity = 0.80;
-					if (smoothScrollProgress > 0.12 && smoothScrollProgress <= 0.45) {
-						currentOpacity = 0.80 - (smoothScrollProgress - 0.12) * 0.30;
-					} else if (smoothScrollProgress > 0.45 && smoothScrollProgress <= 0.75) {
-						currentOpacity = 0.70 - (smoothScrollProgress - 0.45) * 0.73;
-					} else if (smoothScrollProgress > 0.75) {
-						currentOpacity = Math.max(0, 0.48 - (smoothScrollProgress - 0.75) * 3.69);
-					}
-
-					material.opacity = currentOpacity;
-					material.size = 0.044 - (smoothScrollProgress * 0.012);
-
-					// Fade out Google Flow ambient video smoothly when scrolling past Hero
-					const heroFlowBg = document.querySelector('.hero-flow-bg');
-					if (heroFlowBg) {
-						if (smoothScrollProgress < 0.25) {
-							heroFlowBg.style.opacity = Math.max(0, 0.52 * (1 - smoothScrollProgress / 0.25));
-						} else {
-							heroFlowBg.style.opacity = '0';
-						}
-					}
-
-					// Kinetic velocity decay per frame
-					mouseSpeed *= 0.94;
-					mouseVelX *= 0.92;
-					mouseVelY *= 0.92;
-
-					// Dynamic Particle Position Calculation with 3D Vector Flow Field
-					const positions = particleSystem.geometry.attributes.position.array;
-					for (let i = 0; i < particleCount; i++) {
-						const i3 = i * 3;
-
-						const sx = spherePositions[i3];
-						const sy = spherePositions[i3 + 1];
-						const sz = spherePositions[i3 + 2];
-
-						const dnx = dnaPositions[i3];
-						const dny = dnaPositions[i3 + 1];
-						const dnz = dnaPositions[i3 + 2];
-
-						const tx = torusPositions[i3];
-						const ty = torusPositions[i3 + 1];
-						const tz = torusPositions[i3 + 2];
-
-						const gx = galaxyPositions[i3];
-						const gy = galaxyPositions[i3 + 1];
-						const gz = galaxyPositions[i3 + 2];
-
-						const bx = scatterBurstVectors[i3];
-						const by = scatterBurstVectors[i3 + 1];
-						const bz = scatterBurstVectors[i3 + 2];
-
-						// Blended target coordinate with Volumetric Scatter Burst
-						const px = (wSphere * sx + wDna * dnx + wTorus * tx + wGalaxy * gx) + (bx * scatterWeight);
-						const py = (wSphere * sy + wDna * dny + wTorus * ty + wGalaxy * gy) + (by * scatterWeight);
-						const pz = (wSphere * sz + wDna * dnz + wTorus * tz + wGalaxy * gz) + (bz * scatterWeight);
-
-						// Ambient organic fluid wave
-						const wave = Math.sin(elapsedTime * 1.35 + px * 0.85 + py * 0.95 + noiseOffsets[i3]) * 0.045;
-
-						// 3D Vector Flow Field & Wake Vorticity
-						const dx = px - mouseWorldX;
-						const dy = py - mouseWorldY;
-						const distSq = dx * dx + dy * dy;
-
-						let flowX = 0;
-						let flowY = 0;
-						let flowZ = 0;
-
-						// Flow field active within cursor influence radius (primarily in Hero & early scroll)
-						if (distSq < 11.0 && smoothScrollProgress < 0.40) {
-							const dist = Math.sqrt(distSq) + 0.001;
-							const influence = Math.exp(-distSq / 2.5) * (0.40 + mouseSpeed * 0.32);
-
-							// Vector Curl noise (perpendicular vortex swirl)
-							const curlX = -dy / dist;
-							const curlY = dx / dist;
-
-							// Repulsion + wake swirl displacement
-							flowX = ((dx / dist) * 0.38 + curlX * 0.58 + mouseVelX * 0.06) * influence;
-							flowY = ((dy / dist) * 0.38 + curlY * 0.58 + mouseVelY * 0.06) * influence;
-							flowZ = Math.sin(elapsedTime * 2.5 + noiseOffsets[i3]) * 0.48 * influence;
-						}
-
-						positions[i3] = px + wave * Math.cos(noiseOffsets[i3]) + flowX;
-						positions[i3 + 1] = py + wave * Math.sin(noiseOffsets[i3]) + flowY;
-						positions[i3 + 2] = pz + wave * Math.cos(noiseOffsets[i3] * 0.5) + flowZ;
-					}
-					particleSystem.geometry.attributes.position.needsUpdate = true;
-
-					// Subtle Y parallax drift
-					particleSystem.position.y = -smoothScrollProgress * 1.4;
-				}
-
-				threeRenderer.render(threeScene, threeCamera);
-			};
-
-			animate3D();
+			renderCorridor();
 		} catch (err) {
-			console.warn('WebGL Particle Sphere initialization skipped:', err);
+			console.warn('Hero corridor initialization skipped:', err);
 		}
-	}
-
-	// ==========================================================================
-	// 2.1 Seamless Dual-Buffer Crossfading Video Engine (Google Flow Loop)
-	// ==========================================================================
-	// The hero clip is baked loop-perfect (its tail is cross-dissolved onto its
-	// own head), so `loop` on the element is genuinely seamless and the whole
-	// dual-buffer crossfade this used to need is gone. All that is left is the
-	// reduced-motion case, which CSS cannot express for video playback.
-	const heroFlowVideo = document.getElementById('hero-flow-video');
-
-	if (heroFlowVideo && prefersReducedMotion) {
-		heroFlowVideo.autoplay = false;
-		heroFlowVideo.pause();
 	}
 
 	// ==========================================================================
@@ -668,33 +456,112 @@ document.addEventListener('DOMContentLoaded', () => {
 	// ==========================================================================
 	// The overlay is dismissed by the inline bootstrap script in index.html
 	// (root class `is-loaded`), which runs even if this bundle never does.
-	// All this module adds is the hero entrance once the overlay has cleared.
+	// When the bundle is here in time, it arms a diagonal shatter in place of
+	// the CSS shutter: the loading screen cracks along a diagonal, the two
+	// halves press together, part to show the corridor behind, then burst
+	// apart as the hero lands.
 	const preloader = document.getElementById('preloader');
+	const root = document.documentElement;
 
 	if (preloader && !prefersReducedMotion) {
-		const runHeroEntrance = () => {
+		let entranceStarted = false;
+		const runHeroEntrance = (delay = 0) => {
+			if (entranceStarted) return;
+			entranceStarted = true;
 			ScrollTrigger.refresh();
-
 			if (motionEnabled) {
-				gsap.fromTo('.hero-eyebrow', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out', clearProps: 'all' });
-				gsap.fromTo('.hero-title', { y: 32, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, delay: 0.15, ease: 'power3.out', clearProps: 'all' });
-				gsap.fromTo('.hero-subtext', { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, delay: 0.25, ease: 'power2.out', clearProps: 'all' });
-				gsap.fromTo('.hero-actions', { scale: 0.95, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, delay: 0.35, ease: 'power2.out', clearProps: 'all' });
-				gsap.fromTo('.hero-status-pill', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, delay: 0.45, ease: 'power2.out', clearProps: 'all' });
+				gsap.fromTo('.hero-step[data-step="0"] > *', { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, delay, stagger: 0.12, ease: 'power3.out', clearProps: 'all' });
 			}
 		};
 
-		if (document.documentElement.classList.contains('is-loaded')) {
+		// The cut runs from 60% along the top edge to 40% along the bottom.
+		// Each half leaves along the cut's normal, so they separate cleanly.
+		const CUT_TOP = 60;
+		const CUT_BOTTOM = 40;
+
+		const shatter = () => {
+			const content = preloader.querySelector('.preloader__content');
+			const vw = window.innerWidth;
+			const vh = window.innerHeight;
+			// Unit normal to the cut in screen pixels (points right and down)
+			const dx = ((CUT_BOTTOM - CUT_TOP) / 100) * vw;
+			const len = Math.hypot(dx, vh);
+			const nx = vh / len;
+			const ny = -dx / len;
+
+			const makeShard = (polygon) => {
+				const shard = document.createElement('div');
+				shard.className = 'preloader-shard';
+				shard.setAttribute('aria-hidden', 'true');
+				shard.style.clipPath = `polygon(${polygon})`;
+				const copy = content.cloneNode(true);
+				copy.querySelectorAll('[id]').forEach((el) => el.removeAttribute('id'));
+				shard.appendChild(copy);
+				document.body.appendChild(shard);
+				return shard;
+			};
+			const left = makeShard(`0 0, ${CUT_TOP}% 0, ${CUT_BOTTOM}% 100%, 0 100%`);
+			const right = makeShard(`${CUT_TOP}% 0, 100% 0, 100% 100%, ${CUT_BOTTOM}% 100%`);
+
+			const crack = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+			crack.setAttribute('class', 'preloader-crack');
+			// Pixel-space viewBox: a scaled one would force non-scaling-stroke,
+			// which breaks pathLength dashing and draws the crack as dashes.
+			crack.setAttribute('viewBox', `0 0 ${vw} ${vh}`);
+			crack.setAttribute('aria-hidden', 'true');
+			crack.innerHTML = `<line x1="${(CUT_TOP / 100) * vw}" y1="0" x2="${(CUT_BOTTOM / 100) * vw}" y2="${vh}" pathLength="1" stroke-dasharray="1 1" stroke-dashoffset="1"/>`;
+			document.body.appendChild(crack);
+			const line = crack.querySelector('line');
+
+			// Shards now cover the screen pixel-for-pixel; retire the original.
+			preloader.style.display = 'none';
+
+			const cleanup = () => {
+				left.remove();
+				right.remove();
+				crack.remove();
+			};
+
+			const along = (dist) => ({ x: nx * dist, y: ny * dist });
+			const burst = Math.max(vw, vh) * 0.75;
+
+			gsap.timeline({ onComplete: cleanup })
+				// 1. Anticipation: the crack draws top to bottom while the halves
+				//    press into it, as if under load.
+				.to(line, { strokeDashoffset: 0, duration: 0.42, ease: 'power2.in' }, 0)
+				.to(left, { ...along(5), duration: 0.42, ease: 'power2.in' }, 0)
+				.to(right, { ...along(-5), duration: 0.42, ease: 'power2.in' }, 0)
+				// 2. Release: they spring a narrow gap open and hold for a beat,
+				//    so the corridor glows through before the reveal.
+				.to(left, { ...along(-14), rotation: -0.6, duration: 0.24, ease: 'back.out(2.5)' }, 0.42)
+				.to(right, { ...along(14), rotation: 0.6, duration: 0.24, ease: 'back.out(2.5)' }, 0.42)
+				.to(line, { opacity: 0, duration: 0.3 }, 0.5)
+				// 3. Burst: both halves fly out along the normal, turning away.
+				.to(left, { ...along(-burst), rotation: -7, duration: 0.85, ease: 'power4.in' }, 0.78)
+				.to(right, { ...along(burst), rotation: 7, duration: 0.85, ease: 'power4.in' }, 0.78);
+
+			runHeroEntrance(1.15);
+		};
+
+		if (root.classList.contains('is-loaded')) {
+			// The bundle arrived after the CSS shutter already ran.
 			runHeroEntrance();
 		} else {
+			root.classList.add('shatter-armed');
 			const observer = new MutationObserver(() => {
-				if (document.documentElement.classList.contains('is-loaded')) {
-					observer.disconnect();
-					window.setTimeout(runHeroEntrance, 120);
+				if (!root.classList.contains('is-loaded')) return;
+				observer.disconnect();
+				try {
+					shatter();
+				} catch (err) {
+					// Never leave the overlay up: fall back to hiding it outright.
+					console.warn('Preloader shatter skipped:', err);
+					preloader.style.display = 'none';
+					runHeroEntrance();
 				}
 			});
-			observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-			window.addEventListener('load', () => window.setTimeout(runHeroEntrance, 1500), { once: true });
+			observer.observe(root, { attributes: true, attributeFilter: ['class'] });
+			window.addEventListener('load', () => window.setTimeout(() => runHeroEntrance(), 3500), { once: true });
 		}
 	} else if (preloader) {
 		preloader.classList.add('preloader--loaded');
@@ -711,8 +578,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	// failure to fire leaves content permanently invisible. If an element has
 	// scrolled into view and is still fully transparent, drop the inline styles
 	// so the content wins over the animation.
+	// Matrix cards are left out: their reveal is scrubbed to scroll position, so
+	// they can't strand, and they are legitimately transparent mid-flight.
 	const revealTargets = document.querySelectorAll(
-		'.bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .matrix-card, .timeline-card, .about-portrait-card'
+		'.bento-box-tall-highlight, .bento-box-wide, .bento-box-small, .timeline-card, .about-portrait-card'
 	);
 
 	let guardScheduled = false;
@@ -815,6 +684,10 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Every in-page anchor, not just the desktop nav — the brand logo, the
 	// footer discipline links and the mobile panel all need this, because Lenis
 	// suppresses native anchor scrolling.
+	initChat({
+		scrollTo: (id) => (lenis ? lenis.scrollTo(`#${id}`, { duration: 1.2, offset: -80 }) : document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })),
+	});
+
 	const navLinks = document.querySelectorAll('a[href^="#"]:not([href="#"])');
 	navLinks.forEach((link) => {
 		link.addEventListener('click', (e) => {
@@ -920,45 +793,133 @@ document.addEventListener('DOMContentLoaded', () => {
 			);
 		}
 
-		// Technical Matrix cards stagger
-		const matrixCards = document.querySelectorAll('.matrix-card');
-		if (matrixCards.length > 0) {
-			gsap.fromTo(
-				matrixCards,
-				{ opacity: 0, y: 35 },
-				{
-					opacity: 1,
-					y: 0,
-					duration: 0.65,
-					stagger: 0.08,
-					ease: 'power3.out',
-					scrollTrigger: {
-						trigger: '.matrix-orbital-stage',
-						start: 'top 85%',
-						toggleActions: 'play none none none'
-					}
-				}
-			);
+		// Technical Matrix: the orbit assembles as it scrolls in. Side cards fly in
+		// from beyond their own screen edge, tilted toward the viewer; the focal
+		// card rises out of depth and the ring contracts around it. Scrubbed, so
+		// it rewinds on the way back up. #smooth-wrapper clips the off-screen start.
+		const matrixStage = document.querySelector('.matrix-orbital-stage');
+		if (matrixStage) {
+			const vw = () => window.innerWidth;
+			const vh = () => window.innerHeight;
+			const matrixTl = gsap.timeline({
+				defaults: { ease: 'power2.out', duration: 1 },
+				scrollTrigger: {
+					trigger: matrixStage,
+					start: 'top bottom',
+					end: 'center 55%', // locks together as the orbit reaches mid-screen
+					scrub: 0.9,
+					invalidateOnRefresh: true,
+				},
+			});
+
+			// [cards, start offset per card index]: left/right columns fan in from the
+			// top, side and bottom of their edge; the bottom row rises from the corners
+			const flights = [
+				['.matrix-side-col--left .matrix-card', (i) => ({ x: -vw() * 0.7, y: (i - 1) * vh() * 0.35, rotationY: 38 })],
+				['.matrix-side-col--right .matrix-card', (i) => ({ x: vw() * 0.7, y: (i - 1) * vh() * 0.35, rotationY: -38 })],
+				['.matrix-bottom-row .matrix-card', (i) => ({ x: (i === 0 ? -1 : 1) * vw() * 0.4, y: vh() * 0.55, rotationX: -30 })],
+			];
+			flights.forEach(([selector, from]) => {
+				document.querySelectorAll(selector).forEach((card, i) => {
+					matrixTl.fromTo(
+						card,
+						{ x: () => from(i).x, y: () => from(i).y, z: 240, rotationX: () => from(i).rotationX || 0, rotationY: () => from(i).rotationY || 0, opacity: 0, transformPerspective: 1200 },
+						{ x: 0, y: 0, z: 0, rotationX: 0, rotationY: 0, opacity: 1 },
+						0.08 * i,
+					);
+				});
+			});
+
+			const featured = matrixStage.querySelector('.matrix-card--featured');
+			if (featured) {
+				matrixTl.fromTo(featured,
+					{ z: -900, scale: 0.6, rotationX: 28, opacity: 0, transformPerspective: 1200 },
+					{ z: 0, scale: 1, rotationX: 0, opacity: 1, duration: 1.1 },
+					0.1);
+			}
+
+			// The ring already spins via a CSS transform animation, so size it through
+			// its own `scale` property (a CSS variable) instead of fighting that transform
+			const ring = matrixStage.querySelector('.matrix-orbit-ring');
+			if (ring) {
+				matrixTl.fromTo(ring, { '--ring-scale': 1.9, opacity: 0 }, { '--ring-scale': 1, opacity: 1, duration: 1.1 }, 0);
+			}
+
+			const capabilitiesBar = document.querySelector('.matrix-capabilities-bar');
+			if (capabilitiesBar) {
+				matrixTl.fromTo(capabilitiesBar, { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6 }, 0.5);
+			}
 		}
 
-		// Experience Timeline cards reveal
-		const timelineCards = document.querySelectorAll('.timeline-card');
-		timelineCards.forEach((card) => {
-			gsap.fromTo(
-				card,
-				{ opacity: 0, y: 35 },
-				{
-					opacity: 1,
-					y: 0,
-					duration: 0.75,
-					ease: 'power3.out',
-					scrollTrigger: {
-						trigger: card,
-						start: 'top 85%',
-						toggleActions: 'play none none none'
-					}
+		// Experience: on desktop, a pinned diagonal gallery. Cards sit on a
+		// descending staircase (CSS, via --i); vertical scroll translates the row
+		// left and up by the same slope, so the path runs along the diagonal and the
+		// card in focus always lands in the same spot. Elsewhere the cards are a
+		// swipeable row or a grid, and just fade up as they enter.
+		const experienceSection = document.getElementById('experience');
+		const experiencePin = experienceSection?.querySelector('.experience-pin');
+		const experienceTrack = experienceSection?.querySelector('.timeline-stack');
+		const timelineCards = experienceTrack ? [...experienceTrack.querySelectorAll('.timeline-card')] : [];
+		const experienceCounter = experienceSection?.querySelector('.experience-counter');
+		timelineCards.forEach((card, i) => card.style.setProperty('--i', i));
+
+		const revealTimelineCards = () => timelineCards.map((card) => gsap.fromTo(
+			card,
+			{ opacity: 0, y: 35 },
+			{
+				opacity: 1,
+				y: 0,
+				duration: 0.75,
+				ease: 'power3.out',
+				scrollTrigger: { trigger: card, start: 'top 85%', toggleActions: 'play none none none' },
+			}
+		));
+
+		const mm = gsap.matchMedia();
+		mm.add('(min-width: 1025px)', () => {
+			if (!experiencePin || timelineCards.length < 2) {
+				revealTimelineCards();
+				return undefined;
+			}
+			experienceSection.classList.add('is-live');
+			const stair = () => parseFloat(getComputedStyle(experienceTrack).getPropertyValue('--stair')) || 0;
+			// Exactly one card pitch per step, so step k parks card k where card 0
+			// started. That keeps the highlighted card and the staircase rise in sync;
+			// sizing travel to the row's overflow instead let the current card slide
+			// off-screen while later ones were still in view.
+			const travelX = () => timelineCards[timelineCards.length - 1].offsetLeft - timelineCards[0].offsetLeft;
+			const setCurrent = (progress) => {
+				const current = Math.round(progress * (timelineCards.length - 1));
+				timelineCards.forEach((card, i) => card.classList.toggle('is-current', i === current));
+				if (experienceCounter) {
+					experienceCounter.querySelector('span').textContent = String(current + 1).padStart(2, '0');
+					experienceCounter.style.setProperty('--exp-progress', progress.toFixed(3));
 				}
-			);
+			};
+			setCurrent(0);
+
+			gsap.to(experienceTrack, {
+				x: () => -travelX(),
+				y: () => -stair() * (timelineCards.length - 1),
+				ease: 'none',
+				scrollTrigger: {
+					trigger: experiencePin,
+					pin: true,
+					start: 'top top',
+					end: () => '+=' + Math.round(travelX() * 1.15), // a little extra dwell per card
+					scrub: 0.6,
+					invalidateOnRefresh: true,
+					onUpdate: (self) => setCurrent(self.progress),
+				},
+			});
+
+			return () => {
+				experienceSection.classList.remove('is-live');
+				timelineCards.forEach((card) => card.classList.remove('is-current'));
+			};
+		});
+		mm.add('(max-width: 1024px)', () => {
+			revealTimelineCards();
 		});
 	}
 
@@ -972,6 +933,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	const modalIndex = document.getElementById('modal-index');
 	const modalDiagram = document.getElementById('modal-diagram');
 	const modalGithub = document.getElementById('modal-github');
+	const modalDemo = document.getElementById('modal-demo');
 	const modalClose = document.getElementById('modal-close');
 	const modalBackdrop = document.getElementById('modal-backdrop');
 	const modalPanel = projectModal?.querySelector('.project-modal__panel');
@@ -983,7 +945,9 @@ document.addEventListener('DOMContentLoaded', () => {
 	const openProjectModal = (card) => {
 		if (!projectModal || !modalTitle || !modalCategory || !modalDescription || !modalIndex) return;
 		if (!lastFocusedTrigger) lastFocusedTrigger = card.querySelector('[data-open-project]') || card;
-		modalTitle.textContent = card.querySelector('.project-item-title')?.textContent || 'Project';
+		const rawTitle = card.querySelector('.project-item-title')?.cloneNode(true);
+		rawTitle?.querySelectorAll('.sr-only, .project-item-title__arrow')?.forEach((el) => el.remove());
+		modalTitle.textContent = rawTitle?.textContent.trim() || 'Project';
 		modalCategory.textContent = card.querySelector('.project-category-tag')?.textContent || 'Project';
 		modalDescription.textContent = card.querySelector('.project-item-desc')?.textContent || '';
 		modalIndex.textContent = card.querySelector('.project-dates')?.textContent || '';
@@ -992,6 +956,20 @@ document.addEventListener('DOMContentLoaded', () => {
 		if (modalDiagram && diagram) {
 			modalDiagram.src = diagram.src;
 			modalDiagram.alt = diagram.alt;
+		}
+
+		const liveUrl = card.getAttribute('data-live');
+		if (modalDemo) {
+			if (liveUrl) {
+				modalDemo.setAttribute('href', liveUrl);
+				modalDemo.style.display = 'inline-flex';
+				modalGithub?.classList.remove('btn-aurora');
+				modalGithub?.classList.add('btn-kelp');
+			} else {
+				modalDemo.style.display = 'none';
+				modalGithub?.classList.remove('btn-kelp');
+				modalGithub?.classList.add('btn-aurora');
+			}
 		}
 
 		if (modalGithub) {
@@ -1122,29 +1100,77 @@ document.addEventListener('DOMContentLoaded', () => {
 	}
 
 	// ==========================================================================
-	// 9. Velocity-Responsive Kinetic Footer Marquee (Smooth Flywheel)
+	// 9. Footer Reveal
 	// ==========================================================================
-	if (lenis && motionEnabled) {
-		const marqueeTrack = document.querySelector('.marquee-track');
-		if (marqueeTrack) {
-			let targetSpeedMultiplier = 1;
-			let currentSpeedMultiplier = 1;
+	// As the footer arrives, each line rises out of its mask in reading order
+	// (nav, then contact), the rule draws across, and the CDR monogram forms
+	// from a single point (below). Plays back in reverse when you
+	// scroll away, so the reveal runs again on the next approach.
+	const siteFooter = document.querySelector('.site-footer');
+	if (siteFooter && motionEnabled) {
+		const navLines = siteFooter.querySelectorAll('.site-footer__nav [data-reveal]');
+		const infoLines = siteFooter.querySelectorAll('.site-footer__contact [data-reveal]');
+		const rule = siteFooter.querySelector('.site-footer__rule');
+		const mark = siteFooter.querySelector('.site-footer__cdr');
+		const nameEl = siteFooter.querySelector('.site-footer__name');
 
-			lenis.on('scroll', (e) => {
-				// Damped velocity coupling: never exceed 1.45x baseline speed
-				targetSpeedMultiplier = 1 + Math.min(0.45, Math.abs(e.velocity) * 0.005);
+		gsap.timeline({
+			defaults: { ease: 'expo.out', duration: 1.1 },
+			scrollTrigger: {
+				trigger: siteFooter,
+				start: 'top 72%',
+				toggleActions: 'play none none reverse',
+			},
+		})
+			.fromTo(navLines, { yPercent: 125 }, { yPercent: 0, stagger: 0.045 }, 0)
+			.fromTo(infoLines, { yPercent: 125 }, { yPercent: 0, stagger: 0.025 }, 0.25)
+			.fromTo(rule, { scaleX: 0 }, { scaleX: 1, duration: 1.4, ease: 'power3.inOut' }, 0.3);
+
+		// Monogram formation: a seed dot appears at the centre, stretches into a
+		// horizon line out to both edges, and each letter then draws itself
+		// along its own stroke from that line: ( and C from the left end,
+		// R and ) from the right, D last in the middle. The line fades as the
+		// letters take over, then the name rises in letter by letter.
+		if (mark && nameEl) {
+			const seed = mark.querySelector('.cdr-seed');
+			const horizon = mark.querySelector('.cdr-horizon');
+			const letters = [...mark.querySelectorAll('.cdr-letter')];
+			letters.forEach((path) => {
+				const len = path.getTotalLength();
+				// Gap and offset run a few units past the length so no stroke cap
+				// peeks out at the path's start before it draws.
+				path.style.strokeDasharray = `${len} ${len + 20}`;
+				path.dataset.len = len + 10;
 			});
+			nameEl.innerHTML = [...nameEl.textContent].map((ch) => `<span>${ch === ' ' ? '&nbsp;' : ch}</span>`).join('');
+			const nameLetters = nameEl.querySelectorAll('span');
+			const bySide = (side) => letters.filter((p) => p.dataset.side === side);
+			const draw = { strokeDashoffset: 0, duration: 1.1, ease: 'power3.inOut' };
+			const undrawn = (p) => ({ strokeDashoffset: Number(p.dataset.len) });
 
-			const updateMarqueeSpeed = () => {
-				// Smooth exponential lerp towards target, with gradual decay back to 1.0
-				currentSpeedMultiplier += (targetSpeedMultiplier - currentSpeedMultiplier) * 0.06;
-				targetSpeedMultiplier += (1.0 - targetSpeedMultiplier) * 0.03;
+			const formTl = gsap.timeline({
+				paused: true,
+				defaults: { ease: 'power3.out' },
+			})
+				.fromTo(seed, { attr: { r: 0 }, opacity: 1 }, { attr: { r: 7 }, duration: 0.45, ease: 'back.out(3)' })
+				.set(horizon, { opacity: 1 })
+				.fromTo(horizon, { attr: { x1: 320, x2: 320 } }, { attr: { x1: 40, x2: 600 }, duration: 0.7, ease: 'expo.out' }, '>-0.05')
+				.to(seed, { attr: { r: 0 }, duration: 0.3 }, '<');
+			// Outermost first on each side, working in toward the centre
+			bySide('left').forEach((p, i) => formTl.fromTo(p, undrawn(p), draw, 1.0 + i * 0.12));
+			bySide('right').reverse().forEach((p, i) => formTl.fromTo(p, undrawn(p), draw, 1.0 + i * 0.12));
+			bySide('center').forEach((p) => formTl.fromTo(p, undrawn(p), draw, 1.35));
+			formTl
+				.to(horizon, { opacity: 0, attr: { x1: 320, x2: 320 }, duration: 0.8, ease: 'power2.inOut' }, 1.5)
+				.fromTo(nameLetters, { yPercent: 110, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 0.7, stagger: 0.035, ease: 'expo.out' }, 1.9);
+			formTl.progress(0);
 
-				marqueeTrack.style.animationDuration = `${48 / Math.max(0.6, currentSpeedMultiplier)}s`;
-				requestAnimationFrame(updateMarqueeSpeed);
-			};
-
-			requestAnimationFrame(updateMarqueeSpeed);
+			ScrollTrigger.create({
+				trigger: siteFooter,
+				start: 'top 60%',
+				onEnter: () => formTl.timeScale(1).play(),
+				onLeaveBack: () => formTl.timeScale(2.5).reverse(),
+			});
 		}
 	}
 
@@ -1270,7 +1296,8 @@ document.addEventListener('DOMContentLoaded', () => {
 		resizeCanvas();
 		window.addEventListener('resize', resizeCanvas, { passive: true });
 
-		const colors = ['#2ef4eb', '#7EF3D0', '#fde9ff', '#cbfffc', '#ffffff'];
+		// Amber family (--color-accent-deep / -accent / -hover / -soft / platinum as hex): sparks come off amber buttons
+		const colors = ['#c9984c', '#eab96b', '#f5c87e', '#f5daae', '#f7faf9'];
 
 		const createSparks = (originX, originY) => {
 			if (!motionState.particles) return;
@@ -1348,7 +1375,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		const scrambleElements = document.querySelectorAll('[data-scramble]');
 		if (!scrambleElements.length) return;
 
-		const glyphs = '!<>-_\\/[]{}—=+*^?#________';
+		const glyphs = '!<>-_\\/[]{}=+*^?#________';
 
 		class TextScrambler {
 			constructor(el) {
@@ -1388,7 +1415,8 @@ document.addEventListener('DOMContentLoaded', () => {
 							char = glyphs[Math.floor(Math.random() * glyphs.length)];
 							this.queue[i].char = char;
 						}
-						output += `<span style="color: #2ef4eb; opacity: 0.85;">${char}</span>`;
+						// Dimmed copy of the label's own colour, so glyphs read on dark and amber surfaces alike
+						output += `<span style="opacity: 0.45;">${char}</span>`;
 					} else {
 						output += from;
 					}
